@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satellite Mission Lab · 卫星终端任务实验室</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#141c2e; --panel2:#1b2438; --line:#2a3752;
+    --text:#e8eef8; --muted:#9db0cc; --cyan:#4cc9f0; --green:#3ddc84;
+    --amber:#ffb454; --red:#ff6b6b; --sel:#4cc9f0;
+  }
+  body.light{
+    --bg:#f2f5fa; --panel:#ffffff; --panel2:#eef2f8; --line:#c9d4e4;
+    --text:#16213a; --muted:#5a6b88; --cyan:#0a7ea4; --green:#178a4c;
+    --amber:#b26a00; --red:#c93b3b; --sel:#0a7ea4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    font-size:18px; line-height:1.55; min-height:100vh;
+  }
+  header{
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    padding:14px 24px; border-bottom:1px solid var(--line);
+  }
+  header h1{font-size:22px; letter-spacing:1px;}
+  header h1 .en{color:var(--cyan); font-size:15px; margin-left:8px; font-weight:normal;}
+  .spacer{flex:1;}
+  .btn{
+    background:var(--panel2); color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:10px 18px; font-size:17px; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--cyan);}
+  .btn.primary{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
+  .btn.danger{background:var(--red); color:#fff; border:none; font-weight:bold;}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .mission{
+    margin:16px 24px 0; padding:12px 18px; border:1px solid var(--line);
+    border-left:4px solid var(--cyan); border-radius:10px; background:var(--panel);
+    color:var(--muted); font-size:17px;
+  }
+  .mission b{color:var(--text);}
+  .tabs{display:flex; gap:10px; padding:14px 24px 0; flex-wrap:wrap;}
+  .tab{
+    padding:10px 18px; border-radius:10px 10px 0 0; border:1px solid var(--line);
+    border-bottom:none; background:var(--panel2); color:var(--muted);
+    cursor:pointer; font-size:17px;
+  }
+  .tab.active{background:var(--panel); color:var(--text); border-color:var(--cyan); font-weight:bold;}
+  .tab.locked{opacity:.55;}
+  main{padding:0 24px 40px;}
+  .board{
+    border:1px solid var(--line); border-radius:0 12px 12px 12px;
+    background:var(--panel); padding:20px;
+  }
+  .seg{display:flex; gap:8px; margin-bottom:18px;}
+  .seg .btn.on{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
+
+  /* ---- 组装视图 ---- */
+  .asm{display:flex; gap:20px; align-items:flex-start;}
+  .pool{width:300px; flex-shrink:0;}
+  .pool h3, .chainwrap h3{font-size:16px; color:var(--muted); margin-bottom:10px; letter-spacing:2px;}
+  .cards{display:flex; flex-direction:column; gap:8px;}
+  .card{
+    display:flex; align-items:center; gap:10px;
+    background:var(--panel2); border:2px solid var(--line); border-radius:10px;
+    padding:10px 12px; cursor:pointer; user-select:none;
+  }
+  .card:hover{border-color:var(--cyan);}
+  .card.selected{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel); }
+  .card .icon{font-size:22px;}
+  .card .nm{font-size:17px; font-weight:bold;}
+  .card .en{font-size:13px; color:var(--muted);}
+  .chainwrap{flex:1; min-width:0;}
+  .chain{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+  .endnode{
+    padding:12px 10px; border-radius:10px; background:var(--panel2);
+    border:1px dashed var(--line); color:var(--muted); text-align:center; font-size:15px;
+    width:96px;
+  }
+  .slot{
+    width:130px; min-height:86px; border:2px dashed var(--line); border-radius:10px;
+    background:var(--panel2); cursor:pointer; text-align:center;
+    display:flex; flex-direction:column; justify-content:center; gap:2px; padding:6px;
+  }
+  .slot .ph{color:var(--muted); font-size:14px;}
+  .slot.filled{border-style:solid;}
+  .slot.ok{border-color:var(--green); box-shadow:0 0 10px rgba(61,220,132,.35);}
+  .slot.warn{border-color:var(--amber); box-shadow:0 0 10px rgba(255,180,84,.35);}
+  .slot.bad{border-color:var(--red); box-shadow:0 0 10px rgba(255,107,107,.4);}
+  .slot.hot{border-color:var(--cyan);}
+  .slot .icon{font-size:22px;}
+  .slot .nm{font-size:15px; font-weight:bold;}
+  .slot .en{font-size:12px; color:var(--muted);}
+  .arrow{color:var(--muted); font-size:18px;}
+  .supportrow{display:flex; gap:6px; margin-top:14px; align-items:center;}
+  .supportrow .lbl{color:var(--muted); font-size:15px; margin-right:6px;}
+  .runbar{margin-top:18px; display:flex; gap:12px; align-items:center;}
+  .log{
+    margin-top:16px; border:1px solid var(--line); border-radius:10px;
+    background:var(--panel2); padding:14px 18px; min-height:70px;
+    max-height:300px; overflow-y:auto;
+  }
+  .log p{margin:4px 0; font-size:17px;}
+  .log p.ok{color:var(--green);}
+  .log p.warn{color:var(--amber);}
+  .log p.bad{color:var(--red); font-weight:bold;}
+  .log p.info{color:var(--muted);}
+  .log p.big{font-size:20px; font-weight:bold;}
+
+  /* ---- 诊断视图 ---- */
+  .diagtop{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px;}
+  select{
+    background:var(--panel2); color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:10px 14px; font-size:17px;
+  }
+  .symptom{
+    border:1px solid var(--amber); border-radius:10px; background:var(--panel2);
+    padding:12px 18px; margin-bottom:14px; font-size:18px;
+  }
+  .symptom b{color:var(--amber);}
+  .diagchain{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px;}
+  .stats{color:var(--muted); font-size:16px; margin:8px 0;}
+  .obslog{
+    border:1px solid var(--line); border-radius:10px; background:var(--panel2);
+    padding:12px 18px; min-height:60px; margin-top:6px;
+    max-height:280px; overflow-y:auto;
+  }
+  .obslog p{margin:5px 0; font-size:17px;}
+  .obslog p b{color:var(--cyan);}
+  .verdict{margin-top:14px; padding:14px 18px; border-radius:10px; display:none;}
+  .verdict.show{display:block;}
+  .verdict.good{border:1px solid var(--green); background:rgba(61,220,132,.08);}
+  .verdict.badv{border:1px solid var(--red); background:rgba(255,107,107,.08);}
+  .verdict h4{margin-bottom:6px;}
+  .hint{color:var(--muted); font-size:15px; margin-top:10px;}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--panel2); border:1px solid var(--cyan); color:var(--text);
+    border-radius:10px; padding:12px 22px; font-size:17px; display:none; z-index:9;
+  }
+  footer{
+    padding:10px 24px 24px; color:var(--muted); font-size:15px; text-align:center;
+  }
+
+  /* ---- 模块②③ 通用 ---- */
+  .mono{font-family:"SF Mono","Consolas","Menlo",monospace;}
+
+  /* ---- 模块② 噪声通信实验室 ---- */
+  .n2msg{font-size:18px; margin-bottom:16px;}
+  .n2table{
+    margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+    gap:8px; font-size:17px; background:var(--panel2); border:1px solid var(--line);
+    border-radius:10px; padding:14px;
+  }
+  .n2table div{display:flex; justify-content:space-between; gap:8px;}
+  .n2controls{margin-top:6px;}
+  .n2ctrlrow{display:flex; align-items:center; gap:14px; margin-bottom:16px; font-size:18px; flex-wrap:wrap;}
+  .n2ctrlrow input[type=range]{flex:0 0 260px;}
+  .n2schemes{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-bottom:16px;}
+  .n2scheme .ttl{font-size:17px; font-weight:bold;}
+  .n2scheme .sub{font-size:17px; color:var(--muted); margin-top:4px;}
+  .n2result{margin-top:20px;}
+  .n2row{margin-bottom:14px;}
+  .n2row .lbl{font-size:17px; color:var(--muted); margin-bottom:6px;}
+  .n2bits{
+    font-size:19px; letter-spacing:1px; line-height:2; word-break:break-all;
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:10px 12px;
+  }
+  .n2bits .g{margin-right:12px; display:inline-block;}
+  .n2bits .g.grpflag{background:rgba(255,180,84,.25); border-radius:4px; padding:0 3px;}
+  .n2bits span.flip{color:var(--red); font-weight:bold;}
+  .n2bits span.fix{color:var(--green); font-weight:bold;}
+  .n2flagline{margin-top:6px; font-size:17px; color:var(--amber);}
+  .n2text{font-size:22px; font-weight:bold; letter-spacing:2px;}
+  .n2text .bad{color:var(--red);}
+  .n2metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:18px;}
+  .n2mcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:14px 16px;}
+  .n2mcard .v{font-size:22px; font-weight:bold;}
+  .n2mcard .k{font-size:17px; color:var(--muted); margin-top:4px;}
+  .n2concl{grid-column:1/-1; font-size:20px; font-weight:bold; border-left:4px solid var(--cyan); padding-left:14px;}
+  .n2constbox{margin-top:24px; border-top:1px solid var(--line); padding-top:18px;}
+  .n2constctrl{display:flex; gap:14px; align-items:center; margin-bottom:12px; flex-wrap:wrap;}
+  .n2conscap{font-size:17px; color:var(--muted); margin-top:10px;}
+  #n2canvas{background:var(--panel2); border:1px solid var(--line); border-radius:10px;}
+
+  /* ---- 模块③ 芯片架构调度台 ---- */
+  .c3top{display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .c3scname{font-size:18px; font-weight:bold;}
+  .c3sctag{font-size:17px; color:var(--muted); margin-top:4px;}
+  .c3pool{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px;}
+  .c3task{
+    padding:10px 16px; border-radius:10px; border:2px solid var(--line);
+    background:var(--panel2); cursor:pointer; font-size:17px;
+  }
+  .c3task:hover{border-color:var(--cyan);}
+  .c3task.selected{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .c3cols{display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:14px; margin-bottom:18px;}
+  .c3col{border:2px dashed var(--line); border-radius:10px; background:var(--panel2); padding:12px; min-height:220px;}
+  .c3col.hot{border-color:var(--cyan);}
+  .c3col h4{font-size:17px; margin-bottom:4px;}
+  .c3col .tag{font-size:17px; color:var(--muted); margin-bottom:12px;}
+  .c3chip{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:8px 10px; margin-bottom:8px; font-size:17px; cursor:pointer;
+  }
+  .c3chip:hover{border-color:var(--red);}
+  .c3out{margin-top:8px;}
+  .c3bars{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:18px;}
+  .c3bar .k{font-size:17px; margin-bottom:8px;}
+  .c3barseg{display:flex; gap:4px;}
+  .c3barseg span{flex:1; height:16px; border-radius:3px; background:var(--line);}
+  .c3barseg span.on{background:var(--cyan);}
+  .c3bar .lv{font-size:20px; font-weight:bold; margin-top:6px;}
+  .c3notes{list-style:none;}
+  .c3notes li{font-size:17px; margin-bottom:10px; padding-left:14px; border-left:3px solid var(--amber);}
+  .c3final{font-size:20px; font-weight:bold; margin-top:16px; border-left:4px solid var(--cyan); padding-left:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🛰️ 卫星终端任务实验室<span class="en">Satellite Mission Lab</span></h1>
+  <div class="spacer"></div>
+  <button class="btn" id="themeBtn" onclick="toggleTheme()">☀️ 投影亮色模式</button>
+</header>
+
+<div class="mission">
+  <b>任务背景：</b>一支海岛科研队遭遇台风，地面网络全部中断。你们要设计一台便携式低轨卫星通信终端，恢复<b>位置、文字、语音和低清图片</b>的传输。先在纸上给出判断，再上台验证。
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tabBtn1" onclick="showTab(1)">第②课 · 终端组装台</div>
+  <div class="tab" id="tabBtn2" onclick="showTab(2)">第③课 · 噪声通信实验室</div>
+  <div class="tab" id="tabBtn3" onclick="showTab(3)">第④课 · 芯片架构调度台</div>
+  <div class="tab locked" onclick="toast('将在课程七解锁')">🔒 第⑦课 · 量产与供应链中心</div>
+</div>
+
+<main>
+<div id="tabpage-1">
+<div class="board">
+  <div class="seg">
+    <button class="btn on" id="segA" onclick="showView('asm')">① 组装信号链</button>
+    <button class="btn" id="segB" onclick="showView('diag')">② 故障诊断</button>
+  </div>
+
+  <!-- ============ 组装视图 ============ -->
+  <div id="view-asm">
+    <div class="asm">
+      <div class="pool">
+        <h3>模块仓库 · 点选一张卡，再点右侧插槽</h3>
+        <div class="cards" id="pool"></div>
+      </div>
+      <div class="chainwrap">
+        <h3>接收信号链 · 从卫星信号到用户设备</h3>
+        <div class="chain" id="chain"></div>
+        <div class="supportrow" id="supportrow">
+          <span class="lbl">支撑系统（不分先后）：</span>
+        </div>
+        <div class="runbar">
+          <button class="btn primary" id="runBtn" onclick="runBoot()">🚀 启动终端</button>
+          <button class="btn" onclick="resetAsm()">↺ 重置</button>
+        </div>
+        <div class="log" id="log"><p class="info">把模块放进插槽，然后点「启动终端」。系统会逐级通电，走到哪一步断了，就停在哪里。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 诊断视图 ============ -->
+  <div id="view-diag" style="display:none">
+    <div class="diagtop">
+      <label>故障任务：</label>
+      <select id="scSel" onchange="loadScenario()"></select>
+      <button class="btn" onclick="resetDiag()">↺ 重新开始本任务</button>
+      <div class="spacer"></div>
+      <button class="btn danger" id="accuseBtn" onclick="accuse()" disabled>⚠ 指认当前模块为故障源</button>
+    </div>
+    <div class="symptom" id="symptom"></div>
+    <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">终端结构（点击任意模块进行检修）</h3>
+    <div class="diagchain" id="diagchain"></div>
+    <div class="stats">检修次数：<b id="checkCount">0</b> ｜ 指认次数：<b id="accuseCount">0</b>（两组比一比：谁用更少的检修找到故障？）</div>
+    <div class="obslog" id="obslog"><p style="color:var(--muted)">检修记录会出现在这里。提示：故障通常出现在「最早开始不正常」的位置附近。</p></div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 模块② 噪声通信实验室 ============ -->
+<div id="tabpage-2" style="display:none">
+<div class="board">
+  <div class="n2msg">
+    要传的紧急消息：<b class="mono" style="font-size:20px">TEAM SAFE</b>　（9 个字符含空格，用 5 位字母编码表 → 共 45 bit 原始信息）
+    <button class="btn" style="margin-left:10px;padding:6px 14px;font-size:15px" onclick="n2ToggleTable()">📖 展开/收起编码表</button>
+    <div id="n2table" class="n2table" style="display:none"></div>
+  </div>
+
+  <div class="n2controls">
+    <div class="n2ctrlrow">
+      <label>噪声强度（每一位被翻转的概率）：</label>
+      <input type="range" id="n2noise" min="0" max="30" value="10" step="1" oninput="n2NoiseChange()">
+      <b id="n2noiseVal">10%</b>
+    </div>
+    <h3 style="font-size:17px;color:var(--muted);margin-bottom:8px">保护方案（四选一）</h3>
+    <div class="n2schemes" id="n2schemes"></div>
+    <div class="runbar">
+      <button class="btn primary" onclick="n2Send()">📡 发送消息</button>
+      <button class="btn" onclick="n2Send()">↻ 再传一次（同参数重新随机）</button>
+    </div>
+  </div>
+
+  <div class="n2result">
+    <div class="n2row"><div class="lbl">原始 bits（发送前的完整编码）</div><div class="n2bits mono" id="n2row-orig"></div></div>
+    <div class="n2row"><div class="lbl">信道后 bits（红色 = 被噪声翻转）</div><div class="n2bits mono" id="n2row-chan"></div><div class="n2flagline" id="n2flagline" style="display:none"></div></div>
+    <div class="n2row"><div class="lbl">恢复后 bits（红色 = 仍然错误，绿色 = 已被修复）</div><div class="n2bits mono" id="n2row-recv"></div></div>
+    <div class="n2row"><div class="lbl">恢复出的文本（红色字符 = 该字符出错）</div><div class="n2text mono" id="n2text"></div></div>
+  </div>
+
+  <div class="n2metrics" id="n2metrics"></div>
+
+  <div class="n2constbox">
+    <div class="n2constctrl">
+      <span class="lbl" style="font-size:17px">星座图：</span>
+      <div class="seg" style="margin-bottom:0">
+        <button class="btn on" id="n2bpsk" onclick="n2SetMod('bpsk')">BPSK</button>
+        <button class="btn" id="n2qpsk" onclick="n2SetMod('qpsk')">QPSK</button>
+      </div>
+    </div>
+    <canvas id="n2canvas" width="300" height="300"></canvas>
+    <div class="n2conscap">点越散、离得越近的两个标准点，越容易认错。</div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 模块③ 芯片架构调度台 ============ -->
+<div id="tabpage-3" style="display:none">
+<div class="board">
+  <h3 style="font-size:17px;color:var(--muted);margin-bottom:10px">场景（老师三选一）</h3>
+  <div class="c3top" id="c3scenarios"></div>
+
+  <h3 style="font-size:17px;color:var(--muted);margin:18px 0 10px">任务卡 · 点选一张，再点下方处理器立柱；点已放入的任务可取回</h3>
+  <div class="c3pool" id="c3pool"></div>
+
+  <div class="c3cols" id="c3cols"></div>
+
+  <div class="runbar">
+    <button class="btn primary" onclick="c3Evaluate()">📊 评估方案</button>
+    <button class="btn" onclick="c3Reset()">↺ 清空重排</button>
+  </div>
+
+  <div class="c3out" id="c3out" style="display:none">
+    <h3 style="font-size:17px;color:var(--muted);margin:20px 0 10px">评估结果</h3>
+    <div class="c3bars" id="c3bars"></div>
+    <ul class="c3notes" id="c3notes"></ul>
+    <div class="c3final" id="c3final"></div>
+  </div>
+</div>
+</div>
+</main>
+
+<footer>课堂节奏：先讲现实问题 → 学生纸笔判断 → 上台操作 → 观察后果 → 老师解释原理（本页所有结构均为典型教学架构）</footer>
+<div class="toast" id="toastBox"></div>
+
+<script>
+/* ============================= 数据 ============================= */
+const CARDS = [
+  {id:'ant', name:'相控阵天线', en:'Phased Array Antenna', icon:'📡'},
+  {id:'flt', name:'滤波器', en:'Filter', icon:'🚦'},
+  {id:'lna', name:'低噪声放大器', en:'LNA', icon:'📢'},
+  {id:'mix', name:'混频器', en:'Mixer', icon:'🔀'},
+  {id:'adc', name:'模数转换器', en:'ADC', icon:'📸'},
+  {id:'bb',  name:'基带芯片', en:'Baseband', icon:'🧩'},
+  {id:'soc', name:'SoC 主控', en:'System on Chip', icon:'🧠'},
+  {id:'itf', name:'Wi-Fi / 以太网接口', en:'Interface', icon:'🔌'},
+  {id:'pwr', name:'电源模块', en:'Power / PMIC', icon:'🔋', support:true},
+  {id:'thm', name:'散热模块', en:'Thermal', icon:'❄️', support:true},
+];
+const byId = id => CARDS.find(c=>c.id===id);
+const EXPECTED = ['ant','flt','lna','mix','adc','bb','soc','itf'];
+
+const STAGE_OK_LINE = {
+  ant:'📡 天线：把空间里的电磁波接进电路，变成微弱的高频电信号。',
+  flt:'🚦 滤波器：把目标频段之外的干扰先关在门外。',
+  lna:'📢 LNA：信号还很微弱，小心地把它抬高，同时尽量少添噪声。',
+  mix:'🔀 混频器：把信息从很高的频率搬到容易处理的位置。',
+  adc:'📸 ADC：定时给波形拍照，把连续的波变成一串数字。',
+  bb :'🧩 基带芯片：从这串数字里，把真正的消息拼出来。',
+  soc:'🧠 SoC：指挥全局——运行协议、管理设备、处理数据。',
+  itf:'🔌 接口：把恢复好的数据交给手机和电脑。',
+};
+
+const MISPLACE_REASON = {
+  ant:'天线只能在链条最前端工作——它是电磁波进入设备的「门口」，放在中间没有意义。',
+  flt:'滤波器要在信号刚进门、还没被放大处理之前把带外干扰挡掉；放在这里，干扰早已混进前面的环节。',
+  lna:'LNA 的价值在接收链前端：趁噪声还没累积，先把微弱信号抬起来。放到这里已经太晚了。',
+  mix:'混频器要在放大之后、ADC 之前工作，把高频信号搬到容易处理的频率。',
+  adc:'信号此时还是微弱的高频模拟波，ADC 现在「拍」不出有意义的数字——它要放在射频前端处理完之后。',
+  bb :'基带芯片只认数字。它必须排在 ADC 之后，拿到的是一串数，而不是模拟波形。',
+  soc:'SoC 是指挥官，它处理的是基带恢复出来的数据，不直接碰射频信号。',
+  itf:'接口是最后一步：先有恢复好的数据，才谈得上交给用户设备。',
+  pwr:'电源不处理信号本身——它属于下方的「支撑系统」插槽。',
+  thm:'散热不处理信号本身——它属于下方的「支撑系统」插槽。',
+};
+
+const SCENARIOS = [
+  {
+    id:'s1', title:'故障① 一颗卫星都搜不到',
+    symptom:'终端供电正常，自检全部通过，但持续搜索不到任何卫星信号。',
+    culprit:'ant',
+    obs:{
+      pwr:'各路电压输出正常。',
+      thm:'温度 32°C，一切正常。',
+      itf:'本地 Wi-Fi 正常，但没有任何数据可以转发。',
+      soc:'搜星程序在运行，一直报告「未捕获信号」。',
+      bb :'输入端只有底噪，没有任何可识别的信号。',
+      adc:'输出全是低电平噪声——说明前面几乎没有能量进来。',
+      mix:'输入端几乎没有信号能量，问题可能还在更前面。',
+      lna:'工作正常，但输入端能量极低——问题可能还在更前面。',
+      flt:'通带内几乎没有能量进来。',
+      ant:'⚠ 波束指向与轨道预测的卫星方向差了 40°——天线根本没有对准卫星！',
+    },
+    explain:'相控阵天线没有完成对星。自动对星不是「摄像头看见卫星」，它更像导航：先根据自身位置和轨道数据推算卫星在哪，再用收到的信号不断纠偏。任何一步出错，波束就指向了空无一物的天空。',
+    fix:'工程修法：重新执行对星流程（校准位置/时间/姿态 → 按星历预测方向 → 搜索并锁定信号）。',
+  },
+  {
+    id:'s2', title:'故障② 能连上，但消息错字连篇',
+    symptom:'终端能锁定卫星，但收到的消息大量出错，误码率非常高。',
+    culprit:'flt',
+    obs:{
+      pwr:'供电正常。',
+      thm:'温度正常。',
+      itf:'接口正常，但转发出去的数据本身就是错的。',
+      soc:'运行正常，收到的数据包大量校验失败。',
+      bb :'星座图上的点散得到处都是，判决时大量认错。',
+      adc:'输出里目标信号被一大团杂乱能量淹没。',
+      mix:'干扰跟着信号一起被搬到了低频。',
+      lna:'输入里信号和强干扰混在一起，被一起放大了。',
+      flt:'⚠ 通带设置得太宽——邻近频段的强干扰大量涌了进来！',
+      ant:'对星正常，接收能量充足（甚至偏强）。',
+    },
+    explain:'滤波器是接收链的「门卫」。通带开得太宽，带外的强干扰就会混进来，后面每一级都会带着这些干扰一起工作，最后在判决时大量认错。滤波要在干扰被放大之前完成——这就是它站在链条前端的原因。',
+    fix:'工程修法：把滤波器通带收窄到目标频段。第③课我们会亲手数一数这些误码。',
+  },
+  {
+    id:'s3', title:'故障③ 信号越强，反而错得越离谱',
+    symptom:'弱信号时通信还行；附近出现强信号源时，反而完全变成乱码。',
+    culprit:'lna',
+    obs:{
+      pwr:'供电正常。',
+      thm:'温度正常。',
+      itf:'接口正常。',
+      soc:'强信号期间收到的数据几乎全部校验失败。',
+      bb :'波形严重失真，根本无法正确判决。',
+      adc:'采到的波形顶部是平的——输入波形本身已经变形。',
+      mix:'输入波形已经失真，搬频只是照原样搬运。',
+      lna:'⚠ 输出波形顶部被「削平」了——放大器被强信号推进了饱和区！',
+      flt:'带内确实有很强的能量进入（干扰在通带之内，滤波器挡不住）。',
+      ant:'对星正常。',
+    },
+    explain:'放大器不是越用力越好。输入超过它的线性范围后，波形顶部会被「削平」，信息就被压坏了——这叫饱和。所以「信号太强」也是一种故障。',
+    fix:'工程修法：加入自动增益控制（AGC），信号强时自动把增益调低。',
+  },
+  {
+    id:'s4', title:'故障④ 模拟端一切正常，数据却始终不对',
+    symptom:'信号强度正常，但始终拼不出正确数据；换到更慢的速率反而能通。',
+    culprit:'adc',
+    obs:{
+      pwr:'供电正常。',
+      thm:'温度正常。',
+      itf:'接口正常。',
+      soc:'收到的数据自相矛盾，无法组包。',
+      bb :'拿到的数字序列和任何合法波形都对不上。',
+      adc:'⚠ 「拍照」间隔太长——波形变化快时，两次采样之间发生的事情全被漏掉了！',
+      mix:'输出波形干净正常。',
+      lna:'输出波形干净正常。',
+      flt:'通带设置正确。',
+      ant:'对星正常。',
+    },
+    explain:'ADC 像连拍相机：拍得太慢，快速变化的波形会被「看成」另一个样子——就像视频里高速车轮看起来在倒转。慢速率能通，正是因为波形变化变慢了，采样跟得上了。',
+    fix:'工程修法：提高采样率，或者降低符号速率。采样率必须和信号变化速度匹配。',
+  },
+  {
+    id:'s5', title:'故障⑤ 开机十分钟后，速率突然暴跌',
+    symptom:'前十分钟一切正常；之后速率从 20 Mbps 掉到 2 Mbps，外壳发烫。',
+    culprit:'thm',
+    obs:{
+      pwr:'供电正常，电流略偏高。',
+      thm:'⚠ 散热片和外壳之间的导热垫脱落，热量根本排不出去！',
+      itf:'接口正常，只是没多少数据可转发。',
+      soc:'温度 92°C，已自动降频保护——SoC 本身没坏，是热量排不出去。',
+      bb :'工作正常，但处理速度被主控限制了。',
+      adc:'工作正常。',
+      mix:'工作正常。',
+      lna:'工作正常。',
+      flt:'工作正常。',
+      ant:'对星正常。',
+    },
+    explain:'芯片算得快，不等于设备能持续工作。热量排不出去，芯片就会自动降频自保——手机夏天导航时发烫变卡，是同一个道理。注意：SoC 显示 92°C 只是「症状」，真正的故障源是散热系统。',
+    fix:'工程修法：修复散热通路。设计时就要把散热当作系统能力的一部分，而不是可有可无的配件。',
+  },
+];
+
+/* ============================= 通用 ============================= */
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  document.getElementById('themeBtn').textContent =
+    document.body.classList.contains('light') ? '🌙 深色模式' : '☀️ 投影亮色模式';
+  if(typeof n2DrawConstellation==='function') n2DrawConstellation();
+}
+function showTab(n){
+  for(let i=1;i<=3;i++){
+    document.getElementById('tabpage-'+i).style.display = (i===n?'':'none');
+    document.getElementById('tabBtn'+i).classList.toggle('active', i===n);
+  }
+}
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById('toastBox');
+  t.textContent=msg; t.style.display='block';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.style.display='none',2200);
+}
+function showView(v){
+  document.getElementById('view-asm').style.display = v==='asm'?'':'none';
+  document.getElementById('view-diag').style.display = v==='diag'?'':'none';
+  document.getElementById('segA').classList.toggle('on', v==='asm');
+  document.getElementById('segB').classList.toggle('on', v==='diag');
+}
+
+/* ============================= 组装 ============================= */
+let slots = Array(8).fill(null);      // 信号链插槽
+let support = Array(2).fill(null);    // 支撑插槽
+let selected = null;                  // 选中的卡 id
+let running = false;
+let timers = [];
+const POOL_ORDER = ['bb','pwr','mix','ant','soc','adc','thm','flt','itf','lna']; // 打乱的固定顺序
+
+function placedIds(){ return slots.concat(support).filter(Boolean); }
+
+function renderAsm(){
+  // 仓库
+  const pool = document.getElementById('pool');
+  pool.innerHTML='';
+  POOL_ORDER.forEach(id=>{
+    if(placedIds().includes(id)) return;
+    const c = byId(id);
+    const el = document.createElement('div');
+    el.className = 'card' + (selected===id?' selected':'');
+    el.innerHTML = `<span class="icon">${c.icon}</span><span><div class="nm">${c.name}</div><div class="en">${c.en}</div></span>`;
+    el.onclick = ()=>{ if(running) return; selected = (selected===id?null:id); renderAsm(); };
+    pool.appendChild(el);
+  });
+  if(!pool.children.length) pool.innerHTML = '<div style="color:var(--muted);font-size:15px">仓库已空——所有模块都已上板。</div>';
+
+  // 信号链
+  const chain = document.getElementById('chain');
+  chain.innerHTML = '<div class="endnode">🛰️<br>卫星信号</div><span class="arrow">→</span>';
+  slots.forEach((id,i)=>{
+    const el = document.createElement('div');
+    el.className = 'slot' + (id?' filled':'') + (selected&&!id?' hot':'');
+    el.id = 'slot-'+i;
+    if(id){
+      const c=byId(id);
+      el.innerHTML = `<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
+    }else{
+      el.innerHTML = `<div class="ph">第 ${i+1} 步<br>（点此放入）</div>`;
+    }
+    el.onclick = ()=>slotClick('chain',i);
+    chain.appendChild(el);
+    if(i<7) chain.insertAdjacentHTML('beforeend','<span class="arrow">→</span>');
+  });
+  chain.insertAdjacentHTML('beforeend','<span class="arrow">→</span><div class="endnode">💻<br>用户设备</div>');
+
+  // 支撑
+  const row = document.getElementById('supportrow');
+  row.innerHTML = '<span class="lbl">支撑系统（不分先后）：</span>';
+  support.forEach((id,i)=>{
+    const el=document.createElement('div');
+    el.className='slot' + (id?' filled':'') + (selected&&!id?' hot':'');
+    el.id='sup-'+i;
+    if(id){
+      const c=byId(id);
+      el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
+    }else{
+      el.innerHTML=`<div class="ph">支撑插槽<br>（点此放入）</div>`;
+    }
+    el.onclick=()=>slotClick('sup',i);
+    row.appendChild(el);
+  });
+}
+
+function slotClick(kind,i){
+  if(running) return;
+  const arr = kind==='chain'?slots:support;
+  if(arr[i]){                 // 取回已放置的卡
+    arr[i]=null; selected=null; renderAsm(); return;
+  }
+  if(!selected){ toast('先在左侧仓库点选一张模块卡'); return; }
+  arr[i]=selected; selected=null; renderAsm();
+}
+
+function clearMarks(){
+  document.querySelectorAll('#view-asm .slot').forEach(s=>s.classList.remove('ok','warn','bad'));
+}
+function log(html,cls){
+  const box=document.getElementById('log');
+  const p=document.createElement('p');
+  p.className=cls||''; p.innerHTML=html;
+  box.appendChild(p);
+  box.scrollTop=box.scrollHeight;
+}
+function resetAsm(){
+  timers.forEach(clearTimeout); timers=[];
+  running=false; slots=Array(8).fill(null); support=Array(2).fill(null); selected=null;
+  document.getElementById('log').innerHTML='<p class="info">把模块放进插槽，然后点「启动终端」。系统会逐级通电，走到哪一步断了，就停在哪里。</p>';
+  document.getElementById('runBtn').disabled=false;
+  renderAsm(); clearMarks();
+}
+
+function runBoot(){
+  if(running) return;
+  timers.forEach(clearTimeout); timers=[];
+  clearMarks();
+  document.getElementById('log').innerHTML='';
+  running=true; document.getElementById('runBtn').disabled=true;
+  const done=()=>{ running=false; document.getElementById('runBtn').disabled=false; };
+  let t=0; const step=(fn,delay)=>{ t+=delay; timers.push(setTimeout(fn,t)); };
+
+  step(()=>log('🔋 按下电源键……','info'),200);
+
+  // 1. 电源检查
+  if(!support.includes('pwr')){
+    step(()=>{
+      log('❌ 没有任何反应。设备缺少<b>电源模块</b>。','bad');
+      log('芯片不是接上电池就能直接用——不同器件需要不同且稳定的电压，这正是电源管理（PMIC）的工作。','info');
+      done();
+    },700);
+    return;
+  }
+  step(()=>log('✅ 电源系统上电，各路电压正常。','ok'),700);
+
+  // 2. 逐级走链
+  //   允许 滤波器/LNA 互换（琥珀提示）
+  const swapped = slots[1]==='lna' && slots[2]==='flt';
+  let failed=false;
+  for(let i=0;i<8;i++){
+    const idx=i, placed=slots[i];
+    let expected=EXPECTED[i];
+    if(swapped && i===1) expected='lna';
+    if(swapped && i===2) expected='flt';
+    if(failed) break;
+    if(!placed){
+      failed=true;
+      step(()=>{
+        document.getElementById('slot-'+idx).classList.add('bad');
+        log(`❌ 信号走到第 ${idx+1} 步就断了——这一步还没有放模块。`,'bad');
+        done();
+      },800);
+    }else if(placed!==expected){
+      failed=true;
+      step(()=>{
+        document.getElementById('slot-'+idx).classList.add('bad');
+        log(`❌ 信号在第 ${idx+1} 步中断：「${byId(placed).name}」在这里工作不了。`,'bad');
+        log(MISPLACE_REASON[placed],'info');
+        done();
+      },800);
+    }else{
+      step(()=>{
+        document.getElementById('slot-'+idx).classList.add(swapped&&(idx===1||idx===2)?'warn':'ok');
+        log(STAGE_OK_LINE[placed], swapped&&(idx===1||idx===2)?'warn':'ok');
+      },800);
+    }
+  }
+  if(failed) return;
+
+  if(swapped){
+    step(()=>log('⚠ 注意：你把 LNA 放在了滤波器前面。这种结构在工程上也存在，但带外强干扰会先被放大；本课程采用「先滤波、再放大」的典型教学结构。','warn'),600);
+  }
+
+  // 3. 散热检查 + 结局
+  if(!support.includes('thm')){
+    step(()=>{
+      log('📶 链路建立！开始回传数据……','ok');
+    },800);
+    step(()=>{
+      const supEmpty=[...document.querySelectorAll('#supportrow .slot')].find(s=>!s.classList.contains('filled'));
+      if(supEmpty) supEmpty.classList.add('bad');
+      log('⚠ 运行 10 分钟后：SoC 温度升到 88°C，自动降频……速率从 20 Mbps 跌到 3 Mbps。','warn');
+      log('❌ 设备缺少<b>散热模块</b>：短时间能跑，长时间工作就会过热降频。散热是系统能力的一部分。','bad');
+      done();
+    },1600);
+    return;
+  }
+
+  step(()=>{
+    document.querySelectorAll('#supportrow .slot').forEach(s=>s.classList.add('ok'));
+    log('✅ 散热系统正常，温度稳定在 45°C。','ok');
+  },800);
+  step(()=>{
+    log('📶 <b>链路建立！LINK ESTABLISHED</b>','big ok');
+    log('📨 第一条消息已发出：<b>「TEAM SAFE / 队员安全」</b>——位置、文字通道恢复。任务完成！🎉','big ok');
+    done();
+  },1000);
+}
+
+/* ============================= 诊断 ============================= */
+let scen=null, lastChecked=null, checkCount=0, accuseCount=0, solved=false;
+const DIAG_ORDER = ['ant','flt','lna','mix','adc','bb','soc','itf'];
+
+function initDiag(){
+  const sel=document.getElementById('scSel');
+  sel.innerHTML='<option value="">— 老师选择一个故障任务 —</option>';
+  SCENARIOS.forEach((s,i)=>{
+    sel.insertAdjacentHTML('beforeend',`<option value="${i}">${s.title}</option>`);
+  });
+  loadScenario();
+}
+function loadScenario(){
+  const v=document.getElementById('scSel').value;
+  scen = v===''?null:SCENARIOS[+v];
+  resetDiag();
+}
+function resetDiag(){
+  lastChecked=null; checkCount=0; accuseCount=0; solved=false;
+  document.getElementById('checkCount').textContent='0';
+  document.getElementById('accuseCount').textContent='0';
+  document.getElementById('accuseBtn').disabled=true;
+  document.getElementById('verdict').className='verdict';
+  document.getElementById('verdict').innerHTML='';
+  document.getElementById('symptom').innerHTML = scen
+    ? `<b>症状报告：</b>${scen.symptom}<span class="hint">　（先在纸上判断故障位置，再上台检修）</span>`
+    : '请老师先在上方选择一个故障任务。';
+  document.getElementById('obslog').innerHTML='<p style="color:var(--muted)">检修记录会出现在这里。提示：故障通常出现在「最早开始不正常」的位置附近。</p>';
+  renderDiagChain();
+}
+function renderDiagChain(){
+  const wrap=document.getElementById('diagchain');
+  wrap.innerHTML='<div class="endnode">🛰️<br>卫星信号</div><span class="arrow">→</span>';
+  DIAG_ORDER.forEach((id,i)=>{
+    const c=byId(id);
+    const el=document.createElement('div');
+    el.className='slot filled'+(lastChecked===id?' hot':'');
+    el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
+    el.onclick=()=>checkModule(id);
+    wrap.appendChild(el);
+    if(i<DIAG_ORDER.length-1) wrap.insertAdjacentHTML('beforeend','<span class="arrow">→</span>');
+  });
+  wrap.insertAdjacentHTML('beforeend','<span class="arrow">→</span><div class="endnode">💻<br>用户设备</div>');
+  // 支撑模块
+  ['pwr','thm'].forEach(id=>{
+    const c=byId(id);
+    const el=document.createElement('div');
+    el.className='slot filled'+(lastChecked===id?' hot':'');
+    el.style.marginLeft='14px';
+    el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
+    el.onclick=()=>checkModule(id);
+    wrap.appendChild(el);
+  });
+}
+function checkModule(id){
+  if(!scen){ toast('请老师先选择一个故障任务'); return; }
+  if(solved) return;
+  lastChecked=id; checkCount++;
+  document.getElementById('checkCount').textContent=checkCount;
+  document.getElementById('accuseBtn').disabled=false;
+  const c=byId(id);
+  const logEl=document.getElementById('obslog');
+  if(logEl.querySelector('p[style]')) logEl.innerHTML='';
+  logEl.insertAdjacentHTML('beforeend',`<p><b>检修 ${c.name}：</b>${scen.obs[id]}</p>`);
+  logEl.scrollTop=logEl.scrollHeight;
+  renderDiagChain();
+}
+function accuse(){
+  if(!scen||!lastChecked||solved) return;
+  accuseCount++;
+  document.getElementById('accuseCount').textContent=accuseCount;
+  const v=document.getElementById('verdict');
+  if(lastChecked===scen.culprit){
+    solved=true;
+    v.className='verdict show good';
+    v.innerHTML=`<h4>✅ 指认正确！故障源：${byId(scen.culprit).name}</h4>
+      <p>${scen.explain}</p>
+      <p style="margin-top:6px"><b>${scen.fix}</b></p>
+      <p class="hint">本轮成绩：检修 ${checkCount} 次，指认 ${accuseCount} 次。</p>`;
+  }else{
+    v.className='verdict show badv';
+    v.innerHTML=`<h4>❌ 不是「${byId(lastChecked).name}」。</h4>
+      <p>对照检修记录再想想：从信号链的哪一步开始，读数变得不正常？「表现异常」的模块不一定是「故障源」——顺着链条往上游找。</p>`;
+  }
+  v.scrollIntoView({block:'nearest'});
+}
+
+/* ============================= 模块② 噪声通信实验室 ============================= */
+const N2_MSG = 'TEAM SAFE'; // 9 字符含空格 → 45 bit
+function n2CharTo5(ch){
+  if(ch===' ') return '00000';
+  const v = ch.charCodeAt(0)-64; // A=1 ... Z=26
+  return v.toString(2).padStart(5,'0');
+}
+function n2Bits5ToChar(bits){
+  const v = parseInt(bits,2);
+  if(v===0) return ' ';
+  if(v>=1 && v<=26) return String.fromCharCode(64+v);
+  return '#'; // 27-31 为非法编码，展示为乱码标记
+}
+const N2_MSG_BITS = N2_MSG.split('').map(n2CharTo5).join('').split('').map(Number);
+
+const N2_SCHEMES = [
+  {id:'A', name:'A · 不加保护', sub:'直接发 45 bit，不做任何冗余。'},
+  {id:'B', name:'B · 三次重复码', sub:'每位发 3 次，多数表决恢复，发送 135 bit。'},
+  {id:'C', name:'C · 奇偶校验（只检错）', sub:'每 5 bit 加 1 位偶校验，能发现"可能错了"但不修复，发送 54 bit。'},
+  {id:'D', name:'D · 汉明(7,4) 纠错', sub:'每 4 bit 编成 7 bit，可纠正每组 1 位错；45 bit 补齐到 48 bit，发送 84 bit。'},
+];
+const N2_GROUP_SIZE = {A:5, B:15, C:6, D:7};
+
+let n2Scheme = 'A';
+let n2Noise = 10; // 百分比 0-30
+let n2Mod = 'bpsk';
+
+function n2HammingEncode4(d){
+  const [d1,d2,d3,d4]=d;
+  const p1=d1^d2^d4, p2=d1^d3^d4, p3=d2^d3^d4;
+  return [p1,p2,d1,p3,d2,d3,d4];
+}
+function n2HammingDecode7(r){
+  const [r1,r2,r3,r4,r5,r6,r7]=r;
+  const s1=r1^r3^r5^r7, s2=r2^r3^r6^r7, s3=r4^r5^r6^r7;
+  const synd = s1 + s2*2 + s3*4;
+  const fixedBits=r.slice();
+  if(synd!==0 && synd<=7) fixedBits[synd-1]^=1;
+  return {data:[fixedBits[2],fixedBits[4],fixedBits[5],fixedBits[6]], synd, fixedBits};
+}
+function n2Encode(scheme, bits){
+  if(scheme==='A') return bits.slice();
+  if(scheme==='B'){ const o=[]; bits.forEach(b=>o.push(b,b,b)); return o; }
+  if(scheme==='C'){
+    const o=[];
+    for(let g=0; g<9; g++){
+      const grp = bits.slice(g*5,g*5+5);
+      const parity = grp.reduce((a,b)=>a^b,0);
+      o.push(...grp, parity);
+    }
+    return o;
+  }
+  if(scheme==='D'){
+    const padded = bits.concat([0,0,0]); // 45 -> 48
+    const o=[];
+    for(let g=0; g<12; g++){
+      o.push(...n2HammingEncode4(padded.slice(g*4,g*4+4)));
+    }
+    return o;
+  }
+}
+function n2Decode(scheme, channelBits, sentBits, original){
+  if(scheme==='A'){
+    const decoded=channelBits.slice();
+    return {decoded, fixed:decoded.map(()=>false), stillWrong:decoded.map((b,i)=>b!==original[i]), flagged:null, groupErr:null};
+  }
+  if(scheme==='B'){
+    const decoded=[], fixed=[], stillWrong=[];
+    for(let i=0;i<45;i++){
+      const grp=channelBits.slice(i*3,i*3+3);
+      const sum=grp.reduce((a,b)=>a+b,0);
+      const maj=sum>=2?1:0;
+      decoded.push(maj);
+      const anyFlip=grp.some((b,j)=>b!==sentBits[i*3+j]);
+      fixed.push(maj===original[i] && anyFlip);
+      stillWrong.push(maj!==original[i]);
+    }
+    return {decoded, fixed, stillWrong, flagged:null, groupErr:null};
+  }
+  if(scheme==='C'){
+    const decoded=[], fixed=[], stillWrong=[], flagged=[];
+    for(let g=0; g<9; g++){
+      const data=channelBits.slice(g*6,g*6+5);
+      const parityBit=channelBits[g*6+5];
+      const recompute=data.reduce((a,b)=>a^b,0);
+      flagged.push(recompute!==parityBit);
+      data.forEach((b,j)=>{
+        decoded.push(b); fixed.push(false); stillWrong.push(b!==original[g*5+j]);
+      });
+    }
+    return {decoded, fixed, stillWrong, flagged, groupErr:null};
+  }
+  if(scheme==='D'){
+    const original48=original.concat([0,0,0]);
+    const decoded48=[], fixed48=[], stillWrong48=[], groupErr=[];
+    for(let g=0; g<12; g++){
+      const codeword=channelBits.slice(g*7,g*7+7);
+      const sentWord=sentBits.slice(g*7,g*7+7);
+      groupErr.push(codeword.filter((b,k)=>b!==sentWord[k]).length);
+      const {data}=n2HammingDecode7(codeword);
+      const rawData=[codeword[2],codeword[4],codeword[5],codeword[6]]; // 未纠错前的原始接收数据位
+      data.forEach((b,k)=>{
+        const idx=g*4+k;
+        decoded48.push(b);
+        const wasWrongRaw = rawData[k]!==original48[idx];
+        const isRightNow = b===original48[idx];
+        fixed48.push(wasWrongRaw && isRightNow);
+        stillWrong48.push(b!==original48[idx]);
+      });
+    }
+    return {decoded:decoded48.slice(0,45), fixed:fixed48.slice(0,45), stillWrong:stillWrong48.slice(0,45), flagged:null, groupErr};
+  }
+}
+function n2BitsToText(bits45){
+  let s='';
+  for(let g=0; g<9; g++) s+=n2Bits5ToChar(bits45.slice(g*5,g*5+5).join(''));
+  return s;
+}
+function n2InitSchemes(){
+  const wrap=document.getElementById('n2schemes');
+  wrap.innerHTML='';
+  N2_SCHEMES.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='card n2scheme'+(n2Scheme===s.id?' selected':'');
+    el.innerHTML=`<div><div class="ttl">${s.name}</div><div class="sub">${s.sub}</div></div>`;
+    el.onclick=()=>{ n2Scheme=s.id; n2InitSchemes(); };
+    wrap.appendChild(el);
+  });
+}
+function n2NoiseChange(){
+  n2Noise = +document.getElementById('n2noise').value;
+  document.getElementById('n2noiseVal').textContent = n2Noise+'%';
+  n2DrawConstellation();
+}
+function n2ToggleTable(){
+  const t=document.getElementById('n2table');
+  if(t.style.display==='none'){
+    t.style.display='grid';
+    if(!t.innerHTML){
+      let html='';
+      for(let i=0;i<=26;i++){
+        const label = i===0 ? '空格' : String.fromCharCode(64+i);
+        const bits = i===0 ? '00000' : n2CharTo5(String.fromCharCode(64+i));
+        html += `<div><span>${label}</span><span class="mono">${bits}</span></div>`;
+      }
+      t.innerHTML=html;
+    }
+  } else {
+    t.style.display='none';
+  }
+}
+function n2RenderBits(containerId, bits, opts){
+  const el=document.getElementById(containerId);
+  const gs=opts.groupSize;
+  let html='';
+  for(let g=0; g*gs<bits.length; g++){
+    let inner='';
+    for(let j=0; j<gs && g*gs+j<bits.length; j++){
+      const idx=g*gs+j, b=bits[idx];
+      let cls='';
+      if(opts.flipMask && opts.flipMask[idx]) cls='flip';
+      else if(opts.fixMask && opts.fixMask[idx]) cls='fix';
+      inner += `<span class="${cls}">${b}</span>`;
+    }
+    const flaggedCls = (opts.flaggedGroups && opts.flaggedGroups[g]) ? ' grpflag' : '';
+    html += `<span class="g${flaggedCls}">${inner}</span>`;
+  }
+  el.innerHTML=html;
+}
+function n2Send(){
+  const scheme=n2Scheme;
+  const p=n2Noise/100;
+  const sentBits=n2Encode(scheme, N2_MSG_BITS);
+  const channelBits=sentBits.map(b=> Math.random()<p ? 1-b : b);
+  const flipMask=channelBits.map((b,i)=>b!==sentBits[i]);
+  const channelFlips=flipMask.filter(Boolean).length;
+  const dec=n2Decode(scheme, channelBits, sentBits, N2_MSG_BITS);
+  const remainingErrors=dec.stillWrong.filter(Boolean).length;
+  const fixedCount=dec.fixed.filter(Boolean).length;
+  const sentLen=sentBits.length;
+  const efficiency=(45/sentLen*100);
+  const text=n2BitsToText(dec.decoded);
+
+  const gs = N2_GROUP_SIZE[scheme];
+  n2RenderBits('n2row-orig', sentBits, {groupSize:gs});
+  n2RenderBits('n2row-chan', channelBits, {groupSize:gs, flipMask, flaggedGroups: scheme==='C'?dec.flagged:null});
+  n2RenderBits('n2row-recv', dec.decoded, {groupSize:5, flipMask:dec.stillWrong, fixMask:dec.fixed});
+
+  let textHtml='';
+  for(let i=0;i<text.length;i++){
+    textHtml += (text[i]!==N2_MSG[i]) ? `<span class="bad">${text[i]}</span>` : text[i];
+  }
+  document.getElementById('n2text').innerHTML=textHtml;
+
+  const flagline=document.getElementById('n2flagline');
+  if(scheme==='C'){
+    flagline.style.display='';
+    const flaggedIdx = dec.flagged.map((f,i)=>f?i+1:null).filter(v=>v);
+    flagline.textContent = flaggedIdx.length
+      ? `校验标记疑似出错的组：第 ${flaggedIdx.join('、')} 组（注意：同一组内如果偶数位翻转，奇偶校验会漏检）。`
+      : '本次没有任何一组被校验标记为疑似出错。';
+  } else {
+    flagline.style.display='none';
+  }
+
+  const m=document.getElementById('n2metrics');
+  m.innerHTML = `
+    <div class="n2mcard"><div class="v">${channelFlips}</div><div class="k">误码数（信道翻转位数）</div></div>
+    <div class="n2mcard"><div class="v">${remainingErrors}</div><div class="k">恢复后仍错位数</div></div>
+    <div class="n2mcard"><div class="v">${sentLen}</div><div class="k">发送总 bit 数</div></div>
+    <div class="n2mcard"><div class="v">${efficiency.toFixed(1)}%</div><div class="k">有效效率 = 45 / 发送总数</div></div>
+    <div class="n2mcard n2concl" id="n2concl"></div>
+  `;
+  document.getElementById('n2concl').innerHTML = n2Conclusion(scheme, {channelFlips, remainingErrors, fixedCount, sentLen, dec});
+}
+function n2Conclusion(scheme, r){
+  const extra = r.sentLen - 45;
+  if(scheme==='A'){
+    return `结论：没加任何保护，信道翻转了 ${r.channelFlips} 位，全部原样留在消息里——传得最省（多发 0 bit），但完全没有自我修复能力。`;
+  }
+  if(scheme==='B'){
+    return `结论：三次重复码，信道翻转了 ${r.channelFlips} 位（135 bit 里），多数表决修复了 ${r.fixedCount} 处，恢复后仍有 ${r.remainingErrors} 位错——代价是多发了 ${extra} bit。`;
+  }
+  if(scheme==='C'){
+    const flaggedCount = r.dec.flagged.filter(Boolean).length;
+    return `结论：奇偶校验只能"发现"疑似出错（本次标记了 ${flaggedCount} 组），不能修复，恢复后仍有 ${r.remainingErrors} 位错——多发 ${extra} bit 换来的是"知道可能错了"，不是"改对了"。`;
+  }
+  if(scheme==='D'){
+    let s = `结论：汉明(7,4) 纠错，成功修复了 ${r.fixedCount} 处错误，恢复后仍有 ${r.remainingErrors} 位错——代价是多发了 ${extra} bit，冗余买回了可靠。`;
+    const badGroups = r.dec.groupErr.map((c,i)=>c>=2?i+1:null).filter(v=>v!==null);
+    if(badGroups.length){
+      s += ` 注意：第 ${badGroups.join('、')} 组信道里真实发生了 2 位错误——纠错在这种情况下必然失效（这是编码原理决定的，不是 bug），纠错能力是有限的。`;
+    }
+    return s;
+  }
+}
+function n2DrawConstellation(){
+  const cv=document.getElementById('n2canvas');
+  if(!cv) return;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,300,300);
+  const isLight=document.body.classList.contains('light');
+  ctx.strokeStyle = isLight ? '#c9d4e4' : '#2a3752';
+  ctx.beginPath(); ctx.moveTo(150,10); ctx.lineTo(150,290); ctx.moveTo(10,150); ctx.lineTo(290,150); ctx.stroke();
+
+  const points = n2Mod==='bpsk'
+    ? [{x:1,y:0},{x:-1,y:0}]
+    : [{x:0.7,y:0.7},{x:-0.7,y:0.7},{x:-0.7,y:-0.7},{x:0.7,y:-0.7}];
+  const R=100;
+  const spread = 6 + n2Noise*3;
+  const idealColor='#4cc9f0', sampleColor = isLight ? 'rgba(10,126,164,.55)' : 'rgba(76,201,240,.55)';
+
+  points.forEach(pt=>{
+    const cx=150+pt.x*R, cy=150-pt.y*R;
+    for(let i=0;i<40;i++){
+      const u1=Math.random()||1e-6, u2=Math.random();
+      const g1=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+      const g2=Math.sqrt(-2*Math.log(u1))*Math.sin(2*Math.PI*u2);
+      ctx.fillStyle=sampleColor;
+      ctx.beginPath();
+      ctx.arc(cx+g1*spread, cy+g2*spread, 2.4, 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+  points.forEach(pt=>{
+    const cx=150+pt.x*R, cy=150-pt.y*R;
+    ctx.fillStyle=idealColor;
+    ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = isLight ? '#16213a' : '#e8eef8';
+    ctx.lineWidth=1.5; ctx.stroke();
+  });
+}
+function n2SetMod(m){
+  n2Mod=m;
+  document.getElementById('n2bpsk').classList.toggle('on', m==='bpsk');
+  document.getElementById('n2qpsk').classList.toggle('on', m==='qpsk');
+  n2DrawConstellation();
+}
+function n2Init(){
+  n2InitSchemes();
+  document.getElementById('n2noise').value=n2Noise;
+  document.getElementById('n2noiseVal').textContent=n2Noise+'%';
+  n2SetMod('bpsk');
+  n2Send();
+}
+
+/* ============================= 模块③ 芯片架构调度台 ============================= */
+const C3_PROCESSORS = [
+  {id:'cpu', name:'CPU', icon:'🧮', tagline:'什么都能做，但通常按程序顺序处理。'},
+  {id:'dsp', name:'DSP', icon:'〰️', tagline:'擅长重复的数字信号运算。'},
+  {id:'fpga',name:'FPGA', icon:'🔧', tagline:'把电路重新搭出来，同时处理很多数据。'},
+  {id:'asic',name:'ASIC 专用加速器', icon:'🔒', tagline:'为固定任务定制，效率高但很难修改。'},
+];
+const C3_TASKS = [
+  {id:'ui',   name:'设备界面'},
+  {id:'proto',name:'协议栈与连接管理'},
+  {id:'filt', name:'数字滤波'},
+  {id:'fft',  name:'FFT'},
+  {id:'ecc',  name:'纠错解码'},
+  {id:'beam', name:'波束成形'},
+  {id:'auth', name:'安全认证'},
+  {id:'temp', name:'温度监控'},
+  {id:'wifi', name:'Wi-Fi 管理'},
+];
+// 适配度 1(差)~5(好)：该处理器执行该任务是否顺手（数据常量，供评估函数读取）
+const C3_FIT = {
+  ui:   {cpu:5, dsp:1, fpga:2, asic:1},
+  proto:{cpu:5, dsp:2, fpga:3, asic:2},
+  filt: {cpu:2, dsp:5, fpga:5, asic:5},
+  fft:  {cpu:1, dsp:5, fpga:5, asic:5},
+  ecc:  {cpu:2, dsp:4, fpga:5, asic:5},
+  beam: {cpu:1, dsp:3, fpga:5, asic:5},
+  auth: {cpu:4, dsp:2, fpga:4, asic:4},
+  temp: {cpu:5, dsp:3, fpga:3, asic:3},
+  wifi: {cpu:4, dsp:2, fpga:3, asic:3},
+};
+// 处理器结构性基础特性（latency/power 越高越差；flexibility 越高越好；cost 为基础单位，实际成本还要乘场景系数）
+const C3_PROC_BASE = {
+  cpu: {latency:2, power:2, cost:1, flexibility:5},
+  dsp: {latency:2, power:2, cost:2, flexibility:3},
+  fpga:{latency:1, power:3, cost:4, flexibility:4},
+  asic:{latency:1, power:1, cost:5, flexibility:1},
+};
+const C3_SCENARIOS = [
+  {id:'proto',  name:'科研原型',   tagline:'算法还在改，重灵活',
+    costAdj:{cpu:1, dsp:1.2, fpga:1.8, asic:3}},
+  {id:'rescue', name:'应急救援',   tagline:'重延迟与可靠',
+    costAdj:{cpu:1, dsp:1,   fpga:1.3, asic:1.5}},
+  {id:'mass',   name:'十万台量产', tagline:'重功耗与单价',
+    costAdj:{cpu:1.2, dsp:1, fpga:0.9, asic:0.4}},
+];
+const C3_LEVEL_LABEL = {1:'很低', 2:'低', 3:'中', 4:'高', 5:'很高'};
+
+function c3Bounds(){
+  const lat=[], pow=[];
+  C3_TASKS.forEach(t=>{
+    C3_PROCESSORS.forEach(p=>{
+      const fit=C3_FIT[t.id][p.id];
+      lat.push(C3_PROC_BASE[p.id].latency+(6-fit));
+      pow.push(C3_PROC_BASE[p.id].power+(6-fit));
+    });
+  });
+  return {lat:{min:Math.min(...lat),max:Math.max(...lat)}, pow:{min:Math.min(...pow),max:Math.max(...pow)}};
+}
+const C3_BOUNDS = c3Bounds();
+function c3Level(v,min,max){
+  if(max===min) return 3;
+  const t=(v-min)/(max-min);
+  return Math.min(5, Math.max(1, Math.round(t*4)+1));
+}
+
+let c3Scenario='proto';
+let c3Placement={}; // taskId -> procId
+let c3Selected=null;
+
+function c3InitScenarios(){
+  const wrap=document.getElementById('c3scenarios');
+  wrap.innerHTML='';
+  C3_SCENARIOS.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='card'+(c3Scenario===s.id?' selected':'');
+    el.innerHTML=`<div><div class="c3scname">${s.name}</div><div class="c3sctag">${s.tagline}</div></div>`;
+    el.onclick=()=>{ c3Scenario=s.id; c3InitScenarios(); c3ClearOutput(); };
+    wrap.appendChild(el);
+  });
+}
+function c3RenderPool(){
+  const wrap=document.getElementById('c3pool');
+  wrap.innerHTML='';
+  C3_TASKS.forEach(t=>{
+    if(c3Placement[t.id]) return;
+    const el=document.createElement('div');
+    el.className='c3task'+(c3Selected===t.id?' selected':'');
+    el.textContent=t.name;
+    el.onclick=()=>{ c3Selected=(c3Selected===t.id?null:t.id); c3RenderAll(); };
+    wrap.appendChild(el);
+  });
+  if(!wrap.children.length) wrap.innerHTML='<div style="color:var(--muted);font-size:17px">任务卡已全部上板。</div>';
+}
+function c3RenderCols(){
+  const wrap=document.getElementById('c3cols');
+  wrap.innerHTML='';
+  C3_PROCESSORS.forEach(p=>{
+    const col=document.createElement('div');
+    col.className='c3col'+(c3Selected?' hot':'');
+    let chipsHtml='';
+    Object.entries(c3Placement).forEach(([taskId,procId])=>{
+      if(procId!==p.id) return;
+      const t=C3_TASKS.find(x=>x.id===taskId);
+      chipsHtml += `<div class="c3chip" data-task="${taskId}">${t.name} ↩</div>`;
+    });
+    col.innerHTML = `<h4>${p.icon} ${p.name}</h4><div class="tag">${p.tagline}</div><div class="c3chipwrap">${chipsHtml}</div>`;
+    col.onclick=(e)=>{
+      const chip = e.target.closest('.c3chip');
+      if(chip){ delete c3Placement[chip.dataset.task]; c3Selected=null; c3RenderAll(); return; }
+      if(!c3Selected){ toast('先在下方点选一张任务卡'); return; }
+      c3Placement[c3Selected]=p.id; c3Selected=null; c3RenderAll();
+    };
+    wrap.appendChild(col);
+  });
+}
+function c3RenderAll(){ c3RenderPool(); c3RenderCols(); }
+function c3ClearOutput(){ document.getElementById('c3out').style.display='none'; }
+function c3Reset(){
+  c3Placement={}; c3Selected=null;
+  c3RenderAll();
+  c3ClearOutput();
+}
+function c3Evaluate(){
+  const entries=Object.entries(c3Placement);
+  if(!entries.length){ toast('先放置至少一个任务，再评估'); return; }
+  const scenario=C3_SCENARIOS.find(s=>s.id===c3Scenario);
+  let latRaw=0, powSum=0, flexSum=0;
+  const usedProcs=new Set();
+  const perTask=[];
+  entries.forEach(([taskId,procId])=>{
+    const fit=C3_FIT[taskId][procId];
+    const latScore=C3_PROC_BASE[procId].latency+(6-fit);
+    const powScore=C3_PROC_BASE[procId].power+(6-fit);
+    latRaw=Math.max(latRaw, latScore);
+    powSum+=powScore;
+    flexSum+=C3_PROC_BASE[procId].flexibility;
+    usedProcs.add(procId);
+    perTask.push({taskId,procId,fit});
+  });
+  const powRaw=powSum/entries.length;
+  const flexRaw=flexSum/entries.length;
+  let costRaw=0;
+  usedProcs.forEach(p=>{ costRaw += C3_PROC_BASE[p].cost*scenario.costAdj[p]; });
+  const costPerProc=C3_PROCESSORS.map(p=>C3_PROC_BASE[p.id].cost*scenario.costAdj[p.id]);
+  const costMin=Math.min(...costPerProc), costMax=costPerProc.reduce((a,b)=>a+b,0);
+
+  const levels={
+    latency:c3Level(latRaw, C3_BOUNDS.lat.min, C3_BOUNDS.lat.max),
+    power:c3Level(powRaw, C3_BOUNDS.pow.min, C3_BOUNDS.pow.max),
+    cost:c3Level(costRaw, costMin, costMax),
+    flexibility:c3Level(flexRaw, 1, 5),
+  };
+  c3RenderOutput(levels, perTask, usedProcs, scenario, entries.length);
+}
+function c3RenderOutput(levels, perTask, usedProcs, scenario, placedCount){
+  const box=document.getElementById('c3out');
+  box.style.display='';
+  const bars=document.getElementById('c3bars');
+  const metricNames={latency:'延迟', power:'功耗', cost:'成本', flexibility:'灵活性'};
+  bars.innerHTML = Object.keys(metricNames).map(k=>{
+    const lv=levels[k];
+    let segs=''; for(let i=1;i<=5;i++) segs+=`<span class="${i<=lv?'on':''}"></span>`;
+    return `<div class="c3bar"><div class="k">${metricNames[k]}</div><div class="c3barseg">${segs}</div><div class="lv">${C3_LEVEL_LABEL[lv]}</div></div>`;
+  }).join('');
+
+  const notes = c3BuildNotes(levels, perTask, usedProcs, scenario, placedCount);
+  document.getElementById('c3notes').innerHTML = notes.length
+    ? notes.map(n=>`<li>${n}</li>`).join('')
+    : '<li>暂无特别提示——当前摆法没有触发明显的取舍警告。</li>';
+
+  document.getElementById('c3final').textContent = '本场景下没有唯一标准答案，请两组各自陈述取舍理由。';
+}
+function c3BuildNotes(levels, perTask, usedProcs, scenario, placedCount){
+  const rules=[];
+  perTask.forEach(({taskId,procId,fit})=>{
+    if(fit<=2){
+      const t=C3_TASKS.find(x=>x.id===taskId).name;
+      const p=C3_PROCESSORS.find(x=>x.id===procId).name;
+      let tail='可能既没有性能优势，也浪费了灵活性或成本。';
+      let weight=6;
+      if(procId==='cpu' && scenario.id==='rescue'){ tail='实时信号会排队，救援场景下这是致命的。'; weight=9; }
+      else if(procId==='cpu'){ tail='遇到高强度信号处理会排队，容易成为瓶颈。'; }
+      rules.push({text:`「${t}」放在 ${p}：适配度低——${tail}`, weight});
+    }
+  });
+  const fpgaCount = perTask.filter(x=>x.procId==='fpga').length;
+  if(fpgaCount===placedCount && placedCount>=5){
+    rules.push({text:'所有任务都放进了 FPGA：并行是快了，但开发难度和功耗都上去了。', weight:8});
+  }
+  const cpuCount = perTask.filter(x=>x.procId==='cpu').length;
+  if(cpuCount===placedCount && placedCount>=5){
+    rules.push({text:'所有任务都放进了 CPU：开发最省心，但重复的信号运算会排队，延迟和功耗都不占优。', weight:7});
+  }
+  if(scenario.id==='proto'){
+    perTask.filter(x=>x.procId==='asic').forEach(({taskId})=>{
+      const t=C3_TASKS.find(x=>x.id===taskId).name;
+      rules.push({text:`「${t}」放 ASIC：在量产场景合理，但科研原型阶段算法还会改，会被锁死。`, weight:8});
+    });
+  }
+  if(scenario.id==='mass' && !usedProcs.has('asic') && placedCount>=5){
+    rules.push({text:'量产十万台的场景下完全没有用到 ASIC：单价可能压不下来，功耗也吃亏。', weight:7});
+  }
+  if(scenario.id==='rescue' && levels.latency>=4){
+    rules.push({text:'延迟档位偏高：应急救援最怕等待，建议把关键任务挪去 DSP/FPGA/ASIC。', weight:9});
+  }
+  if(scenario.id==='proto' && levels.flexibility<=2){
+    rules.push({text:'灵活性档位偏低：算法还在变的阶段，太多任务锁进硬件会拖慢迭代。', weight:7});
+  }
+  if(scenario.id==='mass' && levels.cost>=4){
+    rules.push({text:'成本档位偏高：量产十万台时，单价每一分钱都会被放大。', weight:7});
+  }
+  const asicCount=perTask.filter(x=>x.procId==='asic').length;
+  if(scenario.id==='mass' && asicCount>=3){
+    rules.push({text:'量产场景大量使用 ASIC：单价和功耗会明显下降，这是合理取舍。', weight:5});
+  }
+
+  const seen=new Set();
+  const uniq = rules.filter(r=>{ if(seen.has(r.text)) return false; seen.add(r.text); return true; });
+  uniq.sort((a,b)=>b.weight-a.weight);
+  return uniq.slice(0,6).map(r=>r.text);
+}
+function c3Init(){
+  c3InitScenarios();
+  c3RenderAll();
+  c3ClearOutput();
+}
+
+/* ============================= 启动 ============================= */
+renderAsm();
+initDiag();
+n2Init();
+c3Init();
+showTab(1);
+</script>
+</body>
+</html>
