@@ -221,46 +221,188 @@
     #tabpage-1 .runbar{margin-top:8px;}
   }
 
+  /* 投影适配：#tabpage-2（课程三）专用，不改动课程二已有的 @media 规则 */
+  @media (max-height:1100px){
+    #tabpage-2 .board{padding:10px 16px;}
+    #tabpage-2 .n2bizcards{gap:6px;}
+    #tabpage-2 .n2bizcard{padding:6px 10px;}
+    #tabpage-2 .n2subtabs{margin-bottom:8px;}
+    #tabpage-2 .n2subtabs .btn{padding:7px 14px; font-size:15px;}
+    #tabpage-2 .n2task{margin-bottom:8px; font-size:14px;}
+    #tabpage-2 .teacherhint{padding:8px 14px; margin-bottom:8px;}
+    #tabpage-2 .n2ctrlrow{margin-bottom:8px;}
+    #tabpage-2 .n2schemes{margin-bottom:8px;}
+    #tabpage-2 .n2result{margin-top:8px;}
+    #tabpage-2 .n2row{margin-bottom:6px;}
+    #tabpage-2 .n2metrics{margin-top:8px;}
+    #tabpage-2 #n2canvas{width:260px; height:260px;}
+    #tabpage-2 .n2strategy{margin-top:12px; padding-top:10px;}
+    #tabpage-2 .n2topbar{margin-bottom:8px; padding-bottom:8px;}
+    #tabpage-2 .n2scoreitem{padding:4px 10px; font-size:13px;}
+    #tabpage-2 .n2questtabs{margin-bottom:8px;}
+    #tabpage-2 .n2questtabs .btn{padding:7px 14px; font-size:15px;}
+    #tabpage-2 .n2qcard{padding:10px 14px; margin-bottom:8px;}
+    #tabpage-2 .n2qprompt{font-size:16px; margin-bottom:8px;}
+  }
+  @media (max-height:800px){
+    #tabpage-2 .n2bits{font-size:15px; padding:6px 10px;}
+    #tabpage-2 .n2text{font-size:18px;}
+    #tabpage-2 #n2canvas{width:200px; height:200px;}
+    #tabpage-2 .n2topbar{gap:6px; margin-bottom:6px; padding-bottom:6px;}
+    #tabpage-2 .n2scorebar{gap:6px;}
+    /* 矮屏(1366×768)投影：把实验模式的"上下文块"压到最小，保证当前子实验的控件+结果+画布尽量同屏 */
+    #tabpage-2 .n2boundarynote{font-size:13px; padding:6px 12px; margin-bottom:8px; line-height:1.5;}
+    #tabpage-2 .n2biz{margin-bottom:8px;}
+    #tabpage-2 .n2bizcards{gap:4px;}
+    #tabpage-2 .n2bizcard{padding:4px 8px;}
+    #tabpage-2 .n2bizcard .ds{display:none;}   /* 只留优先级标签+业务名，隐藏描述行 */
+    #tabpage-2 .n2biz > h3{font-size:14px; margin-bottom:4px;}
+    #tabpage-2 .n2subtabs{margin-bottom:6px;}
+    #tabpage-2 .n2task{margin-bottom:6px;}
+    #tabpage-2 .n2ctrlrow{margin-bottom:6px;}
+    #tabpage-2 .n2result{margin-top:6px;}
+    #tabpage-2 .n2metrics{margin-top:6px;}
+    #tabpage-2 .n2strategy{margin-top:8px; padding-top:8px;}
+    #tabpage-2 .n2strategy > p{font-size:13px; margin-bottom:6px;}
+    /* 子实验面板内：压面板级边界说明 + 画布，让控件+画布进首屏 */
+    #tabpage-2 .n2subpanel .n2boundarynote{font-size:12px; padding:5px 12px; line-height:1.4; margin-top:5px;}
+    #tabpage-2 #n2canvas{width:175px; height:175px;}
+    #tabpage-2 .n2resetrow{margin-bottom:4px;}
+    /* 海岛业务卡压成单行紧凑条（优先级标签+名称同行），省纵向 */
+    #tabpage-2 .n2biz{margin-bottom:6px;}
+    #tabpage-2 .n2biz > h3{margin-bottom:3px; font-size:13px;}
+    #tabpage-2 .n2bizcards{display:flex; flex-wrap:wrap; gap:6px; grid-template-columns:none;}
+    #tabpage-2 .n2bizcard{display:flex; align-items:center; gap:6px; padding:3px 9px; flex:0 1 auto;}
+    #tabpage-2 .n2bizcard .rank{font-size:11px;}
+    #tabpage-2 .n2bizcard .nm{font-size:13px; margin-top:0;}
+    #tabpage-2 .n2boundarynote{margin-bottom:6px;}
+  }
+
   /* ---- 模块②③ 通用 ---- */
   .mono{font-family:"SF Mono","Consolas","Menlo",monospace;}
 
-  /* ---- 模块② 噪声通信实验室 ---- */
-  .n2msg{font-size:18px; margin-bottom:16px;}
+  /* ---- 模块② 噪声通信实验室（课程三，仅 #tabpage-2 使用） ---- */
+  .n2biz{margin-bottom:16px;}
+  .n2bizcards{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:8px;}
+  .n2bizcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:10px 14px;}
+  .n2bizcard .rank{font-size:13px; color:var(--amber); font-weight:bold;}
+  .n2bizcard .nm{font-size:17px; font-weight:bold; margin-top:2px;}
+  .n2bizcard .ds{font-size:14px; color:var(--muted); margin-top:2px;}
+
+  .n2subtabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .n2subtabs .btn.on{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
+
+  .n2task{font-size:16px; color:var(--muted); margin-bottom:12px; border-left:3px solid var(--cyan); padding-left:12px;}
+  .n2boundarynote{font-size:14px; color:var(--muted); margin-top:16px; border-top:1px dashed var(--line); padding-top:10px;}
+  .n2resetrow{display:flex; gap:10px; margin:10px 0 16px; flex-wrap:wrap; align-items:center;}
+  .n2optional{margin:6px 0 14px;}
+
+  .n2msg{font-size:17px; margin-bottom:16px;}
   .n2table{
     margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
-    gap:8px; font-size:17px; background:var(--panel2); border:1px solid var(--line);
+    gap:8px; font-size:16px; background:var(--panel2); border:1px solid var(--line);
     border-radius:10px; padding:14px;
   }
   .n2table div{display:flex; justify-content:space-between; gap:8px;}
-  .n2controls{margin-top:6px;}
-  .n2ctrlrow{display:flex; align-items:center; gap:14px; margin-bottom:16px; font-size:18px; flex-wrap:wrap;}
-  .n2ctrlrow input[type=range]{flex:0 0 260px;}
-  .n2schemes{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-bottom:16px;}
-  .n2scheme .ttl{font-size:17px; font-weight:bold;}
-  .n2scheme .sub{font-size:17px; color:var(--muted); margin-top:4px;}
-  .n2result{margin-top:20px;}
-  .n2row{margin-bottom:14px;}
-  .n2row .lbl{font-size:17px; color:var(--muted); margin-bottom:6px;}
+  .n2ctrlrow{display:flex; align-items:center; gap:14px; margin-bottom:14px; font-size:17px; flex-wrap:wrap;}
+  .n2ctrlrow input[type=range]{flex:0 0 220px;}
+  .n2schemes{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-bottom:14px;}
+  .n2scheme .ttl{font-size:16px; font-weight:bold;}
+  .n2scheme .sub{font-size:14px; color:var(--muted); margin-top:4px;}
+  .n2result{margin-top:16px;}
+  .n2row{margin-bottom:12px;}
+  .n2row .lbl{font-size:15px; color:var(--muted); margin-bottom:6px;}
   .n2bits{
-    font-size:19px; letter-spacing:1px; line-height:2; word-break:break-all;
+    font-size:17px; letter-spacing:1px; line-height:2; word-break:break-all;
     background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:10px 12px;
   }
-  .n2bits .g{margin-right:12px; display:inline-block;}
+  .n2bits .g{margin-right:10px; display:inline-block;}
   .n2bits .g.grpflag{background:rgba(255,180,84,.25); border-radius:4px; padding:0 3px;}
   .n2bits span.flip{color:var(--red); font-weight:bold;}
   .n2bits span.fix{color:var(--green); font-weight:bold;}
-  .n2flagline{margin-top:6px; font-size:17px; color:var(--amber);}
-  .n2text{font-size:22px; font-weight:bold; letter-spacing:2px;}
+  .n2bits span.bitclick{cursor:pointer;}
+  .n2bits span.bitclick:hover{outline:1px dashed var(--cyan);}
+  .n2flagline{margin-top:6px; font-size:15px; color:var(--amber);}
+  .n2text{font-size:20px; font-weight:bold; letter-spacing:2px;}
   .n2text .bad{color:var(--red);}
-  .n2metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:18px;}
-  .n2mcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:14px 16px;}
-  .n2mcard .v{font-size:22px; font-weight:bold;}
-  .n2mcard .k{font-size:17px; color:var(--muted); margin-top:4px;}
-  .n2concl{grid-column:1/-1; font-size:20px; font-weight:bold; border-left:4px solid var(--cyan); padding-left:14px;}
-  .n2constbox{margin-top:24px; border-top:1px solid var(--line); padding-top:18px;}
-  .n2constctrl{display:flex; gap:14px; align-items:center; margin-bottom:12px; flex-wrap:wrap;}
-  .n2conscap{font-size:17px; color:var(--muted); margin-top:10px;}
+  .n2metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:14px;}
+  .n2mcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:12px 14px;}
+  .n2mcard .v{font-size:20px; font-weight:bold;}
+  .n2mcard .k{font-size:14px; color:var(--muted); margin-top:4px;}
+  .n2concl{grid-column:1/-1; font-size:16px; font-weight:bold; border-left:4px solid var(--cyan); padding-left:12px;}
+
+  .n2c1wrap{display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start; margin-top:8px;}
   #n2canvas{background:var(--panel2); border:1px solid var(--line); border-radius:10px;}
+  .n2c1side{flex:1; min-width:260px;}
+  .n2legend{display:flex; gap:14px; flex-wrap:wrap; font-size:14px; color:var(--muted); margin-top:10px;}
+  .n2legend .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle;}
+
+  .n2batchbox{margin-top:14px;}
+  .n2batchtable{width:100%; border-collapse:collapse; font-size:14px; margin-top:8px;}
+  .n2batchtable th, .n2batchtable td{border:1px solid var(--line); padding:6px 10px; text-align:center;}
+  .n2batchtable th{background:var(--panel2); font-weight:normal; color:var(--muted);}
+
+  .n2strategy{margin-top:22px; border-top:1px solid var(--line); padding-top:16px;}
+  .n2stratrow{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; align-items:center;}
+  .n2stratrow select{background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 12px; font-size:15px;}
+  .n2stratresult{margin-top:10px; font-size:15px; color:var(--muted); border-left:3px solid var(--amber); padding-left:12px;}
+
+  /* ---- 课程三 v2：顶部模式切换 + A/B 计分栏 ---- */
+  .n2topbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line);}
+  .n2topmode{display:flex; gap:8px;}
+  .n2topmode .btn.on{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
+  .n2scorebar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-left:auto;}
+  .n2scoreitem{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:6px 12px; font-size:15px; display:flex; align-items:center; gap:8px;}
+  .n2scoreitem b{font-size:20px;}
+  .n2scoreitem.teamon{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .n2scorebtns{display:flex; gap:4px;}
+  .n2scorebtns .btn{padding:4px 8px; font-size:13px;}
+  .n2modelabel{font-size:14px; color:var(--muted);}
+
+  /* ---- 教师答案系统：防泄露弹窗（n2 前缀，独立于课程二的 teacherPrivacyGate） ---- */
+  .n2teacherbox{max-width:640px;}
+  .n2qa-hints{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;}
+  .n2qa-section{border-top:1px dashed var(--line); margin-top:12px; padding-top:12px;}
+  .n2qa-section h4{font-size:15px; color:var(--cyan); margin-bottom:6px;}
+  .n2qa-section p{font-size:15px; margin-bottom:6px;}
+  .n2qa-boundary{font-size:14px; color:var(--muted); font-style:italic;}
+
+  /* ---- 闯关模式：关卡容器 ---- */
+  .n2questtabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .n2questtabs .btn.on{background:var(--amber); color:#2a1a00; font-weight:bold; border:none;}
+  .n2qprogress{font-size:14px; color:var(--muted); margin-bottom:10px;}
+  .n2qcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:14px 16px; margin-bottom:12px;}
+  .n2qprompt{font-size:18px; margin-bottom:12px;}
+  .n2qoptions{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .n2qoptions .btn.picked{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .n2qresultbox{margin-top:10px; padding:10px 14px; border-radius:8px; border-left:4px solid var(--line); display:none;}
+  .n2qresultbox.show{display:block;}
+  .n2qresultbox.good{border-left-color:var(--green); background:rgba(61,220,132,.08);}
+  .n2qresultbox.bad{border-left-color:var(--red); background:rgba(255,107,107,.08);}
+  .n2qbtnrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .n2qsummary{border:1px solid var(--green); border-radius:10px; background:rgba(61,220,132,.08); padding:14px 18px; margin-top:12px;}
+  .n2bitclickable span{cursor:pointer;}
+  .n2bitclickable span.marked{outline:2px solid var(--red); border-radius:3px;}
+
+  /* ---- 第④关 海岛通信指挥官：多维评分（不判唯一对错） ---- */
+  .n2l4choices{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:12px 0;}
+  .n2l4choices label{font-size:14px; color:var(--muted); display:block; margin-bottom:4px;}
+  .n2l4choices select{width:100%; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:15px;}
+  .n2l4bars{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:14px 0;}
+  .n2l4bar .k{font-size:15px; margin-bottom:6px;}
+  .n2l4barseg{display:flex; gap:4px;}
+  .n2l4barseg span{flex:1; height:14px; border-radius:3px; background:var(--line);}
+  .n2l4barseg span.on{background:var(--amber);}
+  .n2l4bar .lv{font-size:16px; font-weight:bold; margin-top:4px;}
+  .n2l4scenario{font-size:14px; color:var(--muted); margin-bottom:10px;}
+
+  /* ---- 打印本节答案卡：只在打印时显示 #n2printCard，其余全部隐藏 ---- */
+  .n2printonly{display:none;}
+  @media print{
+    body *{ visibility:hidden; }
+    #n2printCard, #n2printCard *{ visibility:visible; }
+    #n2printCard{ display:block !important; position:absolute; left:0; top:0; width:100%; }
+  }
 
   /* ---- 模块③ 芯片架构调度台 ---- */
   .c3top{display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
@@ -438,47 +580,317 @@
 <!-- ============ 模块② 噪声通信实验室 ============ -->
 <div id="tabpage-2" style="display:none">
 <div class="board">
-  <div class="n2msg">
-    要传的紧急消息：<b class="mono" style="font-size:20px">TEAM SAFE</b>　（9 个字符含空格，用 5 位字母编码表 → 共 45 bit 原始信息）
-    <button class="btn" style="margin-left:10px;padding:6px 14px;font-size:15px" onclick="n2ToggleTable()">📖 展开/收起编码表</button>
-    <div id="n2table" class="n2table" style="display:none"></div>
+
+  <!-- 顶部：模式切换（实验/闯关） + A/B 计分栏（手动±1/撤销/清空，localStorage） -->
+  <div class="n2topbar">
+    <div class="n2topmode">
+      <button class="btn on" id="n2topModeLabBtn" onclick="n2SetTopMode('lab')">A 实验模式</button>
+      <button class="btn" id="n2topModeQuestBtn" onclick="n2SetTopMode('quest')">B 闯关模式</button>
+    </div>
+    <div class="n2modelabel">当前作答组：
+      <button class="btn" id="n2teamBtnA" style="padding:4px 10px;font-size:13px" onclick="n2SetTeam('A')">A 组</button>
+      <button class="btn" id="n2teamBtnB" style="padding:4px 10px;font-size:13px" onclick="n2SetTeam('B')">B 组</button>
+    </div>
+    <div class="n2scorebar">
+      <div class="n2scoreitem teamon" id="n2scoreCardA"><span>A 组得分</span><b id="n2scoreA">0</b>
+        <div class="n2scorebtns"><button class="btn" onclick="n2ManualScore('A',1)">+1</button><button class="btn" onclick="n2ManualScore('A',-1)">-1</button></div>
+      </div>
+      <div class="n2scoreitem" id="n2scoreCardB"><span>B 组得分</span><b id="n2scoreB">0</b>
+        <div class="n2scorebtns"><button class="btn" onclick="n2ManualScore('B',1)">+1</button><button class="btn" onclick="n2ManualScore('B',-1)">-1</button></div>
+      </div>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2UndoScore()">↩ 撤销上一次加分</button>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2ClearSession()">🗑 重置本节</button>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2OpenTeacherAssist()">🧑‍🏫 教师辅助（T）</button>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2DownloadGuide()">📥 下载讲师指引</button>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2CopyExplain()">📋 复制本题讲解</button>
+      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2PrintAnswerCard()">🖨 打印本节答案卡</button>
+    </div>
   </div>
 
-  <div class="n2controls">
+  <div class="n2boundarynote" style="margin-top:0;margin-bottom:14px;border-top:none;padding-top:0">
+    两条固定边界说明——① 「模拟噪声强度」和「bit 独立翻转概率」是两个完全不同的参数：模拟噪声只影响星座图接收点的偏移与符号判决，bit 翻转概率只用于讲解 BER/CRC/FEC，二者互不影响。真实无线噪声通常先影响接收波形和符号判决，最终才可能形成 bit 错误；这里的独立 bit 翻转是为了方便课堂观察而采用的简化模型。② 误码率必须分开标注：<b>信道 BER</b> = 信道中翻转的编码 bit 数 ÷ 编码后发送总 bit 数；<b>Payload BER</b> = 恢复后仍错的原始数据 bit 数 ÷ 原始 payload bit 数。页面任何地方都不会只写"BER"。
+  </div>
+
+<div id="n2labWrap">
+  <!-- 海岛业务优先级：顶部保留，实验共用背景 -->
+  <div class="n2biz">
+    <h3 style="font-size:16px;margin-bottom:6px">海岛业务优先级（台风过后，卫星链路质量不稳定）</h3>
+    <div class="n2bizcards">
+      <div class="n2bizcard"><div class="rank">最高优先级</div><div class="nm">📍 位置坐标</div><div class="ds">救援定位，必须优先保证送达。</div></div>
+      <div class="n2bizcard"><div class="rank">高优先级</div><div class="nm">🆘 求救文字</div><div class="ds">数据量小，尽量优先保证。</div></div>
+      <div class="n2bizcard"><div class="rank">中优先级</div><div class="nm">🎙️ 短语音</div><div class="ds">数据量更大，信道差时可暂缓。</div></div>
+      <div class="n2bizcard"><div class="rank">较低优先级</div><div class="nm">🖼️ 低清图片</div><div class="ds">数据量最大，信号差时优先让路。</div></div>
+    </div>
+  </div>
+
+  <!-- 内部子标签：三个子实验分开展示 -->
+  <div class="n2subtabs">
+    <button class="btn on" id="n2subBtn1" onclick="n2ShowSub(1)">① 星座图与判决</button>
+    <button class="btn" id="n2subBtn2" onclick="n2ShowSub(2)">② 误码与 BER</button>
+    <button class="btn" id="n2subBtn3" onclick="n2ShowSub(3)">③ CRC 与 FEC</button>
+  </div>
+
+  <!-- ============ 子实验① 星座图与判决 ============ -->
+  <div id="n2sub-1" class="n2subpanel">
+    <div class="n2task">任务①：调节噪声，观察接收点如何越过判决边界导致误判——噪声越大，点越容易被判到相邻的错误符号上。做完请回答：噪声为什么会让接收点跨越判决边界？</div>
+    <button class="btn" style="padding:6px 14px;font-size:14px;margin-bottom:10px" onclick="n2ToggleHint('n2hint1')">💡 教师提示（默认收起）</button>
+    <div class="teacherhint" id="n2hint1" style="display:none">
+      <h4>操作步骤</h4>
+      <ol>
+        <li>先展示无噪声（σ=0）理想点，点云完全集中</li>
+        <li>逐步提高噪声，观察点云扩散</li>
+        <li>比较 BPSK 与 QPSK 在同一噪声下的误判情况</li>
+        <li>可选比较 16-QAM（可选扩展）</li>
+        <li>让学生指出哪些点越过了判决边界</li>
+      </ol>
+    </div>
+
     <div class="n2ctrlrow">
-      <label>噪声强度（每一位被翻转的概率）：</label>
-      <input type="range" id="n2noise" min="0" max="30" value="10" step="1" oninput="n2NoiseChange()">
-      <b id="n2noiseVal">10%</b>
-    </div>
-    <h3 style="font-size:17px;color:var(--muted);margin-bottom:8px">保护方案（四选一）</h3>
-    <div class="n2schemes" id="n2schemes"></div>
-    <div class="runbar">
-      <button class="btn primary" onclick="n2Send()">📡 发送消息</button>
-      <button class="btn" onclick="n2Send()">↻ 再传一次（同参数重新随机）</button>
-    </div>
-  </div>
-
-  <div class="n2result">
-    <div class="n2row"><div class="lbl">原始 bits（发送前的完整编码）</div><div class="n2bits mono" id="n2row-orig"></div></div>
-    <div class="n2row"><div class="lbl">信道后 bits（红色 = 被噪声翻转）</div><div class="n2bits mono" id="n2row-chan"></div><div class="n2flagline" id="n2flagline" style="display:none"></div></div>
-    <div class="n2row"><div class="lbl">恢复后 bits（红色 = 仍然错误，绿色 = 已被修复）</div><div class="n2bits mono" id="n2row-recv"></div></div>
-    <div class="n2row"><div class="lbl">恢复出的文本（红色字符 = 该字符出错）</div><div class="n2text mono" id="n2text"></div></div>
-  </div>
-
-  <div class="n2metrics" id="n2metrics"></div>
-
-  <div class="n2constbox">
-    <div class="n2constctrl">
-      <span class="lbl" style="font-size:17px">星座图：</span>
+      <label>调制方式：</label>
       <div class="seg" style="margin-bottom:0">
-        <button class="btn on" id="n2bpsk" onclick="n2SetMod('bpsk')">BPSK</button>
-        <button class="btn" id="n2qpsk" onclick="n2SetMod('qpsk')">QPSK</button>
+        <button class="btn on" id="n2modBpsk" onclick="n2SetMod('bpsk')">BPSK</button>
+        <button class="btn" id="n2modQpsk" onclick="n2SetMod('qpsk')">QPSK</button>
+        <button class="btn" id="n2modQam" onclick="n2SetMod('qam16')">16-QAM（可选扩展）</button>
       </div>
     </div>
-    <canvas id="n2canvas" width="300" height="300"></canvas>
-    <div class="n2conscap">点越散、离得越近的两个标准点，越容易认错。</div>
+    <div class="n2ctrlrow">
+      <label>噪声预设：</label>
+      <button class="btn" style="padding:7px 14px;font-size:15px" onclick="n2SetSigmaPreset('low')">低</button>
+      <button class="btn" style="padding:7px 14px;font-size:15px" onclick="n2SetSigmaPreset('mid')">中</button>
+      <button class="btn" style="padding:7px 14px;font-size:15px" onclick="n2SetSigmaPreset('high')">高</button>
+      <label style="margin-left:10px">连续调节 σ：</label>
+      <input type="range" id="n2sigma" min="0" max="80" value="0" step="1" oninput="n2SigmaChange()">
+      <b id="n2sigmaVal">0.00</b>
+    </div>
+    <div class="n2resetrow">
+      <button class="btn" onclick="n2RegenSamples()">🔄 重新生成接收样本</button>
+      <label style="font-size:15px;color:var(--muted)"><input type="checkbox" id="n2seed1fix" onchange="n2Seed1Toggle()"> 固定随机种子（可复现）</label>
+      <button class="btn" id="n2boundaryToggleBtn1" onclick="n2ToggleBoundary1()">🙈 隐藏判决边界</button>
+      <button class="btn" id="n2answerToggleBtn1" onclick="n2ToggleAnswer1()">🙈 隐藏答案（判决结果与数据）</button>
+      <button class="btn" onclick="n2ResetSub1()">↺ 重置本实验</button>
+    </div>
+
+    <div class="n2c1wrap">
+      <canvas id="n2canvas" width="320" height="320"></canvas>
+      <div class="n2c1side">
+        <div class="n2legend">
+          <span><span class="dot" style="background:var(--cyan)"></span>理想星座点（含 bit 标签）</span>
+          <span><span class="dot" style="background:var(--green)"></span>判决正确的接收样本</span>
+          <span><span class="dot" style="background:var(--red)"></span>判决错误的接收样本</span>
+        </div>
+        <div class="n2metrics" id="n2c1metrics"></div>
+      </div>
+    </div>
+    <div class="n2boundarynote">
+      课堂边界说明：本实验用<b>连续高斯噪声 σ</b> 让接收点偏离理想位置，再按<b>欧氏距离最近</b>的理想点判决——σ 只影响点的散布和判决结果，<b>不会</b>直接翻转 bit，这是与实验②③完全独立的模型，两者不共用同一个变量。当前模型是课堂简化模型。<br>
+      映射规则：BPSK 单 bit（0/1）；QPSK 2 bit Gray 映射（00/01/11/10，相邻符号只差 1 bit）；16-QAM 每个坐标轴各用 2 bit Gray 编码后拼成 4 bit（可选扩展）。
+    </div>
   </div>
+
+  <!-- ============ 子实验② 误码与 BER ============ -->
+  <div id="n2sub-2" class="n2subpanel" style="display:none">
+    <div class="n2task">任务②：先在纸上数一数被翻转的 bit，再点"计算 BER"核对——注意区分分子（错了几位）和分母（一共几位）。</div>
+    <button class="btn" style="padding:6px 14px;font-size:14px;margin-bottom:10px" onclick="n2ToggleHint('n2hint2')">💡 教师提示（默认收起）</button>
+    <div class="teacherhint" id="n2hint2" style="display:none">
+      <h4>操作步骤</h4>
+      <ol>
+        <li>先让学生纸上数出错误 bit 数</li>
+        <li>再点"计算 BER"核对</li>
+        <li>强调分子（错误 bit 数）和分母（总 bit 数）分别是什么</li>
+      </ol>
+    </div>
+
+    <div class="n2ctrlrow">
+      <label>难度层级：</label>
+      <div class="seg" style="margin-bottom:0">
+        <button class="btn" id="n2layer2Simple" onclick="n2SetLayer2('simple')">A 简单 bit 串（课堂手算）</button>
+        <button class="btn on" id="n2layer2Msg" onclick="n2SetLayer2('msg')">B 紧急消息 TEAM SAFE</button>
+      </div>
+    </div>
+    <div class="n2msg" id="n2msgMsgInfo">
+      要传的紧急消息：<b class="mono" style="font-size:19px">TEAM SAFE</b>　本实验使用<b>自定义 5 位字母编码</b>（不是 ASCII 或 UTF-8），9 个字符含空格 → 共 45 bit 原始 payload。
+      <button class="btn" style="margin-left:10px;padding:6px 14px;font-size:14px" onclick="n2ToggleTable()">📖 展开/收起编码表</button>
+      <div id="n2table" class="n2table" style="display:none"></div>
+    </div>
+    <div class="n2msg" id="n2msgSimpleInfo" style="display:none">
+      简单 bit 串示例：发送 <b class="mono" style="font-size:19px">10110010</b>（8 bit，无文字编码，方便课堂直接手算比对）。
+    </div>
+
+    <div class="seg">
+      <button class="btn on" id="n2modeManual" onclick="n2SetMode2('manual')">A 教师手动翻转 bit</button>
+      <button class="btn" id="n2modeRandom" onclick="n2SetMode2('random')">B 随机信道（独立翻转概率 p）</button>
+    </div>
+    <div class="n2resetrow">
+      <button class="btn" id="n2hideErrBtn2" onclick="n2ToggleHideErr2()">🙈 隐藏错误标记</button>
+      <button class="btn" onclick="n2ResetSub2()">↺ 重置本实验</button>
+    </div>
+
+    <div id="n2manualBox">
+      <div class="n2row"><div class="lbl">原始 payload bits（点击某个 bit 可翻转，再点一次恢复）</div><div class="n2bits mono" id="n2row-manual"></div></div>
+      <div class="n2resetrow">
+        <button class="btn primary" onclick="n2Calc2()">📊 计算 BER</button>
+        <button class="btn" onclick="n2ResetManual2()">↺ 全部恢复</button>
+      </div>
+    </div>
+    <div id="n2randomBox" style="display:none">
+      <div class="n2ctrlrow">
+        <label>bit 独立翻转概率 p：</label>
+        <input type="range" id="n2p2" min="0" max="40" value="10" step="1" oninput="n2P2Change()">
+        <b id="n2p2Val">10%</b>
+      </div>
+      <div class="n2resetrow">
+        <button class="btn primary" onclick="n2GenChannel2()">🔄 重新生成本轮信道</button>
+        <label style="font-size:15px;color:var(--muted)"><input type="checkbox" id="n2seed2fix" onchange="n2Seed2Toggle()"> 固定随机种子（可复现）</label>
+      </div>
+    </div>
+
+    <div class="n2result" id="n2sub2result" style="display:none">
+      <div class="n2row"><div class="lbl">信道后 bits（红色 = 被翻转，点"隐藏错误标记"后不显示颜色）</div><div class="n2bits mono" id="n2row-chan2"></div></div>
+      <div class="n2row" id="n2text2row"><div class="lbl">恢复出的文本（红色字符 = 该字符出错）</div><div class="n2text mono" id="n2text2"></div></div>
+      <div class="n2metrics" id="n2metrics2"></div>
+    </div>
+    <div class="n2result" id="n2sub2empty">
+      <p style="color:var(--muted);font-size:15px">请先完成纸笔判断，再由教师开始实验。</p>
+    </div>
+
+    <div class="n2boundarynote">
+      课堂边界说明：本实验用<b>独立 bit 翻转概率 p</b>（或教师手动指定）模拟误码，与实验①的连续噪声 σ 是两套完全独立的模型，bit 翻转模型是课堂简化模型，不代表真实无线信道的全部物理过程。本实验不加任何保护方案，因此"信道 bit 错误"与"payload 仍错 bit"数值相同——这是实验③加了保护方案后两者会出现差异的对照基线。
+    </div>
+  </div>
+
+  <!-- ============ 子实验③ CRC 与 FEC ============ -->
+  <div id="n2sub-3" class="n2subpanel" style="display:none">
+    <div class="n2task">任务③：比较不加保护 / CRC / 三次重复码（可选：汉明码）在同样错误概率下的表现——先看单次案例，再跑批量统计看趋势。单次实验有随机性，多次统计才能看出总体趋势。</div>
+    <button class="btn" style="padding:6px 14px;font-size:14px;margin-bottom:10px" onclick="n2ToggleHint('n2hint3')">💡 教师提示（默认收起）</button>
+    <div class="teacherhint" id="n2hint3" style="display:none">
+      <h4>操作步骤</h4>
+      <ol>
+        <li>先演示 A 不加保护</li>
+        <li>再演示 B CRC——只报告"校验失败"，不修复</li>
+        <li>再演示 C 三次重复码——修复部分错误</li>
+        <li>最后可选演示 D 汉明码</li>
+        <li>比较可靠性和额外开销（发送总 bit 数）</li>
+      </ol>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--muted);margin-bottom:8px">保护方案</h3>
+    <div class="n2schemes" id="n2schemes3"></div>
+    <div id="n2optionalD" class="n2optional">
+      <button class="btn" style="padding:6px 14px;font-size:14px" onclick="n2ToggleOptionalD()">➕ 展开可选扩展：D 汉明(7,4) 纠错</button>
+    </div>
+
+    <div class="n2ctrlrow">
+      <label>bit 独立翻转概率 p：</label>
+      <input type="range" id="n2p3" min="0" max="40" value="10" step="1" oninput="n2P3Change()">
+      <b id="n2p3Val">10%</b>
+      <label style="font-size:15px;color:var(--muted);margin-left:10px"><input type="checkbox" id="n2seed3fix" onchange="n2Seed3Toggle()"> 固定随机种子（可复现）</label>
+    </div>
+    <div class="n2resetrow">
+      <button class="btn primary" onclick="n2RunSingle3()">▶ 运行单次</button>
+      <button class="btn" onclick="n2RunBatch3(100)">📊 批量统计 100 次</button>
+      <button class="btn" onclick="n2RunBatch3(500)">📊 批量统计 500 次</button>
+      <button class="btn" onclick="n2ResetSub3()">↺ 重置本实验</button>
+    </div>
+
+    <div class="n2result" id="n2sub3result" style="display:none">
+      <div class="n2row"><div class="lbl">发送编码后 bits</div><div class="n2bits mono" id="n2row-orig3"></div></div>
+      <div class="n2row"><div class="lbl">信道后 bits（红色 = 被翻转）</div><div class="n2bits mono" id="n2row-chan3"></div><div class="n2flagline" id="n2flagline3" style="display:none"></div></div>
+      <div class="n2row"><div class="lbl">恢复后 payload bits（红色 = 仍然错误，绿色 = 已被修复）</div><div class="n2bits mono" id="n2row-recv3"></div></div>
+      <div class="n2row"><div class="lbl">恢复出的文本（红色字符 = 该字符出错）</div><div class="n2text mono" id="n2text3"></div></div>
+      <div class="n2metrics" id="n2metrics3"></div>
+    </div>
+    <div class="n2result" id="n2sub3empty">
+      <p style="color:var(--muted);font-size:15px">请先完成纸笔判断，再由教师开始实验。</p>
+    </div>
+
+    <div class="n2batchbox" id="n2batchbox3" style="display:none">
+      <div class="lbl" style="font-size:15px;color:var(--muted)">批量统计结果（同一 p、同一随机种子序列）</div>
+      <table class="n2batchtable" id="n2batchtable3"></table>
+      <p style="font-size:14px;color:var(--muted);margin-top:6px">单次实验有随机性，多次统计才能看出总体趋势；不同方案发送总 bit 数不同，原始错误数不可直接横向比较。</p>
+    </div>
+
+    <div class="n2boundarynote">
+      课堂边界说明：CRC-4 生成多项式为 <b class="mono">x^4 + x + 1（二进制 10011）</b>，CRC 主要用于检测错误，不修复数据；校验失败时原错误数据仍在；不宣称能检测所有可能的错误组合。FEC（三次重复码 / 汉明码）利用冗余修复一定能力范围内的错误——重复码 2 或 3 副本同时错会恢复失败；汉明(7,4) 每组最多保证纠 1 位错，≥2 位错时超出单错纠正能力，可能留下错误或发生误纠正（不是"必然以某种固定方式失败"）。增加保护会带来传输开销（发送总 bit 数变多）。
+    </div>
+  </div>
+
+  <!-- ============ 通信可靠性策略卡（实验后，常显） ============ -->
+  <div class="n2strategy">
+    <h3 style="font-size:16px;margin-bottom:8px">通信可靠性策略卡</h3>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:10px">实际系统会根据链路状态选择策略。设定当前信号、电量和业务类型，说说你会怎么选——网页不判唯一正确答案，重点是解释取舍理由。</p>
+    <div class="n2stratrow">
+      <label>信号：</label>
+      <select id="n2sigLevel"><option value="好">好</option><option value="中">中</option><option value="差">差</option></select>
+      <label>电量：</label>
+      <select id="n2pwrLevel"><option value="充足">充足</option><option value="有限">有限</option></select>
+      <label>业务：</label>
+      <select id="n2bizType"><option value="位置坐标">位置坐标</option><option value="求救文字">求救文字</option><option value="短语音">短语音</option><option value="低清图片">低清图片</option></select>
+      <button class="btn" onclick="n2StratPrompt()">生成决策提示</button>
+    </div>
+    <div class="n2stratresult" id="n2stratresult" style="display:none"></div>
+  </div>
+
 </div>
+<!-- /n2labWrap -->
+
+<!-- ============ 闯关模式：四关容器 ============ -->
+<div id="n2questWrap" style="display:none">
+  <div class="n2questtabs">
+    <button class="btn on" id="n2questTabBtn1" onclick="n2QuestGoLevel(1)">第①关 · 符号配对赛</button>
+    <button class="btn" id="n2questTabBtn2" onclick="n2QuestGoLevel(2)">第②关 · 点云判决挑战</button>
+    <button class="btn" id="n2questTabBtn3" onclick="n2QuestGoLevel(3)">第③关 · BER 侦探</button>
+    <button class="btn" id="n2questTabBtn4" onclick="n2QuestGoLevel(4)">第④关 · 海岛通信指挥官</button>
+  </div>
+  <div id="n2questLevelWrap"><p style="color:var(--muted);font-size:15px">闯关模式建设中，敬请期待。</p></div>
+</div>
+
+<!-- 打印本节答案卡：平时隐藏，仅 @media print 显示，内容=固定映射/正确公式/四关提示/海岛推荐原则/快捷键 -->
+<div id="n2printCard" class="n2printonly">
+  <h2>课程三 · 快速答案卡（打印版）</h2>
+  <h3>固定映射</h3>
+  <p>BPSK：左边的点 = 0，右边的点 = 1。</p>
+  <p>QPSK（Gray）：右上 = 00，左上 = 01，左下 = 11，右下 = 10。</p>
+  <h3>正确公式</h3>
+  <p>信道 BER = 信道中被翻转的编码 bit 数 ÷ 编码后发送总 bit 数。</p>
+  <p>Payload BER = 恢复后仍错的原始数据 bit 数 ÷ 原始 payload bit 数。</p>
+  <p>CRC-4（x⁴+x+1，二进制 10011）：只检测错误，不自动修复，不宣称能检测所有可能的错误组合。</p>
+  <p>FEC：利用冗余修复一定能力范围内的错误，不是任意数量都能修复。</p>
+  <h3>四关提示（一级 / 二级 / 三级）</h3>
+  <p>①符号配对赛：先数这种调制一共有几个理想点 → QPSK 四个状态需要两个bit → 看右上左上左下右下固定Gray映射。</p>
+  <p>②点云判决挑战：先看这个点落在哪个判决区域 → 接收端判为距离最近的理想点 → 不要猜发送端原本想发什么。</p>
+  <p>③BER侦探：从左到右逐位比较 → 先数出不同位置再看总位数 → BER分母是总bit数不是错误数或正确数。</p>
+  <p>④海岛通信指挥官：先判断哪种数据最不能出错 → 再看链路和电量是否支持高开销方案 → 先保位置和文字再考虑语音图片。</p>
+  <h3>海岛推荐原则</h3>
+  <p>位置坐标、求救文字 → 可靠性优先；短语音 → 可降质或短时中断；低清图片 → 优先级最低，链路差或电量紧张可暂停。没有唯一正确组合，能说明取舍理由就是好方案。</p>
+  <h3>快捷键</h3>
+  <p>T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。</p>
+</div>
+
+</div>
+</div>
+
+<!-- 教师答案系统防泄露弹窗（n2 前缀，独立 DOM，不复用课程二的 teacherPrivacyGate） -->
+<div class="modalmask" id="n2teacherModal" style="display:none">
+  <div class="modalbox" id="n2teacherPrivacyGate">
+    <h3>🔒 教师答案即将显示</h3>
+    <p style="font-size:16px;color:var(--text);margin-bottom:10px">请先确认当前未向学生投影：</p>
+    <ul style="font-size:15px;color:var(--muted);margin:0 0 16px 20px;line-height:1.8">
+      <li>投影已切到黑屏 / 暂停键，或已切到其它画面</li>
+      <li>或学生现在没有看着这块屏幕</li>
+    </ul>
+    <p style="font-size:14px;color:var(--muted)">这一步只是流程提醒，网页本身无法探测投影是否切走——请老师自行确认后再继续。按 Esc 可随时立即关闭。</p>
+    <div class="modalbtns">
+      <button class="btn" onclick="n2CloseTeacherAssist()">取消</button>
+      <button class="btn primary" onclick="n2ConfirmTeacherAssist()">✅ 确认显示教师答案</button>
+    </div>
+  </div>
+  <div class="modalbox n2teacherbox" id="n2teacherAssistPanel" style="display:none">
+    <h3>🧑‍🏫 教师辅助视图</h3>
+    <div id="n2teacherAssistContent"><p style="color:var(--muted);font-size:15px">当前没有正在进行的题目——请在闯关模式中开始一道题后再打开教师辅助。</p></div>
+    <div class="modalbtns">
+      <button class="btn" onclick="n2CloseTeacherAssist()">关闭（Esc）</button>
+    </div>
+  </div>
 </div>
 
 <!-- ============ 模块③ 芯片架构调度台 ============ -->
@@ -1060,8 +1472,14 @@ function initCourse2(){
   initDiag();
 }
 
-/* ============================= 模块② 噪声通信实验室 ============================= */
-const N2_MSG = 'TEAM SAFE'; // 9 字符含空格 → 45 bit
+/* ============================= 模块② 噪声通信实验室（课程三）=============================
+   两个噪声模型彻底分离（本轮重构最重要的一点）：
+   - 子实验①星座图：连续高斯噪声 σ，叠加到理想星座点坐标上，再做欧氏距离最近点判决；
+     σ 只影响点的散布与判决结果，不直接翻转 bit。
+   - 子实验②③误码/CRC/FEC：独立的 bit 翻转概率 p（或教师手动翻转指定 bit），与 σ 完全无关。
+   两套模型不共用同一个变量。bit 翻转模型是课堂简化模型，不代表真实无线信道的全部物理过程。
+*/
+const N2_MSG = 'TEAM SAFE'; // 9 字符含空格 → 45 bit，自定义 5 位字母编码，不是 ASCII/UTF-8
 function n2CharTo5(ch){
   if(ch===' ') return '00000';
   const v = ch.charCodeAt(0)-64; // A=1 ... Z=26
@@ -1074,125 +1492,27 @@ function n2Bits5ToChar(bits){
   return '#'; // 27-31 为非法编码，展示为乱码标记
 }
 const N2_MSG_BITS = N2_MSG.split('').map(n2CharTo5).join('').split('').map(Number);
-
-const N2_SCHEMES = [
-  {id:'A', name:'A · 不加保护', sub:'直接发 45 bit，不做任何冗余。'},
-  {id:'B', name:'B · 三次重复码', sub:'每位发 3 次，多数表决恢复，发送 135 bit。'},
-  {id:'C', name:'C · 奇偶校验（只检错）', sub:'每 5 bit 加 1 位偶校验，能发现"可能错了"但不修复，发送 54 bit。'},
-  {id:'D', name:'D · 汉明(7,4) 纠错', sub:'每 4 bit 编成 7 bit，可纠正每组 1 位错；45 bit 补齐到 48 bit，发送 84 bit。'},
-];
-const N2_GROUP_SIZE = {A:5, B:15, C:6, D:7};
-
-let n2Scheme = 'A';
-let n2Noise = 10; // 百分比 0-30
-let n2Mod = 'bpsk';
-
-function n2HammingEncode4(d){
-  const [d1,d2,d3,d4]=d;
-  const p1=d1^d2^d4, p2=d1^d3^d4, p3=d2^d3^d4;
-  return [p1,p2,d1,p3,d2,d3,d4];
-}
-function n2HammingDecode7(r){
-  const [r1,r2,r3,r4,r5,r6,r7]=r;
-  const s1=r1^r3^r5^r7, s2=r2^r3^r6^r7, s3=r4^r5^r6^r7;
-  const synd = s1 + s2*2 + s3*4;
-  const fixedBits=r.slice();
-  if(synd!==0 && synd<=7) fixedBits[synd-1]^=1;
-  return {data:[fixedBits[2],fixedBits[4],fixedBits[5],fixedBits[6]], synd, fixedBits};
-}
-function n2Encode(scheme, bits){
-  if(scheme==='A') return bits.slice();
-  if(scheme==='B'){ const o=[]; bits.forEach(b=>o.push(b,b,b)); return o; }
-  if(scheme==='C'){
-    const o=[];
-    for(let g=0; g<9; g++){
-      const grp = bits.slice(g*5,g*5+5);
-      const parity = grp.reduce((a,b)=>a^b,0);
-      o.push(...grp, parity);
-    }
-    return o;
-  }
-  if(scheme==='D'){
-    const padded = bits.concat([0,0,0]); // 45 -> 48
-    const o=[];
-    for(let g=0; g<12; g++){
-      o.push(...n2HammingEncode4(padded.slice(g*4,g*4+4)));
-    }
-    return o;
-  }
-}
-function n2Decode(scheme, channelBits, sentBits, original){
-  if(scheme==='A'){
-    const decoded=channelBits.slice();
-    return {decoded, fixed:decoded.map(()=>false), stillWrong:decoded.map((b,i)=>b!==original[i]), flagged:null, groupErr:null};
-  }
-  if(scheme==='B'){
-    const decoded=[], fixed=[], stillWrong=[];
-    for(let i=0;i<45;i++){
-      const grp=channelBits.slice(i*3,i*3+3);
-      const sum=grp.reduce((a,b)=>a+b,0);
-      const maj=sum>=2?1:0;
-      decoded.push(maj);
-      const anyFlip=grp.some((b,j)=>b!==sentBits[i*3+j]);
-      fixed.push(maj===original[i] && anyFlip);
-      stillWrong.push(maj!==original[i]);
-    }
-    return {decoded, fixed, stillWrong, flagged:null, groupErr:null};
-  }
-  if(scheme==='C'){
-    const decoded=[], fixed=[], stillWrong=[], flagged=[];
-    for(let g=0; g<9; g++){
-      const data=channelBits.slice(g*6,g*6+5);
-      const parityBit=channelBits[g*6+5];
-      const recompute=data.reduce((a,b)=>a^b,0);
-      flagged.push(recompute!==parityBit);
-      data.forEach((b,j)=>{
-        decoded.push(b); fixed.push(false); stillWrong.push(b!==original[g*5+j]);
-      });
-    }
-    return {decoded, fixed, stillWrong, flagged, groupErr:null};
-  }
-  if(scheme==='D'){
-    const original48=original.concat([0,0,0]);
-    const decoded48=[], fixed48=[], stillWrong48=[], groupErr=[];
-    for(let g=0; g<12; g++){
-      const codeword=channelBits.slice(g*7,g*7+7);
-      const sentWord=sentBits.slice(g*7,g*7+7);
-      groupErr.push(codeword.filter((b,k)=>b!==sentWord[k]).length);
-      const {data}=n2HammingDecode7(codeword);
-      const rawData=[codeword[2],codeword[4],codeword[5],codeword[6]]; // 未纠错前的原始接收数据位
-      data.forEach((b,k)=>{
-        const idx=g*4+k;
-        decoded48.push(b);
-        const wasWrongRaw = rawData[k]!==original48[idx];
-        const isRightNow = b===original48[idx];
-        fixed48.push(wasWrongRaw && isRightNow);
-        stillWrong48.push(b!==original48[idx]);
-      });
-    }
-    return {decoded:decoded48.slice(0,45), fixed:fixed48.slice(0,45), stillWrong:stillWrong48.slice(0,45), flagged:null, groupErr};
-  }
-}
 function n2BitsToText(bits45){
   let s='';
   for(let g=0; g<9; g++) s+=n2Bits5ToChar(bits45.slice(g*5,g*5+5).join(''));
   return s;
 }
-function n2InitSchemes(){
-  const wrap=document.getElementById('n2schemes');
-  wrap.innerHTML='';
-  N2_SCHEMES.forEach(s=>{
-    const el=document.createElement('div');
-    el.className='card n2scheme'+(n2Scheme===s.id?' selected':'');
-    el.innerHTML=`<div><div class="ttl">${s.name}</div><div class="sub">${s.sub}</div></div>`;
-    el.onclick=()=>{ n2Scheme=s.id; n2InitSchemes(); };
-    wrap.appendChild(el);
-  });
+function n2ArrEq(a,b){ return a.length===b.length && a.every((v,i)=>v===b[i]); }
+
+/* 可复现随机数：mulberry32，"固定种子"开关用它，未固定时退回 Math.random */
+function n2Mulberry32(seed){
+  let a = seed>>>0;
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a>>>15, 1 | a);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
 }
-function n2NoiseChange(){
-  n2Noise = +document.getElementById('n2noise').value;
-  document.getElementById('n2noiseVal').textContent = n2Noise+'%';
-  n2DrawConstellation();
+
+function n2ToggleHint(id){
+  const el=document.getElementById(id);
+  el.style.display = el.style.display==='none' ? '' : 'none';
 }
 function n2ToggleTable(){
   const t=document.getElementById('n2table');
@@ -1224,127 +1544,1666 @@ function n2RenderBits(containerId, bits, opts){
       else if(opts.fixMask && opts.fixMask[idx]) cls='fix';
       inner += `<span class="${cls}">${b}</span>`;
     }
-    const flaggedCls = (opts.flaggedGroups && opts.flaggedGroups[g]) ? ' grpflag' : '';
-    html += `<span class="g${flaggedCls}">${inner}</span>`;
+    html += `<span class="g">${inner}</span>`;
   }
   el.innerHTML=html;
 }
-function n2Send(){
-  const scheme=n2Scheme;
-  const p=n2Noise/100;
-  const sentBits=n2Encode(scheme, N2_MSG_BITS);
-  const channelBits=sentBits.map(b=> Math.random()<p ? 1-b : b);
-  const flipMask=channelBits.map((b,i)=>b!==sentBits[i]);
-  const channelFlips=flipMask.filter(Boolean).length;
-  const dec=n2Decode(scheme, channelBits, sentBits, N2_MSG_BITS);
-  const remainingErrors=dec.stillWrong.filter(Boolean).length;
-  const fixedCount=dec.fixed.filter(Boolean).length;
-  const sentLen=sentBits.length;
-  const efficiency=(45/sentLen*100);
-  const text=n2BitsToText(dec.decoded);
-
-  const gs = N2_GROUP_SIZE[scheme];
-  n2RenderBits('n2row-orig', sentBits, {groupSize:gs});
-  n2RenderBits('n2row-chan', channelBits, {groupSize:gs, flipMask, flaggedGroups: scheme==='C'?dec.flagged:null});
-  n2RenderBits('n2row-recv', dec.decoded, {groupSize:5, flipMask:dec.stillWrong, fixMask:dec.fixed});
-
-  let textHtml='';
-  for(let i=0;i<text.length;i++){
-    textHtml += (text[i]!==N2_MSG[i]) ? `<span class="bad">${text[i]}</span>` : text[i];
+function n2ShowSub(n){
+  for(let i=1;i<=3;i++){
+    document.getElementById('n2sub-'+i).style.display = (i===n?'':'none');
+    document.getElementById('n2subBtn'+i).classList.toggle('on', i===n);
   }
-  document.getElementById('n2text').innerHTML=textHtml;
-
-  const flagline=document.getElementById('n2flagline');
-  if(scheme==='C'){
-    flagline.style.display='';
-    const flaggedIdx = dec.flagged.map((f,i)=>f?i+1:null).filter(v=>v);
-    flagline.textContent = flaggedIdx.length
-      ? `校验标记疑似出错的组：第 ${flaggedIdx.join('、')} 组（注意：同一组内如果偶数位翻转，奇偶校验会漏检）。`
-      : '本次没有任何一组被校验标记为疑似出错。';
-  } else {
-    flagline.style.display='none';
-  }
-
-  const m=document.getElementById('n2metrics');
-  m.innerHTML = `
-    <div class="n2mcard"><div class="v">${channelFlips}</div><div class="k">误码数（信道翻转位数）</div></div>
-    <div class="n2mcard"><div class="v">${remainingErrors}</div><div class="k">恢复后仍错位数</div></div>
-    <div class="n2mcard"><div class="v">${sentLen}</div><div class="k">发送总 bit 数</div></div>
-    <div class="n2mcard"><div class="v">${efficiency.toFixed(1)}%</div><div class="k">有效效率 = 45 / 发送总数</div></div>
-    <div class="n2mcard n2concl" id="n2concl"></div>
-  `;
-  document.getElementById('n2concl').innerHTML = n2Conclusion(scheme, {channelFlips, remainingErrors, fixedCount, sentLen, dec});
 }
-function n2Conclusion(scheme, r){
-  const extra = r.sentLen - 45;
-  if(scheme==='A'){
-    return `结论：没加任何保护，信道翻转了 ${r.channelFlips} 位，全部原样留在消息里——传得最省（多发 0 bit），但完全没有自我修复能力。`;
-  }
-  if(scheme==='B'){
-    return `结论：三次重复码，信道翻转了 ${r.channelFlips} 位（135 bit 里），多数表决修复了 ${r.fixedCount} 处，恢复后仍有 ${r.remainingErrors} 位错——代价是多发了 ${extra} bit。`;
-  }
-  if(scheme==='C'){
-    const flaggedCount = r.dec.flagged.filter(Boolean).length;
-    return `结论：奇偶校验只能"发现"疑似出错（本次标记了 ${flaggedCount} 组），不能修复，恢复后仍有 ${r.remainingErrors} 位错——多发 ${extra} bit 换来的是"知道可能错了"，不是"改对了"。`;
-  }
-  if(scheme==='D'){
-    let s = `结论：汉明(7,4) 纠错，成功修复了 ${r.fixedCount} 处错误，恢复后仍有 ${r.remainingErrors} 位错——代价是多发了 ${extra} bit，冗余买回了可靠。`;
-    const badGroups = r.dec.groupErr.map((c,i)=>c>=2?i+1:null).filter(v=>v!==null);
-    if(badGroups.length){
-      s += ` 注意：第 ${badGroups.join('、')} 组信道里真实发生了 2 位错误——纠错在这种情况下必然失效（这是编码原理决定的，不是 bug），纠错能力是有限的。`;
+
+/* 汉明(7,4)：可复用给子实验③方案 D（可选扩展）*/
+function n2HammingEncode4(d){
+  const [d1,d2,d3,d4]=d;
+  const p1=d1^d2^d4, p2=d1^d3^d4, p3=d2^d3^d4;
+  return [p1,p2,d1,p3,d2,d3,d4];
+}
+function n2HammingDecode7(r){
+  const [r1,r2,r3,r4,r5,r6,r7]=r;
+  const s1=r1^r3^r5^r7, s2=r2^r3^r6^r7, s3=r4^r5^r6^r7;
+  const synd = s1 + s2*2 + s3*4;
+  const fixedBits=r.slice();
+  if(synd!==0 && synd<=7) fixedBits[synd-1]^=1;
+  return {data:[fixedBits[2],fixedBits[4],fixedBits[5],fixedBits[6]], synd, fixedBits};
+}
+
+/* CRC-4，生成多项式 x^4 + x + 1（二进制 10011），5 位系数（含最高位 x^4）：
+   1 0 0 1 1。标准比特串行多项式除法：数据位后补 4 个 0，
+   逢最高位为 1 就与多项式异或，余下的 4 位就是 CRC 校验位。
+   只检错不纠错：接收端用同样多项式重算余数，和收到的校验位比对，
+   不一致就报告"校验失败"，但不会去修改任何数据 bit。
+   不宣称能检测所有可能错误——CRC-4 只保证检测单 bit 错误和大多数（并非全部）多 bit 错误组合。 */
+const N2_CRC4_POLY = [1,0,0,1,1];
+function n2Crc4(dataBits){
+  const buf = dataBits.concat(new Array(4).fill(0));
+  for(let i=0;i<dataBits.length;i++){
+    if(buf[i]===1){
+      for(let j=0;j<5;j++) buf[i+j] ^= N2_CRC4_POLY[j];
     }
-    return s;
+  }
+  return buf.slice(dataBits.length);
+}
+
+/* ---------------------------------------------------------------------------
+   子实验① 星座图与判决
+   --------------------------------------------------------------------------- */
+/* 星座点坐标 + Gray bit 标签（写死在注释里，页面同步展示）：
+   BPSK：{-1:'0', +1:'1'}，1 bit/符号。
+   QPSK：四个点分别在 45°/135°/225°/315°，Gray 映射 00/01/11/10，相邻角度只差 1 bit，2 bit/符号。
+   16-QAM（可选扩展）：每个坐标轴各 4 档电平 [-1,-1/3,1/3,1]，
+   每档电平按 00/01/11/10 做 Gray 编码，横轴 2bit + 纵轴 2bit 拼成 4 bit/符号。
+   三种调制的理想点坐标经过归一化，使得同一 σ 下相邻点间距依次变小（BPSK 2.0 > QPSK 1.4 > 16QAM 0.667），
+   用于体现"同噪声下高阶调制更容易误判"的趋势，不代表调制阶数越高一定更先进。*/
+const N2_CONST = {
+  bpsk: {
+    bitsPerSym:1,
+    points: [ {x:1,y:0,bits:'1'}, {x:-1,y:0,bits:'0'} ],
+    xBoundaries:[0], yBoundaries:[],
+  },
+  qpsk: {
+    bitsPerSym:2,
+    points: [
+      {x:0.7,y:0.7,bits:'00'}, {x:-0.7,y:0.7,bits:'01'},
+      {x:-0.7,y:-0.7,bits:'11'}, {x:0.7,y:-0.7,bits:'10'},
+    ],
+    xBoundaries:[0], yBoundaries:[0],
+  },
+  qam16: (function(){
+    const levels=[-1,-1/3,1/3,1];
+    const gray=['00','01','11','10'];
+    const points=[];
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++) points.push({x:levels[i], y:levels[j], bits:gray[i]+gray[j]});
+    return {bitsPerSym:4, points, xBoundaries:[-2/3,0,2/3], yBoundaries:[-2/3,0,2/3]};
+  })(),
+};
+const N2_SIGMA_PRESET = {low:0.12, mid:0.30, high:0.55};
+const N2_SAMPLE_COUNT = 80;
+
+let n2Mod = 'bpsk';
+let n2Sigma = 0;
+let n2Seed1Fixed = false;
+let n2Rng1 = null;
+let n2Samples1 = [];
+let n2ShowBoundary1 = true; // 判决边界显示/隐藏（教师可让学生先预测，再显示边界核对）
+let n2ShowAnswer1 = true;   // 答案（判决对错着色 + bit 标签 + 数值指标）显示/隐藏
+
+function n2Rand1(){ return n2Rng1 ? n2Rng1() : Math.random(); }
+function n2GaussianPair1(){
+  const u1 = n2Rand1() || 1e-9, u2 = n2Rand1();
+  const r = Math.sqrt(-2*Math.log(u1));
+  return [r*Math.cos(2*Math.PI*u2), r*Math.sin(2*Math.PI*u2)];
+}
+/* 真正的最近点判决：对每个接收样本，遍历全部理想点求欧氏距离最小者 */
+function n2Decide1(cfg, x, y){
+  let bestIdx=0, bestD=Infinity;
+  cfg.points.forEach((p,idx)=>{
+    const d=(p.x-x)*(p.x-x)+(p.y-y)*(p.y-y);
+    if(d<bestD){ bestD=d; bestIdx=idx; }
+  });
+  return bestIdx;
+}
+function n2SetSigmaPreset(k){
+  n2Sigma = N2_SIGMA_PRESET[k];
+  document.getElementById('n2sigma').value = Math.round(n2Sigma*100);
+  document.getElementById('n2sigmaVal').textContent = n2Sigma.toFixed(2);
+  n2RegenSamples();
+}
+function n2SigmaChange(){
+  n2Sigma = (+document.getElementById('n2sigma').value)/100;
+  document.getElementById('n2sigmaVal').textContent = n2Sigma.toFixed(2);
+  n2RegenSamples();
+}
+function n2Seed1Toggle(){
+  n2Seed1Fixed = document.getElementById('n2seed1fix').checked;
+  n2RegenSamples();
+}
+function n2RegenSamples(){
+  if(n2Seed1Fixed) n2Rng1 = n2Mulberry32(20260719);
+  else n2Rng1 = null;
+  const cfg = N2_CONST[n2Mod];
+  const samples=[];
+  let bitErrors=0, symErrors=0;
+  for(let i=0;i<N2_SAMPLE_COUNT;i++){
+    const sentIdx = Math.floor(n2Rand1()*cfg.points.length);
+    const sent = cfg.points[sentIdx];
+    const [g1,g2] = n2GaussianPair1();
+    const rx = {x: sent.x + g1*n2Sigma, y: sent.y + g2*n2Sigma};
+    const decidedIdx = n2Decide1(cfg, rx.x, rx.y);
+    const correct = decidedIdx===sentIdx;
+    if(!correct) symErrors++;
+    const sentBits=sent.bits, decBits=cfg.points[decidedIdx].bits;
+    let be=0;
+    for(let k=0;k<sentBits.length;k++) if(sentBits[k]!==decBits[k]) be++;
+    bitErrors += be;
+    samples.push({sentIdx, decidedIdx, x:rx.x, y:rx.y, correct});
+  }
+  n2Samples1 = samples;
+  const totalBits = N2_SAMPLE_COUNT*cfg.bitsPerSym;
+  n2DrawConstellation();
+  const m=document.getElementById('n2c1metrics');
+  if(!m) return;
+  if(!n2ShowAnswer1){
+    m.innerHTML = `<div class="n2mcard n2concl">教师点"显示答案"后，这里会显示发送符号数 / 判决错误符号数 / bit 错误数 / 信道 BER。</div>`;
+    return;
+  }
+  m.innerHTML = `
+    <div class="n2mcard"><div class="v">${N2_SAMPLE_COUNT}</div><div class="k">发送符号数</div></div>
+    <div class="n2mcard"><div class="v">${symErrors}</div><div class="k">判决错误符号数</div></div>
+    <div class="n2mcard"><div class="v">${bitErrors} / ${totalBits}</div><div class="k">bit 错误数 / 总 bit 数</div></div>
+    <div class="n2mcard n2concl"><div class="v">${(bitErrors/totalBits*100).toFixed(1)}%</div><div class="k">信道 BER = bit 错误数 / 总 bit 数（本实验发送即编码，无额外保护）</div></div>
+  `;
+}
+function n2ToggleBoundary1(){
+  n2ShowBoundary1 = !n2ShowBoundary1;
+  document.getElementById('n2boundaryToggleBtn1').textContent = n2ShowBoundary1 ? '🙈 隐藏判决边界' : '👁 显示判决边界';
+  n2DrawConstellation();
+}
+function n2ToggleAnswer1(){
+  n2ShowAnswer1 = !n2ShowAnswer1;
+  document.getElementById('n2answerToggleBtn1').textContent = n2ShowAnswer1 ? '🙈 隐藏答案（判决结果与数据）' : '👁 显示答案（判决结果与数据）';
+  n2DrawConstellation();
+  const cfg = N2_CONST[n2Mod];
+  const m=document.getElementById('n2c1metrics');
+  if(m && n2Samples1.length){
+    if(!n2ShowAnswer1){
+      m.innerHTML = `<div class="n2mcard n2concl">教师点"显示答案"后，这里会显示发送符号数 / 判决错误符号数 / bit 错误数 / 信道 BER。</div>`;
+    } else {
+      const totalBits=N2_SAMPLE_COUNT*cfg.bitsPerSym;
+      const symErrors=n2Samples1.filter(s=>!s.correct).length;
+      let bitErrors=0;
+      n2Samples1.forEach(s=>{
+        const sentBits=cfg.points[s.sentIdx].bits, decBits=cfg.points[s.decidedIdx].bits;
+        for(let k=0;k<sentBits.length;k++) if(sentBits[k]!==decBits[k]) bitErrors++;
+      });
+      m.innerHTML = `
+        <div class="n2mcard"><div class="v">${N2_SAMPLE_COUNT}</div><div class="k">发送符号数</div></div>
+        <div class="n2mcard"><div class="v">${symErrors}</div><div class="k">判决错误符号数</div></div>
+        <div class="n2mcard"><div class="v">${bitErrors} / ${totalBits}</div><div class="k">bit 错误数 / 总 bit 数</div></div>
+        <div class="n2mcard n2concl"><div class="v">${(bitErrors/totalBits*100).toFixed(1)}%</div><div class="k">信道 BER = bit 错误数 / 总 bit 数（本实验发送即编码，无额外保护）</div></div>
+      `;
+    }
   }
 }
 function n2DrawConstellation(){
   const cv=document.getElementById('n2canvas');
   if(!cv) return;
   const ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,300,300);
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
   const isLight=document.body.classList.contains('light');
+  const cx0=W/2, cy0=H/2, R=W*0.34;
+  const toPx=(x,y)=>[cx0+x*R, cy0-y*R];
+
   ctx.strokeStyle = isLight ? '#c9d4e4' : '#2a3752';
-  ctx.beginPath(); ctx.moveTo(150,10); ctx.lineTo(150,290); ctx.moveTo(10,150); ctx.lineTo(290,150); ctx.stroke();
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx0,10); ctx.lineTo(cx0,H-10); ctx.moveTo(10,cy0); ctx.lineTo(W-10,cy0); ctx.stroke();
 
-  const points = n2Mod==='bpsk'
-    ? [{x:1,y:0},{x:-1,y:0}]
-    : [{x:0.7,y:0.7},{x:-0.7,y:0.7},{x:-0.7,y:-0.7},{x:0.7,y:-0.7}];
-  const R=100;
-  const spread = 6 + n2Noise*3;
-  const idealColor='#4cc9f0', sampleColor = isLight ? 'rgba(10,126,164,.55)' : 'rgba(76,201,240,.55)';
+  const cfg = N2_CONST[n2Mod];
+  if(n2ShowBoundary1){
+    ctx.setLineDash([5,4]);
+    ctx.strokeStyle = isLight ? '#0a7ea4' : '#4cc9f0';
+    cfg.xBoundaries.forEach(bx=>{
+      const px=toPx(bx,0)[0];
+      ctx.beginPath(); ctx.moveTo(px,8); ctx.lineTo(px,H-8); ctx.stroke();
+    });
+    cfg.yBoundaries.forEach(by=>{
+      const py=toPx(0,by)[1];
+      ctx.beginPath(); ctx.moveTo(8,py); ctx.lineTo(W-8,py); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
 
-  points.forEach(pt=>{
-    const cx=150+pt.x*R, cy=150-pt.y*R;
-    for(let i=0;i<40;i++){
-      const u1=Math.random()||1e-6, u2=Math.random();
-      const g1=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
-      const g2=Math.sqrt(-2*Math.log(u1))*Math.sin(2*Math.PI*u2);
-      ctx.fillStyle=sampleColor;
-      ctx.beginPath();
-      ctx.arc(cx+g1*spread, cy+g2*spread, 2.4, 0, Math.PI*2);
-      ctx.fill();
+  (n2Samples1||[]).forEach(s=>{
+    const [px,py]=toPx(s.x,s.y);
+    if(n2ShowAnswer1){
+      ctx.fillStyle = s.correct ? (isLight?'rgba(23,138,76,.6)':'rgba(61,220,132,.65)') : (isLight?'rgba(201,59,59,.7)':'rgba(255,107,107,.75)');
+    } else {
+      ctx.fillStyle = isLight?'rgba(90,107,136,.55)':'rgba(157,176,204,.6)'; // 隐藏答案时用中性色，不泄露判决对错
     }
+    ctx.beginPath(); ctx.arc(px,py,3,0,Math.PI*2); ctx.fill();
   });
-  points.forEach(pt=>{
-    const cx=150+pt.x*R, cy=150-pt.y*R;
-    ctx.fillStyle=idealColor;
-    ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle = isLight ? '#16213a' : '#e8eef8';
+
+  cfg.points.forEach(p=>{
+    const [px,py]=toPx(p.x,p.y);
+    ctx.fillStyle = isLight?'#0a7ea4':'#4cc9f0';
+    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = isLight?'#16213a':'#e8eef8';
     ctx.lineWidth=1.5; ctx.stroke();
+    if(n2ShowAnswer1){
+      ctx.fillStyle = isLight?'#16213a':'#e8eef8';
+      ctx.font='12px monospace';
+      ctx.fillText(p.bits, px+8, py-8);
+    }
   });
 }
 function n2SetMod(m){
   n2Mod=m;
-  document.getElementById('n2bpsk').classList.toggle('on', m==='bpsk');
-  document.getElementById('n2qpsk').classList.toggle('on', m==='qpsk');
-  n2DrawConstellation();
+  document.getElementById('n2modBpsk').classList.toggle('on', m==='bpsk');
+  document.getElementById('n2modQpsk').classList.toggle('on', m==='qpsk');
+  document.getElementById('n2modQam').classList.toggle('on', m==='qam16');
+  n2RegenSamples();
 }
-function n2Init(){
-  n2InitSchemes();
-  document.getElementById('n2noise').value=n2Noise;
-  document.getElementById('n2noiseVal').textContent=n2Noise+'%';
+function n2ResetSub1(){
+  n2Sigma=0;
+  document.getElementById('n2sigma').value=0;
+  document.getElementById('n2sigmaVal').textContent='0.00';
+  document.getElementById('n2seed1fix').checked=false;
+  n2Seed1Fixed=false;
+  n2ShowBoundary1=true;
+  document.getElementById('n2boundaryToggleBtn1').textContent='🙈 隐藏判决边界';
+  n2ShowAnswer1=true;
+  document.getElementById('n2answerToggleBtn1').textContent='🙈 隐藏答案（判决结果与数据）';
   n2SetMod('bpsk');
-  n2Send();
 }
+
+/* ---------------------------------------------------------------------------
+   子实验② 误码与 BER（不加保护的基线，独立 bit 翻转概率 p，与 σ 无关）
+   两难度层级：A 简单 8-bit 串（10110010，课堂手算）/ B 紧急消息 TEAM SAFE（45 bit，自定义编码）
+   --------------------------------------------------------------------------- */
+const N2_LAYERS2 = {
+  simple: {bits:[1,0,1,1,0,0,1,0], hasText:false, groupSize:4}, // 10110010，课堂手算示例
+  msg:    {bits:N2_MSG_BITS, hasText:true, groupSize:5},
+};
+let n2Layer2 = 'msg';
+let n2Mode2 = 'manual';
+let n2ManualFlips2 = new Array(N2_LAYERS2.msg.bits.length).fill(false);
+let n2P2 = 10;
+let n2Seed2Fixed = false;
+let n2Rng2 = null;
+let n2Channel2Bits = null;
+let n2HideErr2 = false; // 隐藏错误标记：教师先隐藏红色错误位让学生找，之后点"显示错误位置"
+
+function n2CurBits2(){ return N2_LAYERS2[n2Layer2].bits; }
+function n2Rand2(){ return n2Rng2 ? n2Rng2() : Math.random(); }
+function n2SetLayer2(layer){
+  n2Layer2 = layer;
+  document.getElementById('n2layer2Simple').classList.toggle('on', layer==='simple');
+  document.getElementById('n2layer2Msg').classList.toggle('on', layer==='msg');
+  document.getElementById('n2msgMsgInfo').style.display = layer==='msg' ? '' : 'none';
+  document.getElementById('n2msgSimpleInfo').style.display = layer==='simple' ? '' : 'none';
+  document.getElementById('n2text2row').style.display = N2_LAYERS2[layer].hasText ? '' : 'none';
+  n2ManualFlips2 = new Array(n2CurBits2().length).fill(false);
+  n2Channel2Bits = null;
+  n2SetMode2('manual');
+}
+function n2SetMode2(m){
+  n2Mode2=m;
+  document.getElementById('n2modeManual').classList.toggle('on', m==='manual');
+  document.getElementById('n2modeRandom').classList.toggle('on', m==='random');
+  document.getElementById('n2manualBox').style.display = m==='manual'?'':'none';
+  document.getElementById('n2randomBox').style.display = m==='random'?'':'none';
+  document.getElementById('n2sub2result').style.display='none';
+  document.getElementById('n2sub2empty').style.display='';
+  if(m==='manual') n2RenderManualBits2();
+}
+function n2RenderManualBits2(){
+  const el=document.getElementById('n2row-manual');
+  const bits=n2CurBits2(), gs=N2_LAYERS2[n2Layer2].groupSize;
+  let html='';
+  for(let g=0; g*gs<bits.length; g++){
+    let inner='';
+    for(let j=0;j<gs && g*gs+j<bits.length;j++){
+      const idx=g*gs+j;
+      const b = bits[idx] ^ (n2ManualFlips2[idx]?1:0);
+      const cls = n2ManualFlips2[idx] ? 'flip bitclick' : 'bitclick';
+      inner += `<span class="${cls}" onclick="n2ToggleManualBit2(${idx})">${b}</span>`;
+    }
+    html += `<span class="g">${inner}</span>`;
+  }
+  el.innerHTML=html;
+}
+function n2ToggleManualBit2(idx){
+  n2ManualFlips2[idx] = !n2ManualFlips2[idx];
+  n2RenderManualBits2();
+}
+function n2ResetManual2(){
+  n2ManualFlips2 = new Array(n2CurBits2().length).fill(false);
+  n2RenderManualBits2();
+  document.getElementById('n2sub2result').style.display='none';
+  document.getElementById('n2sub2empty').style.display='';
+}
+function n2P2Change(){
+  n2P2 = +document.getElementById('n2p2').value;
+  document.getElementById('n2p2Val').textContent = n2P2+'%';
+}
+function n2Seed2Toggle(){
+  n2Seed2Fixed = document.getElementById('n2seed2fix').checked;
+}
+function n2GenChannel2(){
+  if(n2Seed2Fixed) n2Rng2 = n2Mulberry32(20260720);
+  else n2Rng2 = null;
+  const p = n2P2/100;
+  n2Channel2Bits = n2CurBits2().map(b => n2Rand2()<p ? 1-b : b);
+  n2Calc2();
+}
+function n2ToggleHideErr2(){
+  n2HideErr2 = !n2HideErr2;
+  document.getElementById('n2hideErrBtn2').textContent = n2HideErr2 ? '👁 显示错误位置' : '🙈 隐藏错误标记';
+  if(document.getElementById('n2sub2result').style.display!=='none') n2Calc2();
+}
+function n2Calc2(){
+  const bits=n2CurBits2(), len=bits.length, gs=N2_LAYERS2[n2Layer2].groupSize;
+  let channelBits;
+  if(n2Mode2==='manual'){
+    channelBits = bits.map((b,i)=> n2ManualFlips2[i] ? 1-b : b);
+  } else {
+    if(!n2Channel2Bits){ n2GenChannel2(); return; }
+    channelBits = n2Channel2Bits;
+  }
+  const flipMask = channelBits.map((b,i)=>b!==bits[i]);
+  const channelFlips = flipMask.filter(Boolean).length;
+  const payloadStillWrong = channelFlips; // 本实验不加保护：解码后 payload 就是信道 bits
+
+  n2RenderBits('n2row-chan2', channelBits, {groupSize:gs, flipMask: n2HideErr2 ? null : flipMask});
+
+  if(N2_LAYERS2[n2Layer2].hasText){
+    const text = n2BitsToText(channelBits);
+    let textHtml='';
+    for(let i=0;i<text.length;i++){
+      const bad = text[i]!==N2_MSG[i] && !n2HideErr2;
+      textHtml += bad ? `<span class="bad">${text[i]}</span>` : text[i];
+    }
+    document.getElementById('n2text2').innerHTML = textHtml;
+  }
+
+  const m=document.getElementById('n2metrics2');
+  m.innerHTML = `
+    <div class="n2mcard"><div class="v">${len}</div><div class="k">原始 payload bit 数</div></div>
+    <div class="n2mcard"><div class="v">${len}</div><div class="k">传输编码后总 bit 数（本实验不加保护，等于 payload）</div></div>
+    <div class="n2mcard"><div class="v">${n2HideErr2 ? '？' : channelFlips}</div><div class="k">信道中被翻转的编码 bit 数</div></div>
+    <div class="n2mcard"><div class="v">${n2HideErr2 ? '？' : (channelFlips/len*100).toFixed(1)+'%'}</div><div class="k">信道 BER = 翻转数 / ${len}</div></div>
+    <div class="n2mcard"><div class="v">${n2HideErr2 ? '？' : payloadStillWrong}</div><div class="k">解码后 payload 仍错误的 bit 数</div></div>
+    <div class="n2mcard n2concl"><div class="v">${n2HideErr2 ? '先找错误位置，再点"显示错误位置"核对' : (payloadStillWrong/len*100).toFixed(1)+'%'}</div><div class="k">Payload BER = 仍错 bit 数 / ${len}</div></div>
+  `;
+  document.getElementById('n2sub2result').style.display='';
+  document.getElementById('n2sub2empty').style.display='none';
+}
+function n2ResetSub2(){
+  n2SetLayer2('msg');
+  n2P2=10;
+  document.getElementById('n2p2').value=10;
+  document.getElementById('n2p2Val').textContent='10%';
+  document.getElementById('n2seed2fix').checked=false;
+  n2Seed2Fixed=false;
+  n2Channel2Bits=null;
+  n2HideErr2=false;
+  document.getElementById('n2hideErrBtn2').textContent='🙈 隐藏错误标记';
+}
+
+/* ---------------------------------------------------------------------------
+   子实验③ CRC 与 FEC（核心 A/B/C + 可选扩展 D，独立 bit 翻转概率 p，与 σ 无关）
+   --------------------------------------------------------------------------- */
+const N2_SCHEMES3 = [
+  {id:'A', name:'A · 不加保护', sub:'直接发送 45 bit，不做任何校验或纠错。'},
+  {id:'B', name:'B · 教学版 CRC-4', sub:'生成多项式 x^4+x+1（10011），只检错不纠错，多发 4 bit。'},
+  {id:'C', name:'C · 三次重复码', sub:'每 bit 发 3 次，多数表决恢复，多发到 135 bit。'},
+];
+const N2_SCHEME3_D = {id:'D', name:'D · 汉明(7,4) 纠错（可选扩展）', sub:'每 4 bit 编成 7 bit，每组最多保证纠 1 位错，多发到 84 bit。'};
+const N2_GROUP_SIZE3 = {A:5, B:5, C:3, D:7};
+
+let n2Scheme3 = 'A';
+let n2ShowD3 = false;
+let n2P3 = 10;
+let n2Seed3Fixed = false;
+
+function n2Encode3(scheme, bits){
+  if(scheme==='A') return bits.slice();
+  if(scheme==='B') return bits.concat(n2Crc4(bits));
+  if(scheme==='C'){ const o=[]; bits.forEach(b=>o.push(b,b,b)); return o; }
+  if(scheme==='D'){
+    const padded = bits.concat([0,0,0]);
+    const o=[];
+    for(let g=0; g<12; g++) o.push(...n2HammingEncode4(padded.slice(g*4,g*4+4)));
+    return o;
+  }
+}
+function n2Decode3(scheme, channelBits, sentBits, original){
+  if(scheme==='A'){
+    const decoded=channelBits.slice();
+    return {decoded, fixed:decoded.map(()=>false), stillWrong:decoded.map((b,i)=>b!==original[i]), detected:null, detectable:false};
+  }
+  if(scheme==='B'){
+    const dataBits=channelBits.slice(0,45), crcBits=channelBits.slice(45,49);
+    const recompute=n2Crc4(dataBits);
+    const passed=n2ArrEq(recompute, crcBits);
+    const decoded=dataBits.slice();
+    return {decoded, fixed:decoded.map(()=>false), stillWrong:decoded.map((b,i)=>b!==original[i]), detected:!passed, detectable:true, passed};
+  }
+  if(scheme==='C'){
+    const decoded=[], fixed=[], stillWrong=[];
+    let anyGroupDisagree=false;
+    for(let i=0;i<45;i++){
+      const grp=channelBits.slice(i*3,i*3+3);
+      const sum=grp.reduce((a,b)=>a+b,0);
+      const maj = sum>=2?1:0;
+      const disagree = !(grp[0]===grp[1] && grp[1]===grp[2]);
+      if(disagree) anyGroupDisagree=true;
+      decoded.push(maj);
+      fixed.push(disagree && maj===original[i]);
+      stillWrong.push(maj!==original[i]);
+    }
+    return {decoded, fixed, stillWrong, detected:anyGroupDisagree, detectable:true, anyGroupDisagree};
+  }
+  if(scheme==='D'){
+    const original48=original.concat([0,0,0]);
+    const decoded48=[], fixed48=[], stillWrong48=[];
+    let anyDetected=false, anyMultiError=false;
+    for(let g=0; g<12; g++){
+      const codeword=channelBits.slice(g*7,g*7+7);
+      const sentWord=sentBits.slice(g*7,g*7+7);
+      const trueErrCount=codeword.filter((b,k)=>b!==sentWord[k]).length;
+      if(trueErrCount>=2) anyMultiError=true;
+      const {data, synd}=n2HammingDecode7(codeword);
+      if(synd!==0) anyDetected=true;
+      const rawData=[codeword[2],codeword[4],codeword[5],codeword[6]];
+      data.forEach((b,k)=>{
+        const idx=g*4+k;
+        decoded48.push(b);
+        const wasWrongRaw = rawData[k]!==original48[idx];
+        const isRightNow = b===original48[idx];
+        fixed48.push(wasWrongRaw && isRightNow);
+        stillWrong48.push(b!==original48[idx]);
+      });
+    }
+    return {decoded:decoded48.slice(0,45), fixed:fixed48.slice(0,45), stillWrong:stillWrong48.slice(0,45), detected:anyDetected, detectable:true, anyMultiError};
+  }
+}
+function n2Conclusion3(scheme, r, extra){
+  if(scheme==='A'){
+    return `结论：没有加任何保护，信道翻转的 ${r.channelFlips} 位原样留在 payload 里——发送开销最小，但没有检错或纠错能力。`;
+  }
+  if(scheme==='B'){
+    const passed = r.dec.passed;
+    return `结论：CRC 主要用于检测错误，不修复数据。本次校验${passed?'通过':'失败（数据疑似损坏）'}——即使失败，原始错误数据仍在，CRC 没有改动它。多发了 ${extra} bit 的传输开销。`;
+  }
+  if(scheme==='C'){
+    return `结论：三次重复码利用冗余修复一定能力范围内的错误——本次修复了 ${r.fixedCount} 处，恢复后仍有 ${r.remainingErrors} 位错。若某 bit 的 3 个副本里有 2 个或以上被翻转，多数表决会得到错误结果。代价是多发了 ${extra} bit（发送量 3 倍，有效效率约 1/3）。`;
+  }
+  if(scheme==='D'){
+    let s = `结论：汉明(7,4) 每组最多保证纠 1 位错，本次修复了 ${r.fixedCount} 处，恢复后仍有 ${r.remainingErrors} 位错，多发了 ${extra} bit。`;
+    if(r.dec.anyMultiError){
+      s += ' 注意：本次信道里有分组发生了 2 位及以上错误——超出单错纠正能力，可能留下错误或发生误纠正。';
+    }
+    return s;
+  }
+}
+function n2InitSchemes3(){
+  const wrap=document.getElementById('n2schemes3');
+  const list = n2ShowD3 ? N2_SCHEMES3.concat([N2_SCHEME3_D]) : N2_SCHEMES3;
+  wrap.innerHTML='';
+  list.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='card n2scheme'+(n2Scheme3===s.id?' selected':'');
+    el.innerHTML=`<div><div class="ttl">${s.name}</div><div class="sub">${s.sub}</div></div>`;
+    el.onclick=()=>{ n2Scheme3=s.id; n2InitSchemes3(); };
+    wrap.appendChild(el);
+  });
+}
+function n2ToggleOptionalD(){
+  n2ShowD3 = !n2ShowD3;
+  n2InitSchemes3();
+}
+function n2P3Change(){
+  n2P3 = +document.getElementById('n2p3').value;
+  document.getElementById('n2p3Val').textContent = n2P3+'%';
+}
+function n2Seed3Toggle(){
+  n2Seed3Fixed = document.getElementById('n2seed3fix').checked;
+}
+function n2Rand3(rng){ return rng ? rng() : Math.random(); }
+function n2RunSingle3(){
+  const rng = n2Seed3Fixed ? n2Mulberry32(20260721) : null;
+  const scheme=n2Scheme3;
+  const p=n2P3/100;
+  const sentBits=n2Encode3(scheme, N2_MSG_BITS);
+  const channelBits=sentBits.map(b=> n2Rand3(rng)<p ? 1-b : b);
+  const flipMask=channelBits.map((b,i)=>b!==sentBits[i]);
+  const channelFlips=flipMask.filter(Boolean).length;
+  const dec=n2Decode3(scheme, channelBits, sentBits, N2_MSG_BITS);
+  const remainingErrors=dec.stillWrong.filter(Boolean).length;
+  const fixedCount=dec.fixed.filter(Boolean).length;
+  const sentLen=sentBits.length;
+  const efficiency=(45/sentLen*100);
+  const text=n2BitsToText(dec.decoded);
+
+  const gs = N2_GROUP_SIZE3[scheme];
+  n2RenderBits('n2row-orig3', sentBits, {groupSize:gs});
+  n2RenderBits('n2row-chan3', channelBits, {groupSize:gs, flipMask});
+  n2RenderBits('n2row-recv3', dec.decoded, {groupSize:5, flipMask:dec.stillWrong, fixMask:dec.fixed});
+
+  let textHtml='';
+  for(let i=0;i<text.length;i++) textHtml += (text[i]!==N2_MSG[i]) ? `<span class="bad">${text[i]}</span>` : text[i];
+  document.getElementById('n2text3').innerHTML = textHtml;
+
+  const flagline=document.getElementById('n2flagline3');
+  if(scheme==='B'){
+    flagline.style.display='';
+    flagline.textContent = dec.passed ? '本次 CRC 校验通过。' : '本次 CRC 校验失败：数据疑似损坏（CRC 不修复，原错误数据仍在）。';
+  } else if(scheme==='C'){
+    flagline.style.display='';
+    flagline.textContent = dec.anyGroupDisagree ? '本次至少有一个 bit 的 3 个副本出现了不一致（发生过翻转）。' : '本次所有 bit 的 3 个副本都一致，未检测到翻转。';
+  } else if(scheme==='D'){
+    flagline.style.display='';
+    flagline.textContent = dec.anyMultiError
+      ? '本次至少一个分组发生了 2 位及以上错误——超出单错纠正能力，可能留下错误或发生误纠正。'
+      : (dec.detected ? '本次检测到分组错误，已尝试单 bit 纠正。' : '本次未检测到分组错误。');
+  } else {
+    flagline.style.display='none';
+  }
+
+  const m=document.getElementById('n2metrics3');
+  m.innerHTML = `
+    <div class="n2mcard"><div class="v">45</div><div class="k">原始 payload bit 数</div></div>
+    <div class="n2mcard"><div class="v">${sentLen}</div><div class="k">发送编码后总 bit 数</div></div>
+    <div class="n2mcard"><div class="v">${channelFlips}</div><div class="k">信道翻转的编码 bit 数</div></div>
+    <div class="n2mcard"><div class="v">${(channelFlips/sentLen*100).toFixed(1)}%</div><div class="k">信道 bit 错误比例</div></div>
+    <div class="n2mcard"><div class="v">${remainingErrors}</div><div class="k">解码后 payload 仍错 bit 数</div></div>
+    <div class="n2mcard"><div class="v">${(remainingErrors/45*100).toFixed(1)}%</div><div class="k">payload BER = 仍错 / 45</div></div>
+    <div class="n2mcard"><div class="v">${efficiency.toFixed(1)}%</div><div class="k">有效效率 = 45 / 发送总数</div></div>
+    <div class="n2mcard n2concl">${n2Conclusion3(scheme, {channelFlips, remainingErrors, fixedCount, dec}, sentLen-45)}</div>
+  `;
+  document.getElementById('n2sub3result').style.display='';
+  document.getElementById('n2sub3empty').style.display='none';
+  document.getElementById('n2batchbox3').style.display='none';
+}
+function n2RunBatch3(n){
+  const scheme=n2Scheme3;
+  const p=n2P3/100;
+  const rng = n2Seed3Fixed ? n2Mulberry32(20260722) : null;
+  let fullRecoverCount=0, sumBER=0, sentLen=0;
+  let errorRuns=0, detectedInErrorRuns=0, correctedInErrorRuns=0;
+  for(let i=0;i<n;i++){
+    const sentBits=n2Encode3(scheme, N2_MSG_BITS);
+    sentLen=sentBits.length;
+    const channelBits=sentBits.map(b=> n2Rand3(rng)<p ? 1-b : b);
+    const channelFlips=channelBits.filter((b,idx)=>b!==sentBits[idx]).length;
+    const dec=n2Decode3(scheme, channelBits, sentBits, N2_MSG_BITS);
+    const remainingErrors=dec.stillWrong.filter(Boolean).length;
+    sumBER += remainingErrors/45;
+    if(remainingErrors===0) fullRecoverCount++;
+    if(channelFlips>0){
+      errorRuns++;
+      if(dec.detectable && dec.detected) detectedInErrorRuns++;
+      if(remainingErrors===0) correctedInErrorRuns++;
+    }
+  }
+  const fullRecoverRate=(fullRecoverCount/n*100).toFixed(1);
+  const avgBER=(sumBER/n*100).toFixed(2);
+  const effRatio=(45/sentLen*100).toFixed(1);
+  const detectApplicable = scheme!=='A';
+  const detectRate = errorRuns>0 ? (detectedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）';
+  const correctRate = errorRuns>0 ? (correctedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）';
+
+  const tbl=document.getElementById('n2batchtable3');
+  tbl.innerHTML=`
+    <tr><th>运行次数</th><th>完整恢复成功率</th><th>平均 payload BER</th><th>发送总 bit 数</th><th>有效数据比例</th><th>检错成功率</th><th>纠错成功率</th></tr>
+    <tr>
+      <td>${n}</td>
+      <td>${fullRecoverRate}%</td>
+      <td>${avgBER}%</td>
+      <td>${sentLen}</td>
+      <td>${effRatio}%</td>
+      <td>${detectApplicable ? detectRate : '不适用（无检错机制）'}</td>
+      <td>${correctRate}</td>
+    </tr>`;
+  document.getElementById('n2batchbox3').style.display='';
+  document.getElementById('n2sub3result').style.display='none';
+}
+function n2ResetSub3(){
+  n2Scheme3='A';
+  n2ShowD3=false;
+  n2InitSchemes3();
+  n2P3=10;
+  document.getElementById('n2p3').value=10;
+  document.getElementById('n2p3Val').textContent='10%';
+  document.getElementById('n2seed3fix').checked=false;
+  n2Seed3Fixed=false;
+  document.getElementById('n2sub3result').style.display='none';
+  document.getElementById('n2sub3empty').style.display='';
+  document.getElementById('n2batchbox3').style.display='none';
+}
+
+/* ---------------------------------------------------------------------------
+   通信可靠性策略卡：不判唯一正确答案，只给出决策提示
+   --------------------------------------------------------------------------- */
+function n2StratPrompt(){
+  const sig=document.getElementById('n2sigLevel').value;
+  const pwr=document.getElementById('n2pwrLevel').value;
+  const biz=document.getElementById('n2bizType').value;
+  const el=document.getElementById('n2stratresult');
+  el.style.display='';
+  el.innerHTML = `信号「${sig}」× 电量「${pwr}」× 业务「${biz}」——请说明：选稳定档还是高速档？是否加 FEC？是否启用 CRC？是否允许重传？是否暂停低优先级业务？实际系统会根据链路状态选择策略，这里没有唯一正确答案，请解释你的取舍理由。`;
+}
+
+/* ---------------------------------------------------------------------------
+   初始化：不自动发送，初始无结果（子实验②③），子实验①默认展示无噪声理想点
+   --------------------------------------------------------------------------- */
+function n2Init(){
+  n2ShowSub(1);
+  n2SetMod('bpsk'); // 子实验①：σ=0，理想点集中展示
+  n2SetMode2('manual'); // 子实验②：手动模式，无结果占位
+  document.getElementById('n2p2').value=n2P2;
+  document.getElementById('n2p2Val').textContent=n2P2+'%';
+  n2InitSchemes3(); // 子实验③：方案卡渲染，无结果占位
+  document.getElementById('n2p3').value=n2P3;
+  document.getElementById('n2p3Val').textContent=n2P3+'%';
+  document.getElementById('n2sub3empty').style.display='';
+  document.getElementById('n2sub3result').style.display='none';
+
+  n2LoadScore();
+  n2RenderScore();
+  n2SetTeam(n2CurrentTeam);
+  n2SetTopMode(n2TopMode);
+}
+
+/* =============================================================================
+   课程三 v2：模式切换（实验/闯关）+ 顶部 A/B 计分栏 + 教师答案系统骨架
+   只存课堂状态（分数/当前组/当前模式/闯关进度），不含任何个人信息。
+   ============================================================================= */
+const N2_SCORE_KEY = 'satlab_course3_score_v1';
+let n2TopMode = 'lab';       // 'lab' 实验模式 / 'quest' 闯关模式
+let n2QLevel = 1;           // 闯关模式当前关卡 1~4
+let n2ScoreA = 0;
+let n2ScoreB = 0;
+let n2CurrentTeam = 'A';
+let n2ScoreHistory = [];    // 每次加分记录 {team, delta, reason}，供"撤销上一次加分"使用
+
+function n2SetTopMode(m){
+  n2TopMode = m;
+  document.getElementById('n2topModeLabBtn').classList.toggle('on', m==='lab');
+  document.getElementById('n2topModeQuestBtn').classList.toggle('on', m==='quest');
+  document.getElementById('n2labWrap').style.display = m==='lab' ? '' : 'none';
+  document.getElementById('n2questWrap').style.display = m==='quest' ? '' : 'none';
+  if(m==='quest' && typeof n2QuestGoLevel==='function') n2QuestGoLevel(n2QLevel);
+  n2SaveScore();
+}
+function n2SetTeam(t){
+  n2CurrentTeam = t;
+  document.getElementById('n2teamBtnA').classList.toggle('on', t==='A');
+  document.getElementById('n2teamBtnB').classList.toggle('on', t==='B');
+  document.getElementById('n2scoreCardA').classList.toggle('teamon', t==='A');
+  document.getElementById('n2scoreCardB').classList.toggle('teamon', t==='B');
+  n2SaveScore();
+}
+function n2RenderScore(){
+  document.getElementById('n2scoreA').textContent = n2ScoreA;
+  document.getElementById('n2scoreB').textContent = n2ScoreB;
+}
+function n2AddScore(team, delta, reason){
+  if(team==='A') n2ScoreA += delta; else n2ScoreB += delta;
+  n2ScoreHistory.push({team, delta, reason: reason||'手动调整'});
+  n2RenderScore();
+  n2SaveScore();
+}
+function n2ManualScore(team, delta){ n2AddScore(team, delta, '教师手动'+(delta>0?'+1':'-1')); }
+function n2UndoScore(){
+  const last = n2ScoreHistory.pop();
+  if(!last){ toast('没有可撤销的加分记录'); return; }
+  if(last.team==='A') n2ScoreA -= last.delta; else n2ScoreB -= last.delta;
+  n2RenderScore();
+  n2SaveScore();
+  toast('已撤销上一次加分（'+last.team+' 组 '+(last.delta>0?'+':'')+last.delta+'）');
+}
+function n2ClearSession(){
+  if(typeof confirm==='function' && !confirm('确定要清空课程三本节的分数和进度吗？此操作不可撤销。')) return;
+  n2ScoreA=0; n2ScoreB=0; n2ScoreHistory=[];
+  n2RenderScore();
+  n2SetTeam('A');
+  if(typeof n2QuestResetProgress==='function') n2QuestResetProgress();
+  n2SaveScore();
+  toast('课程三本节分数与进度已清空');
+}
+function n2SaveScore(){
+  try{
+    localStorage.setItem(N2_SCORE_KEY, JSON.stringify({
+      scoreA:n2ScoreA, scoreB:n2ScoreB, currentTeam:n2CurrentTeam, topMode:n2TopMode,
+      history:n2ScoreHistory,
+    }));
+  }catch(e){ /* localStorage 不可用时静默跳过，不影响课堂使用 */ }
+}
+function n2LoadScore(){
+  try{
+    const raw=localStorage.getItem(N2_SCORE_KEY);
+    if(!raw) return false;
+    const d=JSON.parse(raw);
+    n2ScoreA = d.scoreA||0; n2ScoreB = d.scoreB||0;
+    n2CurrentTeam = d.currentTeam==='B' ? 'B' : 'A';
+    n2ScoreHistory = Array.isArray(d.history) ? d.history : [];
+    if(d.topMode==='quest' || d.topMode==='lab') n2TopMode = d.topMode;
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ---------------------------------------------------------------------------
+   教师答案系统：防泄露弹窗骨架（复用课程二 teacherPrivacyGate 的思路，n2 前缀独立实现）
+   闯关模式每道题把自己的数据对象指给 n2ActiveQuestion，本骨架负责统一渲染/防泄露/快捷键。
+   --------------------------------------------------------------------------- */
+let n2ActiveQuestion = null; // 当前题目数据对象：answer/acceptedAnswers/reason/hint1~3/commonMistakes/teacher20s/teacher60s/boundary
+let n2ActiveHintLevel = 0;   // 当前题目已经显示到第几级提示（0 = 未显示任何提示）
+
+function n2OpenTeacherAssist(){
+  document.getElementById('n2teacherModal').style.display='flex';
+  document.getElementById('n2teacherPrivacyGate').style.display='';
+  document.getElementById('n2teacherAssistPanel').style.display='none';
+}
+function n2ConfirmTeacherAssist(){
+  document.getElementById('n2teacherPrivacyGate').style.display='none';
+  document.getElementById('n2teacherAssistPanel').style.display='';
+  n2RenderTeacherAssistContent();
+}
+function n2CloseTeacherAssist(){
+  document.getElementById('n2teacherModal').style.display='none';
+  // 关闭后复位到隐私确认页，下次打开前不残留已经显示过的答案
+  document.getElementById('n2teacherPrivacyGate').style.display='';
+  document.getElementById('n2teacherAssistPanel').style.display='none';
+}
+function n2TeacherAssistIsShowing(){
+  const modal=document.getElementById('n2teacherModal');
+  const panel=document.getElementById('n2teacherAssistPanel');
+  return modal.style.display!=='none' && panel.style.display!=='none';
+}
+function n2RenderTeacherAssistContent(){
+  const box=document.getElementById('n2teacherAssistContent');
+  if(!n2ActiveQuestion){
+    box.innerHTML = '<p style="color:var(--muted);font-size:15px">当前没有正在进行的题目——请在闯关模式中开始一道题后再打开教师辅助。</p>';
+    return;
+  }
+  const q=n2ActiveQuestion;
+  let hintsHtml='';
+  for(let lv=1; lv<=3; lv++){
+    if(n2ActiveHintLevel>=lv) hintsHtml += `<p><b>${lv} 级提示：</b>${q['hint'+lv]||''}</p>`;
+  }
+  box.innerHTML = `
+    <div class="n2qa-section">
+      <h4>正确答案</h4>
+      <p><b>${q.answer||''}</b>${(q.acceptedAnswers&&q.acceptedAnswers.length) ? '（可接受：'+q.acceptedAnswers.join('、')+'）' : ''}</p>
+      <p>${q.reason||''}</p>
+    </div>
+    <div class="n2qa-section">
+      <h4>分级提示（已显示 ${n2ActiveHintLevel}/3 级，快捷键 H 显示下一级）</h4>
+      ${hintsHtml || '<p style="color:var(--muted)">按 H 键或点"下一级提示"逐级显示。</p>'}
+    </div>
+    <div class="n2qa-section">
+      <h4>常见错误</h4>
+      <p>${q.commonMistakes||''}</p>
+    </div>
+    <div class="n2qa-section">
+      <h4>20 秒照读稿</h4>
+      <p>${q.teacher20s||''}</p>
+    </div>
+    <div class="n2qa-section">
+      <h4>60 秒照读稿</h4>
+      <p>${q.teacher60s||''}</p>
+    </div>
+    <div class="n2qa-section">
+      <p class="n2qa-boundary">技术边界：${q.boundary||''}</p>
+    </div>
+  `;
+}
+function n2NextHint(){
+  if(!n2ActiveQuestion) return;
+  n2ActiveHintLevel = Math.min(3, n2ActiveHintLevel+1);
+  if(n2TeacherAssistIsShowing()) n2RenderTeacherAssistContent();
+}
+
+/* 快捷键：T 打开教师辅助 / Esc 关闭 / H 下一级提示 / R 显示答案 / N 下一题
+   只在课程三 #tabpage-2 激活时生效，用 display!=='none' 判断，和课程二 T/H/Esc（只在 #tabpage-1 生效）互斥。 */
+document.addEventListener('keydown', function(e){
+  const tp2=document.getElementById('tabpage-2');
+  if(!tp2 || tp2.style.display==='none') return;
+  const tag=(e.target && e.target.tagName) || '';
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT') return;
+  if(e.key==='t' || e.key==='T'){ n2OpenTeacherAssist(); }
+  else if(e.key==='Escape'){ n2CloseTeacherAssist(); }
+  else if(e.key==='h' || e.key==='H'){
+    if(n2TopMode==='quest' && n2QLevel>=1 && n2QLevel<=4) n2QuestNextHintPublic();
+    else n2NextHint();
+  }
+  else if(e.key==='r' || e.key==='R'){ if(typeof n2QuestShowAnswer==='function') n2QuestShowAnswer(); }
+  else if(e.key==='n' || e.key==='N'){ if(typeof n2QuestNextQuestion==='function') n2QuestNextQuestion(); }
+});
+
+/* =============================================================================
+   闯关模式：第①②③关（判断题，有唯一正确答案）
+   通用计分规则（规格十二/十四）：答对且未用提示 = 2 分；用过一级提示后答对 = 1 分；
+   用过二/三级提示后答对 = 0 分；答错不扣分。教师直接"显示答案"（R 键/按钮）视为放弃本题，记 0 分。
+   第④关海岛通信指挥官是综合应用题，无唯一标准答案，见后文单独的多维评分逻辑（不使用本计分规则）。
+   ============================================================================= */
+function n2QScorePoints(hintLevel, isCorrect){
+  if(!isCorrect) return 0;
+  if(hintLevel<=0) return 2;
+  if(hintLevel===1) return 1;
+  return 0;
+}
+function n2QuestGoLevel(n){
+  n2QLevel = n;
+  for(let i=1;i<=4;i++){
+    const btn=document.getElementById('n2questTabBtn'+i);
+    if(btn) btn.classList.toggle('on', i===n);
+  }
+  if(n===1) n2L1Render();
+  else if(n===2) n2L2Render();
+  else if(n===3) n2L3Render();
+  else if(n===4){
+    if(typeof n2L4Render==='function') n2L4Render();
+    else document.getElementById('n2questLevelWrap').innerHTML='<p style="color:var(--muted);font-size:15px">第④关建设中，敬请期待（P2）。</p>';
+  }
+}
+function n2QuestNextHintPublic(){
+  if(n2QLevel===1) n2L1Hint();
+  else if(n2QLevel===2) n2L2Hint();
+  else if(n2QLevel===3) n2L3Hint();
+  else if(n2QLevel===4 && typeof n2L4Hint==='function') n2L4Hint();
+}
+function n2QuestShowAnswer(){
+  if(n2TopMode!=='quest') return;
+  if(n2QLevel===1) n2L1Reveal();
+  else if(n2QLevel===2) n2L2Reveal();
+  else if(n2QLevel===3) n2L3Reveal();
+  else if(n2QLevel===4 && typeof n2L4Reveal==='function') n2L4Reveal();
+}
+function n2QuestNextQuestion(){
+  if(n2TopMode!=='quest') return;
+  if(n2QLevel===1) n2L1Next();
+  else if(n2QLevel===2) n2L2Next();
+  else if(n2QLevel===3) n2L3Next();
+  else if(n2QLevel===4 && typeof n2L4Next==='function') n2L4Next();
+}
+function n2QuestResetProgress(){
+  n2L1State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L2State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  if(typeof n2L4Restart==='function') n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+  if(n2TopMode==='quest') n2QuestGoLevel(n2QLevel);
+}
+
+/* ---------------------------------------------------------------------------
+   第①关 · 符号配对赛：给 bit 选星座点 / 给星座点选 bit，BPSK + QPSK，默认 8 题
+   固定映射：BPSK 左=0 右=1；QPSK Gray 右上=00 左上=01 左下=11 右下=10（与实验①共用同一套约定）
+   --------------------------------------------------------------------------- */
+const N2_L1_BPSK_POINTS = [ {label:'左边的点', bits:'0'}, {label:'右边的点', bits:'1'} ];
+const N2_L1_QPSK_POINTS = [ {label:'右上', bits:'00'}, {label:'左上', bits:'01'}, {label:'左下', bits:'11'}, {label:'右下', bits:'10'} ];
+function n2L1MakeBpsk(dir, targetIdx, qid){
+  const target = N2_L1_BPSK_POINTS[targetIdx];
+  const common = {
+    hint1:'BPSK 只有两个理想点，一左一右，每个符号只代表 1 个 bit。',
+    hint2:'现在只需要记住哪边是 0，哪边是 1，不需要计算。',
+    hint3:'固定映射：左边的点 = bit 0，右边的点 = bit 1。',
+    commonMistakes:'把左右和 0/1 记反，或误以为这是算出来的，其实是固定约定。',
+    teacher20s:'BPSK 只有两个符号点。本课固定约定：左边的点是 0，右边的点是 1——不需要计算，只需要记住。',
+    teacher60s:'BPSK（二进制相移键控）每个符号只携带 1 个 bit，星座图上只有两个点。本课固定约定：左边的点代表 bit 0，右边的点代表 bit 1。做题时不需要计算，只需要记住这个固定映射。这个约定只在本课堂使用，不是行业统一标准，实际系统里具体哪个相位对应 0 或 1 可以自行定义，但收发双方必须提前约定一致，否则会整体译码颠倒。',
+    boundary:'BPSK 左=0/右=1 是本课固定的教学约定，不是行业强制标准。',
+  };
+  if(dir==='bit2point'){
+    return Object.assign({id:qid, mod:'bpsk', dir:'bit2point',
+      prompt:`发送 bit = ${target.bits}，接收端应该判到星座图上的哪个理想点？`,
+      options:N2_L1_BPSK_POINTS.map(p=>p.label), answerIdx:targetIdx,
+      answer:target.label, acceptedAnswers:[target.bits==='0'?'左点':'右点'],
+      reason:`本课固定映射：BPSK 左边的点 = 0，右边的点 = 1；bit = ${target.bits} 对应${target.label}。`,
+    }, common);
+  }
+  return Object.assign({id:qid, mod:'bpsk', dir:'point2bit',
+    prompt:`接收端判决结果是${target.label}，这个符号代表的 bit 是多少？`,
+    options:['0','1'], answerIdx: target.bits==='0'?0:1,
+    answer:target.bits, acceptedAnswers:[],
+    reason:`本课固定映射：BPSK 左边的点 = 0，右边的点 = 1；${target.label}对应 bit ${target.bits}。`,
+  }, common);
+}
+function n2L1MakeQpsk(dir, targetIdx, qid){
+  const target = N2_L1_QPSK_POINTS[targetIdx];
+  const common = {
+    hint1:'QPSK 有四个理想点，每个符号携带 2 个 bit。',
+    hint2:'四个点分别在右上、左上、左下、右下四个位置，各对应一组固定的 2-bit 编码。',
+    hint3:'固定 Gray 映射：右上 = 00，左上 = 01，左下 = 11，右下 = 10。',
+    commonMistakes:'把四个象限的顺序记错，或按"自然顺序"猜编码，而不是使用固定 Gray 映射。',
+    teacher20s:'QPSK 有四个理想点，每个符号能表示 2 个 bit。本课固定映射：右上 00、左上 01、左下 11、右下 10。',
+    teacher60s:'QPSK（正交相移键控）在星座图上有四个理想点，相比只有两个点的 BPSK，每个符号能多携带 1 个 bit，一共 2 个 bit。本课固定映射：右上角 = 00，左上角 = 01，左下角 = 11，右下角 = 10。这组映射用了 Gray 编码的思想——相邻象限只差 1 个 bit，这样即使噪声让判决跨到相邻象限，通常也只错 1 个 bit，但这不是本题重点，只需要记住固定对应关系即可。',
+    boundary:'QPSK 四象限 Gray 映射是本课固定约定，实际系统中的相位分配可以不同，但收发双方必须提前约定一致。',
+  };
+  if(dir==='bit2point'){
+    return Object.assign({id:qid, mod:'qpsk', dir:'bit2point',
+      prompt:`发送 bit = ${target.bits}，接收端应该判到星座图的哪个象限？`,
+      options:N2_L1_QPSK_POINTS.map(p=>p.label), answerIdx:targetIdx,
+      answer:target.label, acceptedAnswers:[],
+      reason:`本课固定映射：右上=00，左上=01，左下=11，右下=10；bit=${target.bits} 对应${target.label}。`,
+    }, common);
+  }
+  return Object.assign({id:qid, mod:'qpsk', dir:'point2bit',
+    prompt:`接收端判决结果落在${target.label}象限，这个符号代表的 2 个 bit 是多少？`,
+    options:N2_L1_QPSK_POINTS.map(p=>p.bits), answerIdx:targetIdx,
+    answer:target.bits, acceptedAnswers:[],
+    reason:`本课固定映射：右上=00，左上=01，左下=11，右下=10；${target.label}象限对应 bit ${target.bits}。`,
+  }, common);
+}
+const N2_L1_QUESTIONS = [
+  n2L1MakeBpsk('bit2point', 0, 'l1-1'),
+  n2L1MakeBpsk('point2bit', 1, 'l1-2'),
+  n2L1MakeBpsk('bit2point', 1, 'l1-3'),
+  n2L1MakeBpsk('point2bit', 0, 'l1-4'),
+  n2L1MakeQpsk('bit2point', 0, 'l1-5'),
+  n2L1MakeQpsk('point2bit', 1, 'l1-6'),
+  n2L1MakeQpsk('bit2point', 2, 'l1-7'),
+  n2L1MakeQpsk('point2bit', 3, 'l1-8'),
+];
+let n2L1State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+function n2L1Render(){
+  const i=n2L1State.idx, q=N2_L1_QUESTIONS[i];
+  n2ActiveQuestion=q; n2ActiveHintLevel=n2L1State.hintLevel[i];
+  const answered=n2L1State.answered[i], picked=n2L1State.picked[i];
+  let optsHtml='';
+  q.options.forEach((opt,idx)=>{
+    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L1Pick(${idx})" ${answered?'disabled':''}>${opt}</button>`;
+  });
+  let hintHtml='';
+  for(let lv=1; lv<=n2L1State.hintLevel[i]; lv++) hintHtml += `<p style="font-size:14px;color:var(--amber)">提示${lv}：${q['hint'+lv]}</p>`;
+  let resultHtml='';
+  if(answered){
+    const ok=n2L1State.correct[i];
+    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
+      <p><b>${ok?'✅ 回答正确':'❌ 回答不正确'}</b>（本题得分：${n2L1State.points[i]}）</p>
+      <p>正确答案：${q.answer}</p>
+      <p>${q.reason}</p>
+      ${!ok?`<p style="color:var(--muted)">常见错误：${q.commonMistakes}</p>`:''}
+      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
+    </div>`;
+  }
+  let summaryHtml='';
+  if(i===7 && answered){
+    const correctCount=n2L1State.correct.filter(Boolean).length;
+    const totalPts=n2L1State.points.reduce((a,b)=>a+b,0);
+    summaryHtml = `<div class="n2qsummary"><h4>第①关结束</h4><p>共 8 题，答对 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L1Restart()">↺ 重新开始本关</button></div>`;
+  }
+  document.getElementById('n2questLevelWrap').innerHTML = `
+    <div class="n2qprogress">第①关 · 符号配对赛　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qcard">
+      <div class="n2qprompt">${q.prompt}</div>
+      <div class="n2qoptions">${optsHtml}</div>
+      ${hintHtml}
+      <div class="n2qbtnrow">
+        <button class="btn" onclick="n2L1Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L1Submit()" ${answered||picked===null?'disabled':''}>提交答案</button>
+        <button class="btn" onclick="n2L1Next()" ${answered?'':'disabled'}>下一题（N）</button>
+      </div>
+      ${resultHtml}
+    </div>
+    ${summaryHtml}
+  `;
+}
+function n2L1Pick(idx){ if(n2L1State.answered[n2L1State.idx]) return; n2L1State.picked[n2L1State.idx]=idx; n2L1Render(); }
+function n2L1Hint(){
+  const i=n2L1State.idx;
+  if(n2L1State.answered[i]) return;
+  n2L1State.hintLevel[i]=Math.min(3, n2L1State.hintLevel[i]+1);
+  n2ActiveHintLevel=n2L1State.hintLevel[i];
+  n2L1Render();
+}
+function n2L1Submit(){
+  const i=n2L1State.idx, q=N2_L1_QUESTIONS[i];
+  if(n2L1State.answered[i] || n2L1State.picked[i]===null) return;
+  const ok = n2L1State.picked[i]===q.answerIdx;
+  n2L1State.answered[i]=true; n2L1State.correct[i]=ok;
+  const pts=n2QScorePoints(n2L1State.hintLevel[i], ok);
+  n2L1State.points[i]=pts;
+  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第①关第'+(i+1)+'题');
+  n2L1Render();
+}
+function n2L1Next(){ const i=n2L1State.idx; if(!n2L1State.answered[i]) return; if(i<7) n2L1State.idx++; n2L1Render(); }
+function n2L1Reveal(){
+  const i=n2L1State.idx;
+  if(n2L1State.answered[i]) return;
+  n2L1State.answered[i]=true; n2L1State.correct[i]=false; n2L1State.points[i]=0;
+  n2L1Render();
+}
+function n2L1Restart(){
+  n2L1State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L1Render();
+}
+
+/* ---------------------------------------------------------------------------
+   第②关 · 点云判决挑战：给一个带噪接收点（发送端隐藏），判断接收端会判成哪个 symbol
+   复用实验①已验证的 N2_CONST 星座数据 + n2Decide1 最近点判决函数，不重新实现数学逻辑
+   三档：简单(明显靠近一点)/中等(靠近边界未跨过)/困难(已跨过边界)，坐标固定写死，不生成边界歧义题
+   --------------------------------------------------------------------------- */
+function n2L2Common(mod){
+  if(mod==='bpsk') return {
+    hint1:'先看这个点落在哪个判决区域——BPSK 只有左右两个区域。',
+    hint2:'接收端通常判为距离最近的理想点，不是猜发送端原本想发什么。',
+    hint3:'不要猜发送端原本想发什么，只判断接收点现在落在哪一侧、离哪个理想点更近。',
+    commonMistakes:'把"发送端原本发的符号"当成答案，而不是看接收点实际落在哪个判决区域。',
+    boundary:'本题只判断接收端的判决结果，不代表发送端"本来就该"发这个符号——那是另一件事。',
+  };
+  return {
+    hint1:'先看这个点落在哪个象限（判决区域）——QPSK 有四个象限。',
+    hint2:'接收端通常判为距离最近的理想点，四个理想点分别在四个象限中心附近。',
+    hint3:'不要猜发送端原本想发什么，只判断接收点现在离哪个理想点最近。',
+    commonMistakes:'把"发送端原本发的符号"当成答案，或凭直觉判断象限而不是实际比较到理想点的距离。',
+    boundary:'本题只判断接收端的判决结果，不代表发送端"本来就该"发这个符号——那是另一件事。',
+  };
+}
+function n2L2Build(raw){
+  const cfg=N2_CONST[raw.mod];
+  const decidedIdx=n2Decide1(cfg, raw.rx.x, raw.rx.y); // 复用实验①已验证的最近点判决函数
+  const decided=cfg.points[decidedIdx];
+  const sent=cfg.points[raw.sentIdx];
+  let bitErr=0;
+  for(let k=0;k<sent.bits.length;k++) if(sent.bits[k]!==decided.bits[k]) bitErr++;
+  const symErr = decidedIdx!==raw.sentIdx;
+  return Object.assign({}, raw, n2L2Common(raw.mod), {
+    cfg, decidedIdx, options:cfg.points.map(p=>p.bits), answerIdx:decidedIdx,
+    answer:decided.bits, acceptedAnswers:[],
+    reason:`接收点距离理想点「${decided.bits}」最近，所以接收端判决为「${decided.bits}」。${symErr?'这次已经跨过判决边界，产生了符号错误。':'这次没有跨过判决边界，判决正确。'}`,
+    teacher20s:`噪声把接收点推离了理想位置。接收端只看这个点现在离哪个理想点最近，本题判为「${decided.bits}」。`,
+    teacher60s:`噪声不会在屏幕上直接写出一个错误 bit，它先把接收点推离理想位置。接收端的判决规则很简单：看这个点距离哪个理想点最近，就判成哪个符号。本题接收点距离「${decided.bits}」最近，所以判决结果是「${decided.bits}」；${symErr?'发送端实际发送的是「'+sent.bits+'」，判决结果和发送端不一致，这就是一次符号错误，对应 '+bitErr+' 个 bit 错误。':'和发送端实际发送的符号一致，判决正确。'}`,
+    bitErr, symErr,
+  });
+}
+const N2_L2_QUESTIONS = [
+  {id:'l2-1', mod:'bpsk', sentIdx:1, rx:{x:0.9,y:0},    diff:'简单'},
+  {id:'l2-2', mod:'bpsk', sentIdx:1, rx:{x:0.2,y:0},    diff:'中等'},
+  {id:'l2-3', mod:'bpsk', sentIdx:1, rx:{x:-0.15,y:0},  diff:'困难'},
+  {id:'l2-4', mod:'qpsk', sentIdx:0, rx:{x:0.9,y:0.9},  diff:'简单'},
+  {id:'l2-5', mod:'qpsk', sentIdx:0, rx:{x:0.1,y:0.6},  diff:'中等'},
+  {id:'l2-6', mod:'qpsk', sentIdx:0, rx:{x:-0.1,y:0.6}, diff:'困难'},
+  {id:'l2-7', mod:'bpsk', sentIdx:0, rx:{x:-0.85,y:0},  diff:'简单'},
+  {id:'l2-8', mod:'qpsk', sentIdx:2, rx:{x:-0.6,y:-0.05},diff:'中等'},
+].map(n2L2Build);
+let n2L2State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+function n2L2DrawCanvas(canvasId, cfg, rx, reveal, decidedIdx, sentIdx){
+  const cv=document.getElementById(canvasId);
+  if(!cv) return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const isLight=document.body.classList.contains('light');
+  const cx0=W/2, cy0=H/2, R=W*0.34;
+  const toPx=(x,y)=>[cx0+x*R, cy0-y*R];
+  ctx.strokeStyle=isLight?'#c9d4e4':'#2a3752'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx0,10); ctx.lineTo(cx0,H-10); ctx.moveTo(10,cy0); ctx.lineTo(W-10,cy0); ctx.stroke();
+  ctx.setLineDash([5,4]); ctx.strokeStyle=isLight?'#0a7ea4':'#4cc9f0';
+  cfg.xBoundaries.forEach(bx=>{ const px=toPx(bx,0)[0]; ctx.beginPath(); ctx.moveTo(px,8); ctx.lineTo(px,H-8); ctx.stroke(); });
+  cfg.yBoundaries.forEach(by=>{ const py=toPx(0,by)[1]; ctx.beginPath(); ctx.moveTo(8,py); ctx.lineTo(W-8,py); ctx.stroke(); });
+  ctx.setLineDash([]);
+  cfg.points.forEach(p=>{
+    const [px,py]=toPx(p.x,p.y);
+    ctx.fillStyle=isLight?'#0a7ea4':'#4cc9f0';
+    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=isLight?'#16213a':'#e8eef8'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle=isLight?'#16213a':'#e8eef8'; ctx.font='12px monospace';
+    ctx.fillText(p.bits, px+8, py-8);
+  });
+  const [rpx,rpy]=toPx(rx.x, rx.y);
+  ctx.fillStyle = reveal ? ((decidedIdx===sentIdx)?(isLight?'rgba(23,138,76,.8)':'rgba(61,220,132,.85)'):(isLight?'rgba(201,59,59,.85)':'rgba(255,107,107,.9)')) : (isLight?'rgba(90,107,136,.8)':'rgba(157,176,204,.85)');
+  ctx.beginPath(); ctx.arc(rpx,rpy,5,0,Math.PI*2); ctx.fill();
+}
+function n2L2Render(){
+  const i=n2L2State.idx, q=N2_L2_QUESTIONS[i];
+  n2ActiveQuestion=q; n2ActiveHintLevel=n2L2State.hintLevel[i];
+  const answered=n2L2State.answered[i], picked=n2L2State.picked[i];
+  let optsHtml='';
+  q.options.forEach((opt,idx)=>{
+    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L2Pick(${idx})" ${answered?'disabled':''}>接收端判为 ${opt}</button>`;
+  });
+  let hintHtml='';
+  for(let lv=1; lv<=n2L2State.hintLevel[i]; lv++) hintHtml += `<p style="font-size:14px;color:var(--amber)">提示${lv}：${q['hint'+lv]}</p>`;
+  let resultHtml='';
+  if(answered){
+    const ok=n2L2State.correct[i];
+    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
+      <p><b>${ok?'✅ 判断正确':'❌ 判断不正确'}</b>（本题得分：${n2L2State.points[i]}）——接收端实际判决为「${q.answer}」</p>
+      <p>发送端实际发送符号：「${q.cfg.points[q.sentIdx].bits}」　是否产生符号错误：${q.symErr?'是':'否'}　对应 bit 错误数：${q.bitErr}</p>
+      <p>${q.reason}</p>
+      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
+    </div>`;
+  }
+  let summaryHtml='';
+  if(i===7 && answered){
+    const correctCount=n2L2State.correct.filter(Boolean).length;
+    const totalPts=n2L2State.points.reduce((a,b)=>a+b,0);
+    summaryHtml = `<div class="n2qsummary"><h4>第②关结束</h4><p>共 8 题，判断正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L2Restart()">↺ 重新开始本关</button></div>`;
+  }
+  document.getElementById('n2questLevelWrap').innerHTML = `
+    <div class="n2qprogress">第②关 · 点云判决挑战　第 ${i+1}/8 题　难度：${q.diff}　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qcard">
+      <div class="n2qprompt">下面是一个带噪声的接收点（发送端实际发送的符号暂时隐藏）。请判断：接收端会把它判成哪个符号？</div>
+      <canvas id="n2l2canvas" width="240" height="240"></canvas>
+      <div class="n2qoptions">${optsHtml}</div>
+      ${hintHtml}
+      <div class="n2qbtnrow">
+        <button class="btn" onclick="n2L2Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L2Submit()" ${answered||picked===null?'disabled':''}>提交判断</button>
+        <button class="btn" onclick="n2L2Next()" ${answered?'':'disabled'}>下一题（N）</button>
+      </div>
+      ${resultHtml}
+    </div>
+    ${summaryHtml}
+  `;
+  n2L2DrawCanvas('n2l2canvas', q.cfg, q.rx, answered, q.decidedIdx, q.sentIdx);
+}
+function n2L2Pick(idx){ if(n2L2State.answered[n2L2State.idx]) return; n2L2State.picked[n2L2State.idx]=idx; n2L2Render(); }
+function n2L2Hint(){
+  const i=n2L2State.idx;
+  if(n2L2State.answered[i]) return;
+  n2L2State.hintLevel[i]=Math.min(3, n2L2State.hintLevel[i]+1);
+  n2ActiveHintLevel=n2L2State.hintLevel[i];
+  n2L2Render();
+}
+function n2L2Submit(){
+  const i=n2L2State.idx, q=N2_L2_QUESTIONS[i];
+  if(n2L2State.answered[i] || n2L2State.picked[i]===null) return;
+  const ok = n2L2State.picked[i]===q.answerIdx;
+  n2L2State.answered[i]=true; n2L2State.correct[i]=ok;
+  const pts=n2QScorePoints(n2L2State.hintLevel[i], ok);
+  n2L2State.points[i]=pts;
+  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第②关第'+(i+1)+'题');
+  n2L2Render();
+}
+function n2L2Next(){ const i=n2L2State.idx; if(!n2L2State.answered[i]) return; if(i<7) n2L2State.idx++; n2L2Render(); }
+function n2L2Reveal(){
+  const i=n2L2State.idx;
+  if(n2L2State.answered[i]) return;
+  n2L2State.answered[i]=true; n2L2State.correct[i]=false; n2L2State.points[i]=0;
+  n2L2Render();
+}
+function n2L2Restart(){
+  n2L2State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L2Render();
+}
+
+/* ---------------------------------------------------------------------------
+   第③关 · BER 侦探：点击所有错误位置 + 填错误 bit 数 + 选 BER，只用简单分数 1/8、2/8、3/12、1/16
+   --------------------------------------------------------------------------- */
+function n2L3Build(sentBits, errPositions, qid){
+  const received = sentBits.slice();
+  errPositions.forEach(idx=>{ received[idx] = 1-received[idx]; });
+  const total = sentBits.length, count = errPositions.length;
+  const opts = [`${count}/${total}`, `${count+1}/${total}`, `${count}/${total-count||1}`];
+  const evenQ = (parseInt(qid.replace(/\D/g,''),10) % 2 === 0);
+  const order = evenQ ? [1,0,2] : [0,1,2];
+  const berOptions = order.map(k=>opts[k]);
+  const berAnswerIdx = berOptions.indexOf(opts[0]);
+  return {
+    id:qid, sent:sentBits.slice(), received, errorPositions:errPositions.slice(), totalBits:total, errorCount:count,
+    berOptions, berAnswerIdx,
+    answer:`错误位置（从0开始计数）：${errPositions.join(', ')}；错误数：${count}；BER = ${count}/${total}`,
+    acceptedAnswers:[],
+    reason:`逐位比较发送串和接收串，第 ${errPositions.join('、')} 位（从0开始计数）不同，共 ${count} 处；BER = 错误 bit 数 ÷ 总 bit 数 = ${count}/${total}。`,
+    hint1:'从左到右逐位比较发送串和接收串，找到所有不同的位置。',
+    hint2:'先数出有几个位置不同，再看总共有多少位——这两个数字分别是分子和分母。',
+    hint3:`BER 的分母不是错误数也不是正确数，而是总 bit 数：本题是 ${count}/${total}。`,
+    commonMistakes:'把分母错填成"正确的位数"，或漏数/多数错误位置，尤其是首尾位置容易漏看。',
+    teacher20s:`BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。本题错了 ${count} 位，总共 ${total} 位，BER = ${count}/${total}。`,
+    teacher60s:`BER（误码率）的计算只需要两个数字：分子是错误 bit 数，分母是总传输 bit 数，二者相除就是 BER。本题发送串和接收串逐位比较后，在第 ${errPositions.join('、')} 位（从0开始计数）出现不同，一共 ${count} 处错误，总长度是 ${total} bit，所以 BER = ${count}/${total}。BER 不是网速，也不是信号强度，它只描述"错了多少、共传了多少"这一个比例关系。`,
+    boundary:'本题使用简单分数（1/8、2/8、3/12、1/16），刻意避免出现循环小数，方便课堂心算核对。',
+  };
+}
+const N2_L3_QUESTIONS = [
+  n2L3Build([1,0,1,0,1,0,1,0], [5], 'l3-1'),
+  n2L3Build([1,1,0,0,1,1,0,0], [1,6], 'l3-2'),
+  n2L3Build([1,0,0,1,1,0,1,1,0,0,1,0], [2,7,10], 'l3-3'),
+  n2L3Build([1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1], [3], 'l3-4'),
+  n2L3Build([0,1,1,0,1,0,0,1], [2], 'l3-5'),
+  n2L3Build([0,0,1,1,0,1,1,0], [0,5], 'l3-6'),
+  n2L3Build([0,1,1,0,0,1,0,1,1,0,0,1], [1,4,9], 'l3-7'),
+  n2L3Build([1,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0], [6], 'l3-8'),
+];
+let n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
+function n2L3ToggleMark(pos){
+  const i=n2L3State.idx;
+  if(n2L3State.answered[i]) return;
+  const set=n2L3State.marked[i];
+  if(set.has(pos)) set.delete(pos); else set.add(pos);
+  n2L3Render();
+}
+function n2L3SetCount(val){ n2L3State.countVal[n2L3State.idx]=val; }
+function n2L3PickBer(idx){ if(n2L3State.answered[n2L3State.idx]) return; n2L3State.berPicked[n2L3State.idx]=idx; n2L3Render(); }
+function n2L3Render(){
+  const i=n2L3State.idx, q=N2_L3_QUESTIONS[i];
+  n2ActiveQuestion=q; n2ActiveHintLevel=n2L3State.hintLevel[i];
+  const answered=n2L3State.answered[i], marked=n2L3State.marked[i];
+  let bitsHtml='';
+  for(let k=0;k<q.received.length;k++){
+    const isMarked=marked.has(k), isActualErr=q.errorPositions.includes(k);
+    let cls='bitclick';
+    if(answered){ if(isActualErr) cls+=' flip'; else if(isMarked) cls+=' fix'; }
+    else if(isMarked) cls+=' marked';
+    bitsHtml += `<span class="${cls}" onclick="n2L3ToggleMark(${k})">${q.received[k]}</span>`;
+  }
+  const countVal=n2L3State.countVal[i], berPicked=n2L3State.berPicked[i];
+  let berOptsHtml='';
+  q.berOptions.forEach((opt,idx)=>{
+    berOptsHtml += `<button class="btn${berPicked===idx?' picked':''}" onclick="n2L3PickBer(${idx})" ${answered?'disabled':''}>${opt}</button>`;
+  });
+  let resultHtml='';
+  if(answered){
+    const ok=n2L3State.correct[i];
+    const markOk = marked.size===q.errorPositions.length && q.errorPositions.every(p=>marked.has(p));
+    const countOk = parseInt(countVal,10)===q.errorCount;
+    const berOk = berPicked===q.berAnswerIdx;
+    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
+      <p><b>${ok?'✅ 全部正确':'❌ 存在错误'}</b>（本题得分：${n2L3State.points[i]}）——错误位置找全：${markOk?'✔':'✘'}　错误数正确：${countOk?'✔':'✘'}　BER正确：${berOk?'✔':'✘'}</p>
+      <p>正确答案：${q.answer}</p>
+      <p>${q.reason}</p>
+      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
+    </div>`;
+  }
+  let summaryHtml='';
+  if(i===7 && answered){
+    const correctCount=n2L3State.correct.filter(Boolean).length;
+    const totalPts=n2L3State.points.reduce((a,b)=>a+b,0);
+    summaryHtml = `<div class="n2qsummary"><h4>第③关结束</h4><p>共 8 题，全部正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L3Restart()">↺ 重新开始本关</button></div>`;
+  }
+  document.getElementById('n2questLevelWrap').innerHTML = `
+    <div class="n2qprogress">第③关 · BER 侦探　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qcard">
+      <div class="n2qprompt">下面是发送串和接收串（共 ${q.totalBits} bit）。请：① 点击接收串中所有出错的位置　② 填写错误 bit 数　③ 选出正确的 BER。</div>
+      <div class="n2row"><div class="lbl">发送 bits</div><div class="n2bits mono">${q.sent.join('')}</div></div>
+      <div class="n2row"><div class="lbl">接收 bits（点击标记你认为错误的位置）</div><div class="n2bits mono n2bitclickable">${bitsHtml}</div></div>
+      <div class="n2row"><div class="lbl">错误 bit 数：</div><input type="number" min="0" style="width:80px;font-size:16px;padding:6px" value="${countVal}" oninput="n2L3SetCount(this.value)" ${answered?'disabled':''}></div>
+      <div class="n2row"><div class="lbl">BER：</div><div class="n2qoptions">${berOptsHtml}</div></div>
+      <div class="n2qbtnrow">
+        <button class="btn" onclick="n2L3Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L3Submit()" ${answered?'disabled':''}>提交答案</button>
+        <button class="btn" onclick="n2L3Next()" ${answered?'':'disabled'}>下一题（N）</button>
+      </div>
+      ${resultHtml}
+    </div>
+    ${summaryHtml}
+  `;
+}
+function n2L3Hint(){
+  const i=n2L3State.idx;
+  if(n2L3State.answered[i]) return;
+  n2L3State.hintLevel[i]=Math.min(3, n2L3State.hintLevel[i]+1);
+  n2ActiveHintLevel=n2L3State.hintLevel[i];
+  n2L3Render();
+}
+function n2L3Submit(){
+  const i=n2L3State.idx, q=N2_L3_QUESTIONS[i];
+  if(n2L3State.answered[i]) return;
+  const marked=n2L3State.marked[i];
+  const markOk = marked.size===q.errorPositions.length && q.errorPositions.every(p=>marked.has(p));
+  const countOk = parseInt(n2L3State.countVal[i],10)===q.errorCount;
+  const berOk = n2L3State.berPicked[i]===q.berAnswerIdx;
+  const ok = markOk && countOk && berOk;
+  n2L3State.answered[i]=true; n2L3State.correct[i]=ok;
+  const pts=n2QScorePoints(n2L3State.hintLevel[i], ok);
+  n2L3State.points[i]=pts;
+  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第③关第'+(i+1)+'题');
+  n2L3Render();
+}
+function n2L3Next(){ const i=n2L3State.idx; if(!n2L3State.answered[i]) return; if(i<7) n2L3State.idx++; n2L3Render(); }
+function n2L3Reveal(){
+  const i=n2L3State.idx;
+  if(n2L3State.answered[i]) return;
+  n2L3State.answered[i]=true; n2L3State.correct[i]=false; n2L3State.points[i]=0;
+  n2L3Render();
+}
+function n2L3Restart(){
+  n2L3State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L3Render();
+}
+
+/* ---------------------------------------------------------------------------
+   第④关 · 海岛通信指挥官：综合应用题，无唯一标准答案。
+   学生选五项（调制档位/CRC/FEC/重传/业务调整），系统按四个维度各 0~5 分评分
+   （核心任务保障/可靠性/数据开销/电量消耗），不判对错，只给推荐方案、可接受替代方案、风险提示。
+   --------------------------------------------------------------------------- */
+const N2_L4_SCENARIOS = [
+  { id:'l4-1', link:'很差', power:'只够一小时', task:'救援坐标',
+    recommended:'稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 只保留位置和文字',
+    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字'],
+    risk:'链路很差、电量只剩一小时：选择"全部保留"业务或"高速档"调制会明显推高数据开销和电量消耗，可能导致坐标还没发完就断电或断链。',
+    reason:'救援坐标是最高优先级数据，链路很差、电量紧张时应优先保证它送达，而不是兼顾语音图片。' },
+  { id:'l4-2', link:'一般', power:'有限', task:'求救文字',
+    recommended:'稳定档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字',
+    acceptable:['高速档 + CRC 开 + FEC 中等 + 允许重传 + 降低语音质量'],
+    risk:'电量有限时，若同时选择"强 FEC"和"允许重传"，开销和电量消耗都会偏高，可能撑不到任务结束。',
+    reason:'求救文字数据量小，链路一般时有条件优先保证可靠送达，代价可以接受。' },
+  { id:'l4-3', link:'好', power:'充足', task:'短语音',
+    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留',
+    acceptable:['高速档 + CRC 开 + FEC 不用 + 允许重传 + 降低语音质量'],
+    risk:'链路好、电量充足时过度保守（比如仍然暂停语音）会浪费当前良好的条件。',
+    reason:'链路好、电量充足时，语音这类中优先级业务也可以争取全部保留。' },
+  { id:'l4-4', link:'很差', power:'有限', task:'低清图片',
+    recommended:'稳定档 + CRC 开 + FEC 不用 + 不允许重传 + 暂停图片',
+    acceptable:['稳定档 + CRC 开 + FEC 中等 + 不允许重传 + 暂停图片'],
+    risk:'链路很差、电量有限时仍坚持传输图片（尤其选高速档或允许重传）会大量消耗本该留给位置文字的资源。',
+    reason:'低清图片优先级最低，链路差、电量紧张时应该优先暂停，把资源留给关键数据。' },
+  { id:'l4-5', link:'一般', power:'只够一小时', task:'救援坐标',
+    recommended:'稳定档 + CRC 开 + FEC 中等 + 仅关键数据重传 + 只保留位置和文字',
+    acceptable:['稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 只保留位置和文字'],
+    risk:'电量只够一小时时，若选择"允许重传"+"强 FEC"+"全部保留"的组合，电量消耗评分会很高，存在任务未完成就断电的风险。',
+    reason:'救援坐标优先级最高，电量紧张时要把有限的电量集中用在它身上。' },
+  { id:'l4-6', link:'好', power:'有限', task:'求救文字',
+    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字',
+    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 降低语音质量'],
+    risk:'电量有限时选择"全部保留"业务会让电量消耗评分偏高，且求救文字本身数据量小，不需要额外开销支撑语音图片。',
+    reason:'链路好可以用高速档节省时间，但电量有限仍需控制业务范围。' },
+  { id:'l4-7', link:'很差', power:'充足', task:'短语音',
+    recommended:'稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 降低语音质量',
+    acceptable:['稳定档 + CRC 开 + FEC 强 + 允许重传 + 降低语音质量'],
+    risk:'链路很差时坚持"高速档"或"全部保留"会让核心任务保障评分下降，即使电量充足也无法弥补链路本身的限制。',
+    reason:'链路很差时语音这类中优先级业务应主动降质，把有限的可靠传输能力留给关键内容。' },
+  { id:'l4-8', link:'一般', power:'充足', task:'低清图片',
+    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留',
+    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留'],
+    risk:'电量充足、链路一般时过度保守（暂停图片）不是必须的，但仍要注意 CRC 开启以避免图片数据损坏不可察觉。',
+    reason:'链路一般、电量充足时，即使是低优先级的图片也有条件传输，只是仍需基本的检错保护。' },
+];
+function n2L4Common(){
+  return {
+    hint1:'先判断这次任务哪种数据最不能出错。',
+    hint2:'再看当前链路和电量是否支持高开销方案。',
+    hint3:'先保位置和文字，再考虑语音和图片。',
+    commonMistakes:'不考虑当前链路和电量条件，固定选择"全部保留＋高速档＋强保护"，或反过来固定选择"最省"而不顾任务优先级。',
+    teacher60s:'这道题没有唯一正确组合，打分只反映当前条件下的取舍是否合理。评分维度包括核心任务保障、可靠性、数据开销、电量消耗——高分方案不是某一项拉满，而是能在当前链路和电量条件下，保住最重要的任务，并能说明清楚取舍理由。位置坐标和求救文字优先级最高，通常应该可靠性优先；语音可以降质或短时中断；图片优先级最低，链路差或电量紧张时可以暂停。',
+    boundary:'没有唯一正确组合。高分方案需要在当前条件下保住最重要任务，并能说明取舍理由。',
+  };
+}
+function n2L4Build(raw){
+  return Object.assign({}, raw, n2L4Common(), {
+    answer:raw.recommended, acceptedAnswers:raw.acceptable,
+    teacher20s:`当前链路「${raw.link}」、电量「${raw.power}」、任务「${raw.task}」——推荐方案：${raw.recommended}。${raw.reason}`,
+  });
+}
+const N2_L4_QUESTIONS = N2_L4_SCENARIOS.map(n2L4Build);
+let n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+
+function n2L4Clamp(v){ return Math.max(0, Math.min(5, Math.round(v))); }
+function n2L4Score(q, p){
+  const isReliabilityTask = (q.task==='救援坐标' || q.task==='求救文字');
+  const isImageTask = (q.task==='低清图片');
+  // ① 核心任务保障
+  let core=5;
+  if(isReliabilityTask){
+    if(p.crc==='关') core-=2;
+    if(p.fec==='不用') core-=1;
+    if(p.retrans==='不允许' && q.link==='很差') core-=2;
+  } else if(q.task==='短语音'){
+    if(p.retrans==='不允许' && q.link==='很差') core-=1;
+    if(p.crc==='关') core-=1;
+  } else if(isImageTask){
+    const heavy = (p.modTier==='高速档' && p.fec==='强' && p.retrans==='允许');
+    if(heavy && (q.link==='很差' || q.power==='只够一小时')) core-=2;
+  }
+  core = n2L4Clamp(core);
+  // ② 可靠性
+  let reliability=2;
+  if(p.crc==='开') reliability+=1;
+  if(p.fec==='中等') reliability+=1; else if(p.fec==='强') reliability+=2;
+  if(p.modTier==='稳定档') reliability+=1;
+  if(p.retrans!=='不允许') reliability+=1;
+  reliability = n2L4Clamp(reliability);
+  // ③ 数据开销（描述性：数值越高代表额外开销越大，不是"越高越好"）
+  let overhead=0;
+  if(p.crc==='开') overhead+=1;
+  if(p.fec==='中等') overhead+=1; else if(p.fec==='强') overhead+=2;
+  if(p.retrans==='允许') overhead+=2; else if(p.retrans==='仅关键数据') overhead+=1;
+  if(p.modTier==='稳定档') overhead+=1;
+  if(p.bizAdjust==='全部保留') overhead+=1;
+  overhead = n2L4Clamp(overhead);
+  // ④ 电量消耗（描述性：数值越高代表耗电越多）
+  let powerUse=0;
+  powerUse += (p.modTier==='高速档') ? 2 : 1;
+  if(p.retrans==='允许') powerUse+=2; else if(p.retrans==='仅关键数据') powerUse+=1;
+  if(p.fec==='强') powerUse+=1;
+  if(p.bizAdjust==='全部保留') powerUse+=1;
+  powerUse = n2L4Clamp(powerUse);
+  return {core, reliability, overhead, powerUse};
+}
+function n2L4PickDescribe(p){
+  return `${p.modTier} + CRC${p.crc==='开'?' 开':' 关'} + FEC${p.fec} + 重传${p.retrans} + 业务${p.bizAdjust}`;
+}
+function n2L4SetPick(field, val){
+  const i=n2L4State.idx;
+  if(n2L4State.submitted[i]) return;
+  n2L4State.picks[i][field]=val;
+}
+function n2L4Render(){
+  const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
+  n2ActiveQuestion=q; n2ActiveHintLevel = n2L4State.scores[i] ? 0 : 0; // 第④关不设逐题分级提示计数，H键仅展示三级提示文案供教师参考
+  const p=n2L4State.picks[i];
+  const submitted=n2L4State.submitted[i];
+  const sel=(field,options)=>`<select onchange="n2L4SetPick('${field}',this.value)" ${submitted?'disabled':''}>${options.map(o=>`<option value="${o}" ${p[field]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  let resultHtml='';
+  if(submitted){
+    const s=n2L4State.scores[i];
+    const bar=(label,val)=>{
+      let segs=''; for(let k=1;k<=5;k++) segs+=`<span class="${k<=val?'on':''}"></span>`;
+      return `<div class="n2l4bar"><div class="k">${label}</div><div class="n2l4barseg">${segs}</div><div class="lv">${val}/5</div></div>`;
+    };
+    resultHtml = `<div class="n2qresultbox show good">
+      <div class="n2l4bars">
+        ${bar('核心任务保障', s.core)}
+        ${bar('可靠性', s.reliability)}
+        ${bar('数据开销（越高代表开销越大）', s.overhead)}
+        ${bar('电量消耗（越高代表耗电越多）', s.powerUse)}
+      </div>
+      <p>你的方案：${n2L4PickDescribe(p)}</p>
+      <p><b>推荐方案：</b>${q.recommended}</p>
+      <p><b>可接受替代方案：</b>${q.acceptable.join('；')}</p>
+      <p><b>方案风险：</b>${q.risk}</p>
+      <p style="font-size:15px;color:var(--cyan)">教师复盘稿：${q.teacher20s}</p>
+      <p class="n2qa-boundary">${q.boundary}</p>
+    </div>`;
+  }
+  let summaryHtml='';
+  if(i===7 && submitted){
+    summaryHtml = `<div class="n2qsummary"><h4>第④关结束</h4><p>共 8 个场景，已全部提交方案。第④关无唯一对错，请两组各自陈述取舍理由。</p><button class="btn" onclick="n2L4Restart()">↺ 重新开始本关</button></div>`;
+  }
+  document.getElementById('n2questLevelWrap').innerHTML = `
+    <div class="n2qprogress">第④关 · 海岛通信指挥官　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qcard">
+      <div class="n2l4scenario">链路状态：<b>${q.link}</b>　电量：<b>${q.power}</b>　任务：<b>${q.task}</b></div>
+      <div class="n2qprompt">请为当前场景选择通信策略，系统会按四个维度评分（不判唯一对错）。</div>
+      <div class="n2l4choices">
+        <div><label>① 调制档位</label>${sel('modTier',['高速档','稳定档'])}</div>
+        <div><label>② CRC</label>${sel('crc',['开','关'])}</div>
+        <div><label>③ FEC</label>${sel('fec',['不用','中等','强'])}</div>
+        <div><label>④ 重传</label>${sel('retrans',['允许','仅关键数据','不允许'])}</div>
+        <div><label>⑤ 业务调整</label>${sel('bizAdjust',['全部保留','降低语音质量','暂停图片','只保留位置和文字'])}</div>
+      </div>
+      <div class="n2qbtnrow">
+        <button class="btn" onclick="n2L4Hint()">💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L4Submit()" ${submitted?'disabled':''}>提交方案</button>
+        <button class="btn" onclick="n2L4Next()" ${submitted?'':'disabled'}>下一题（N）</button>
+      </div>
+      ${resultHtml}
+    </div>
+    ${summaryHtml}
+  `;
+}
+function n2L4Hint(){
+  const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
+  toast('提示：'+q.hint1);
+}
+function n2L4Submit(){
+  const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
+  if(n2L4State.submitted[i]) return;
+  n2L4State.scores[i] = n2L4Score(q, n2L4State.picks[i]);
+  n2L4State.submitted[i]=true;
+  n2AddScore(n2CurrentTeam, 1, '第④关第'+(i+1)+'题（参与分，无唯一对错）');
+  n2L4Render();
+}
+function n2L4Next(){ const i=n2L4State.idx; if(!n2L4State.submitted[i]) return; if(i<7) n2L4State.idx++; n2L4Render(); }
+function n2L4Reveal(){
+  const i=n2L4State.idx;
+  if(n2L4State.submitted[i]) return;
+  n2L4State.scores[i] = n2L4Score(N2_L4_QUESTIONS[i], n2L4State.picks[i]);
+  n2L4State.submitted[i]=true;
+  n2L4Render();
+}
+function n2L4Restart(){
+  n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+  n2L4Render();
+}
+
+/* ---------------------------------------------------------------------------
+   讲师指引：内嵌 Markdown 常量与 teacher-guide.md 文件内容逐字一致（规格十八/十九）
+   --------------------------------------------------------------------------- */
+const N2_TEACHER_GUIDE_MD = `# 课程三 HTML 实验与闯关讲师指引
+
+本指引与网页内「🧑‍🏫 教师辅助 → 下载讲师指引」按钮下载的 \`课程三_HTML讲师指引.md\` 内容完全一致，供手机、打印或另一台设备离线查看。
+
+## 一、课堂使用总流程
+
+建议总时长：45 分钟（实验模式约 20 分钟 + 闯关模式约 25 分钟），可根据班级进度调整。
+
+> **与 PPT／故事板联动**：闯关四关分别对应故事板第 17（符号配对赛）、31（点云判决挑战）、35（BER 侦探）、49（海岛通信指挥官）页的规则页，每关打完后回到 PPT 对应的 30 秒复盘页；实验模式在教学页随讲随演，不单独占 PPT 页。
+
+1. **开场（3 分钟）**：讲清楚两条写死的技术边界（见第四节「快速答案卡」），再让学生知道今天会用网页验证判断，而不是老师直接讲结论。
+2. **实验模式（约 20 分钟，教师随讲随演）**：
+   - 先讲一个简单概念 → 学生纸上预测 → 网页验证 → 显示答案 → 教师复盘。
+   - 三个子实验按顺序演示：① 星座图与判决 → ② 误码与 BER → ③ CRC 与 FEC。
+   - **哪些答案不能提前显示**：子实验①的判决结果颜色和 bit 标签（点"隐藏答案"后）、子实验②的错误标记（点"隐藏错误标记"后）——这些都是"先让学生猜，再核对"的环节，不要提前点开。
+3. **切换到闯关模式（约 25 分钟，学生 A/B 两组竞赛）**：
+   - 顶部先选好当前作答组（A/B），四关可以按顺序打，也可以教师跳关、重复某一关。
+   - **哪些答案不能提前显示**：每道题在学生提交答案之前，正确答案不会出现在投影区；教师如果想自己先确认答案，必须用 T 键打开"教师辅助"，会先弹出隐私确认页，确认现在没有对着学生投影才能看到内容，Esc 随时关闭。
+4. **结束复盘（3 分钟）**：用第四节「快速答案卡」带全班过一遍固定结论，公布 A/B 两组总分。
+
+## 二、实验模式讲师指引
+
+### 实验① 星座图与判决
+
+- **实验目的**：让学生看到"噪声让接收点偏离理想位置，点跨过判决边界才会被判错"，不是"噪声直接把 bit 改错"。
+- **建议参数**：先固定种子演示 σ=0（理想点集中）→ 中噪声预设 → 高噪声预设，BPSK 演示完再切 QPSK 对比。
+- **操作步骤**：① 展示 σ=0 理想点；② 逐步提高噪声观察点云扩散；③ 比较 BPSK 与 QPSK 同噪声下的误判情况；④ 让学生指出哪些点越过了判决边界；⑤ 需要"先猜后核对"时，点"隐藏答案"再点"显示答案"核对。
+- **正常现象**：噪声越大，红点（判决错误）越多；QPSK 比 BPSK 更容易在同噪声下出错（相邻理想点间距更小）。
+- **正确结论**：噪声会让接收点偏离理想位置。只要点仍留在原来的判决区域，接收端通常还能判断正确；当点越过边界，就可能被判断成另一个符号。
+- **常见异常**：无（本实验是确定性可视化面板，不涉及随机报错）。
+- **学生可能误解**：以为"噪声直接改变了 bit 的值"，而不是"噪声先让接收点移动位置，判决错误后才产生 bit 错误"。
+- **20 秒逐字稿**：这个星座图上，蓝色点是发送端理想发出的符号。噪声会把接收点往四周推。只要红色的接收点还留在原来的区域里，接收端还是能判断正确；一旦跨过虚线判决边界，才会被判成另一个符号。
+- **60 秒逐字稿**：我们发送的每个符号，理论上应该落在星座图上的一个固定理想点。但信道里的噪声会让接收点"抖动"，偏离理想位置，抖动幅度由这个 σ 滑杆控制。判决规则很简单：接收端只看这个抖动后的点距离哪个理想点最近，就判成哪个符号。只要抖动没有让点跨过虚线（判决边界），结果仍然正确；一旦跨过边界，就会被判成邻近的另一个符号，这时才会产生 bit 错误。注意 QPSK 因为理想点之间挨得更近，同样的噪声下更容易被跨界判错，这不代表 QPSK "更差"，只是阶数更高、抗噪能力的代价。
+- **技术边界**：本实验的噪声 σ 只影响这个星座图的点云和判决，和实验②③里的"bit 翻转概率"是两个完全独立的变量，互不影响。
+
+### 实验② 误码与 BER
+
+- **实验目的**：让学生亲手数出"错了几位、共传了几位"，理解 BER 只是这两个数字的比值。
+- **建议参数**：先用「A 简单 bit 串」层级（发送 10110010），手动翻转 2 位（例如变成 11110000），全班一起手算 BER；再切换到「B 紧急消息 TEAM SAFE」层级演示 45 bit 场景。
+- **操作步骤**：① 选难度层级（简单 bit 串 / TEAM SAFE）；② A 手动翻转模式：点击 bit 制造错误，点"隐藏错误标记"让学生自己先找错误位置，再点"显示错误位置"核对，点"计算 BER"前不要提前公布；③ B 随机信道模式：调节独立翻转概率 p，可固定随机种子复现；④ 强调分子（信道中被翻转的 bit 数）和分母（编码后发送总 bit 数）分别是什么。
+- **正常现象**：p 越大，被标红的翻转位越多，信道 BER 越高；本实验不加保护，所以"信道 BER"和"Payload BER"数值相同。
+- **正确结论**：BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。
+- **常见异常**：无。
+- **学生可能误解**：把"信道 BER"和"Payload BER"混为一谈——本实验因为没有加保护方案，两者数值相同，但下一个实验（CRC/FEC）加了保护之后，两者会出现差异，这是重要的对比点。
+- **20 秒逐字稿**：这里发送了一串 bit。信道翻转了其中几位（红色标出），这就是"信道 BER"：翻转数除以总位数。因为这次没有加任何保护，最后恢复出来的数据错误位数和信道翻转位数完全一样。
+- **60 秒逐字稿**：误码率（BER）的计算只需要两个数字：分子是错误的 bit 数，分母是传输的总 bit 数。本实验里，"信道 BER"指的是信道中被翻转的编码 bit 数除以编码后发送的总 bit 数；"Payload BER"指的是恢复之后仍然错误的原始数据 bit 数除以原始 payload 的 bit 数。因为这个实验不加任何保护方案，信道翻转多少位，恢复出来就错多少位，所以这两个数字现在相等——但这不是巧合，而是"没有保护"这个前提决定的。等到下一个实验加了 CRC 或三次重复码之后，你们会看到这两个数字开始不一样。
+- **技术边界**：本实验的 bit 翻转概率 p（或手动翻转）与实验①的连续噪声 σ 是两套完全独立的模型，bit 翻转是课堂简化模型，不代表真实无线信道的全部物理过程。
+
+### 实验③ CRC 与 FEC
+
+- **实验目的**：让学生分清"检错"（CRC）和"纠错"（三次重复码/汉明码）的区别，以及"多保护 = 多开销"的取舍。
+- **建议参数**：先演示 A 不加保护（对照基线）→ B 教学版 CRC-4（生成多项式 x⁴+x+1，二进制 10011）→ C 三次重复码 → 可选展开 D 汉明(7,4)；p 建议先设 10%-20% 观察效果，再跑批量统计 100/500 次看趋势。
+- **操作步骤**：① 选保护方案；② 调节 bit 翻转概率 p；③ 先跑单次案例，观察发送/信道/恢复三行 bit 和恢复文本；④ 再跑批量统计 100 或 500 次，比较完整恢复率、平均 Payload BER、发送总 bit 数、检错/纠错成功率；⑤ 强调"CRC 只报告校验失败，不修复数据"。
+- **正常现象**：CRC 校验失败时，原始错误数据原样保留，没有被"修好"；三次重复码大部分情况能修复单个副本错误，但如果同一 bit 的 3 个副本里有 2 个或以上被翻转，多数表决会得到错误结果；汉明(7,4)（可选扩展）单个 codeword 内 1 位错必定纠对，2 位及以上错误超出单错纠正能力，可能留下错误或发生误纠正。
+- **正确结论**：CRC 主要用于检测错误，不修复数据；FEC（三次重复码/汉明码）利用冗余修复一定能力范围内的错误；增加保护会带来传输开销（发送总 bit 数变多）。
+- **常见异常**：无（批量统计有随机性属于正常现象，不是 bug——多次统计才能看出总体趋势）。
+- **学生可能误解**：以为"CRC 校验失败=自动把数据修好了"；以为"重复码/汉明码可以修复任意数量的错误"；以为"CRC-4 能检测所有可能的错误组合"（CRC-4 只保证检出单 bit 错误和大多数、并非全部的多 bit 错误组合）。
+- **20 秒逐字稿**：CRC 只负责"体检"，告诉你数据可能坏了，它自己不会把坏的数据修好。三次重复码是真正会"修"的方法，把每个 bit 发三遍，多数表决——但如果三份里坏了两份以上，修出来的结果也会是错的。
+- **60 秒逐字稿**：这个实验对比三种保护方式。A 不加保护，发送量最小，但没有任何检错或纠错能力。B 是教学版 CRC-4，生成多项式是 x⁴+x+1（二进制 10011），接收端会用同样的多项式重新计算一次余数，和收到的校验位比较：一致就"通过"，不一致就报告"校验失败"——但无论通过还是失败，CRC 都不会去改动任何数据 bit，失败时原始错误数据原样还在。C 是三次重复码，把每个 bit 重复发送三次，接收端用多数表决决定这一位是 0 还是 1，如果三份里只错了一份，多数表决能把它修回来；但如果错了两份或三份，修出来的反而是错的。批量统计模式能让大家看到"单次结果有随机性，多次统计才能看出总体趋势和平均可靠性"这句话的真正含义。
+- **技术边界**：CRC-4 只检错不纠错，不宣称能检测所有可能的错误组合；三次重复码/汉明码的纠错能力都有明确上限，超出上限可能留下错误或发生误纠正，不是"冗余越多一定越好"，而是要在可靠性和开销之间取舍。
+
+## 三、四个闯关游戏答案
+
+### 第①关 符号配对赛（8 题，判断题）
+
+- **规则**：给 bit 选星座点，或给星座点选 bit，覆盖 BPSK 和 QPSK。
+- **正确答案逻辑**：完全按下面的固定映射表判断，不需要计算。
+- **固定映射表**：
+  - BPSK：左边的点 = 0，右边的点 = 1。
+  - QPSK（Gray 映射）：右上 = 00，左上 = 01，左下 = 11，右下 = 10。
+- **评分规则**：答对且未用提示 = 2 分；用过一级提示后答对 = 1 分；用过二级或三级提示后答对 = 0 分；答错不扣分。
+- **一二三级提示**：
+  - 一级：先数这种调制一共有几个理想点。
+  - 二级：QPSK 有四个状态，每个状态需要两个 bit 区分。
+  - 三级：看右上左上左下右下对应的固定 Gray 映射。
+- **常见错误**：把左右或四个象限的对应关系记反，或试图用"自然顺序"猜测编码而不是使用固定映射。
+- **复盘逐字稿**：bit 是信息，symbol 是一次发送选择的信号状态。QPSK 有四种状态，所以在本课映射里一个 symbol 可以表示两个 bit。
+
+### 第②关 点云判决挑战（8 题，判断题）
+
+- **规则**：给一个带噪声的接收点（发送端实际发送的符号暂时隐藏），学生判断"接收端会判成哪个 symbol"。
+- **正确答案逻辑**：接收端永远判决为距离最近的理想点，用欧氏距离比较，和"发送端原本想发什么"无关——这是本关最容易搞错的地方。
+- **固定映射表**：与第①关相同（BPSK 左 0 右 1；QPSK 右上 00 左上 01 左下 11 右下 10）。
+- **评分规则**：同第①关（2 / 1 / 0 / 答错不扣）。
+- **一二三级提示**：
+  - 一级：先看这个点落在哪个判决区域。
+  - 二级：接收端通常判为距离最近的理想点。
+  - 三级：不要猜发送端原本想发什么，只判断接收端现在会认成什么。
+- **常见错误**：把"发送端原本发的符号"当成答案，而不是看接收点实际落在哪个判决区域。
+- **复盘逐字稿**：噪声不会在屏幕上直接写出一个错误 bit。它先把接收点推离理想位置。如果点跨过判决边界，接收机才会认成另一个符号，随后形成 bit 错误。
+
+### 第③关 BER 侦探（8 题，判断题）
+
+- **规则**：给发送串和接收串，学生要：① 点击所有错误位置 ② 填错误 bit 数 ③ 选出正确的 BER。三项都对才算全部正确。
+- **正确答案逻辑**：逐位比较发送串和接收串找出所有不同的位置；BER = 错误 bit 数 ÷ 传输总 bit 数。全部 8 题只使用简单分数：1/8、2/8、3/12、1/16，不出现循环小数。
+- **评分规则**：同第①关（三项全对才算"答对"，2 / 1 / 0 / 答错不扣）。
+- **一二三级提示**：
+  - 一级：从左到右逐位比较。
+  - 二级：先数出不同的位置，再看总共多少位。
+  - 三级：BER 的分母不是错误数也不是正确数，而是总 bit 数。
+- **常见错误**：把分母错填成"正确的位数"，或漏数/多数错误位置，尤其首尾位置容易漏看。
+- **复盘逐字稿**：BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。它不是网速，也不是信号强度。
+
+### 第④关 海岛通信指挥官（8 题，综合应用题，无唯一标准答案）
+
+- **规则**：给出链路状态（好/一般/很差）× 电量（充足/有限/只够一小时）× 任务（救援坐标/求救文字/短语音/低清图片），学生选调制档位、CRC 开关、FEC 强度、重传策略、业务调整共 5 项。
+- **正确答案逻辑**：**没有唯一正确组合**。系统按四个维度各打 0-5 分：核心任务保障、可靠性、数据开销、电量消耗，高分方案不是某一项拉满，而是能在当前链路和电量条件下保住最重要的任务。
+- **推荐原则**：位置坐标、求救文字这类关键数据 → 可靠性优先，通常稳定档 + CRC 开 + 适当 FEC，链路很差时可以允许关键数据重传；语音 → 可以降低质量或短时中断，不应该优先占用所有资源；图片 → 优先级最低，链路差或电量紧张时可以暂停。
+- **评分规则**：本关不用第①-③关的判断题计分规则，提交方案即获得 1 分参与分（不判定对错），核心价值在于四维评分和教师复盘讨论，不计入"答对/答错"统计。
+- **一二三级提示**：
+  - 一级：先判断这次任务哪种数据最不能出错。
+  - 二级：再看当前链路和电量是否支持高开销方案。
+  - 三级：先保位置和文字，再考虑语音和图片。
+- **常见错误**：不考虑当前链路和电量条件，固定选择"全部保留 + 高速档 + 强保护"，或反过来固定选择"最省"而不顾任务优先级。
+- **复盘逐字稿**：这道题没有唯一正确组合，打分只反映当前条件下的取舍是否合理。高分方案不是某一项拉满，而是能在当前链路和电量条件下，保住最重要的任务，并能说明清楚取舍理由。
+
+## 四、快速答案卡（可打印，供课堂随时翻查）
+
+- **QPSK 映射**：右上 00，左上 01，左下 11，右下 10。
+- **BPSK 映射**：左边的点 = 0，右边的点 = 1。
+- **BER 公式**：BER = 错误 bit 数 ÷ 总 bit 数（信道 BER 分母是编码后总 bit 数；Payload BER 分母是原始 payload bit 数，两者必须分开标注）。
+- **CRC**：CRC-4（生成多项式 x⁴+x+1，二进制 10011）——只检测错误，不自动修复数据，也不宣称能检测所有可能的错误组合。
+- **FEC**：利用冗余修复一定能力范围内的错误，不是任意数量的错误都能修复。
+- **重复码**：三位副本中最多错一位时，多数表决通常可以恢复；错两位或三位会恢复失败。
+- **海岛原则**：先保位置和文字，再考虑语音和图片；没有唯一正确组合，能说明取舍理由就是好方案。
+- **两条写死边界**：① 模拟噪声强度和 bit 独立翻转概率是两个完全不同的参数，互不影响；② 误码率必须分别标注"信道 BER"和"Payload BER"，不能只写"BER"。
+- **快捷键**：T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。
+
+## 五、技术故障备用方案（网页不能用时的纸笔替代）
+
+- **符号配对纸笔题**：老师口头报出一个 bit 串或象限方位，学生纸上写出对应的另一半（照第四节固定映射表判断），同桌互相检查。
+- **判决区域纸笔题**：老师在黑板画一个简化的星座图坐标轴，点上一个"接收点"位置，学生纸上判断它离哪个理想点最近、是否跨过了判决边界。
+- **BER 手算题**：老师口头给出两串等长 0/1（比如 8 位），学生纸上逐位比较，数出错误位置和错误数，再算出 BER（用第三关允许的简单分数形式）。
+- **重复码多数表决题**：老师给出一个 bit 的三次重复副本（比如 1 1 0），学生纸上做多数表决，判断恢复出的 bit 是多少，并说明这是否是"多数表决失败"的情形（两份或以上不一致时）。
+- **海岛策略卡**：把第四节"海岛原则"打印发给两组，直接讨论当前假设场景该怎么选，不需要网页也能完成第④关的教学目标。
+`;
+
+function n2DownloadGuide(){
+  try{
+    const blob = new Blob([N2_TEACHER_GUIDE_MD], {type:'text/markdown;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '课程三_HTML讲师指引.md';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){ toast('下载失败，请改用手机或另一台设备查看 teacher-guide.md'); }
+}
+function n2CopyExplain(){
+  if(!n2ActiveQuestion || !n2ActiveQuestion.teacher20s){ toast('当前没有活动题目可复制，请先在闯关模式中开始一道题'); return; }
+  const text = n2ActiveQuestion.teacher20s;
+  if(typeof navigator!=='undefined' && navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>toast('已复制本题20秒讲解')).catch(()=>toast('复制失败，请手动选取文本'));
+  } else {
+    toast('当前环境不支持自动复制，请手动选取文本');
+  }
+}
+function n2PrintAnswerCard(){
+  if(typeof window!=='undefined' && typeof window.print==='function') window.print();
+}
+
 
 /* ============================= 模块③ 芯片架构调度台 ============================= */
 const C3_PROCESSORS = [
