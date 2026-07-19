@@ -410,7 +410,22 @@
 
 <!-- 教师设置故障弹窗（遮罩）：关闭后故障名不再出现在投影上 -->
 <div class="modalmask" id="teacherModal" style="display:none">
-  <div class="modalbox">
+  <!-- 隐私确认页：打开弹窗先看到这个，不看到故障名，避免投影全程开着时意外露题 -->
+  <div class="modalbox" id="teacherPrivacyGate">
+    <h3>🔒 设置故障前，先确认投影</h3>
+    <p style="font-size:16px;color:var(--text);margin-bottom:10px">接下来会显示 5 个故障选项的名字。请先确认：</p>
+    <ul style="font-size:15px;color:var(--muted);margin:0 0 16px 20px;line-height:1.8">
+      <li>投影已切到黑屏 / 暂停键，或已切到其它画面</li>
+      <li>或学生现在没有看着这块屏幕</li>
+    </ul>
+    <p style="font-size:14px;color:var(--muted)">这一步只是流程提醒，网页本身无法探测投影是否切走——请老师自行确认后再继续。</p>
+    <div class="modalbtns">
+      <button class="btn" onclick="closeTeacherPanel()">取消</button>
+      <button class="btn primary" onclick="teacherConfirmPrivacy()">✅ 已确认，继续设置故障</button>
+    </div>
+  </div>
+  <!-- 故障选择页：确认隐私后才显示 -->
+  <div class="modalbox" id="teacherFaultPicker" style="display:none">
     <h3>教师设置故障 · 仅教师操作，请勿把此弹窗投影给学生查看</h3>
     <div class="cards" id="teacherFaultList"></div>
     <div class="modalbtns">
@@ -947,11 +962,21 @@ function teacherReveal(){
 /* ============================= 教师设置故障（弹窗） ============================= */
 function openTeacherPanel(){
   teacherSelectedFault=null;
-  renderTeacherFaultList();
+  // 每次打开都先回到隐私确认页，不直接显示故障名单
+  document.getElementById('teacherPrivacyGate').style.display='block';
+  document.getElementById('teacherFaultPicker').style.display='none';
   document.getElementById('teacherModal').style.display='flex';
+}
+function teacherConfirmPrivacy(){
+  renderTeacherFaultList();
+  document.getElementById('teacherPrivacyGate').style.display='none';
+  document.getElementById('teacherFaultPicker').style.display='block';
 }
 function closeTeacherPanel(){
   document.getElementById('teacherModal').style.display='none';
+  // 关闭后重置回隐私确认页，下次打开不会残留故障名单
+  document.getElementById('teacherPrivacyGate').style.display='block';
+  document.getElementById('teacherFaultPicker').style.display='none';
 }
 function renderTeacherFaultList(){
   const wrap=document.getElementById('teacherFaultList');
