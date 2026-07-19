@@ -435,6 +435,112 @@
   .c3notes{list-style:none;}
   .c3notes li{font-size:17px; margin-bottom:10px; padding-left:14px; border-left:3px solid var(--amber);}
   .c3final{font-size:20px; font-weight:bold; margin-top:16px; border-left:4px solid var(--cyan); padding-left:14px;}
+
+  /* ---- 课程四 v2：芯片架构调度台（c4 前缀，仅 #tabpage-3 使用） ---- */
+  .c4topbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--line);}
+  .c4topmode{display:flex; gap:8px;}
+  .c4topmode .btn.on{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
+  .c4modelabel{font-size:14px; color:var(--muted);}
+  .c4modelabel .btn{padding:4px 10px; font-size:13px;}
+  .c4modelabel .btn.on{background:var(--sel); color:#08121f; border:none;}
+  .c4scorebar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-left:auto;}
+  .c4scoreitem{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:6px 12px; font-size:15px; display:flex; align-items:center; gap:8px;}
+  .c4scoreitem b{font-size:20px;}
+  .c4scoreitem.teamon{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .c4scorebtns{display:flex; gap:4px;}
+  .c4scorebtns .btn{padding:4px 8px; font-size:13px;}
+  .c4scorebar .btn{padding:6px 12px; font-size:13px;}
+
+  .c4disclaimer{font-size:13px; color:var(--muted); border:1px dashed var(--line); border-radius:8px; background:var(--panel2); padding:8px 14px; margin-bottom:10px; line-height:1.5;}
+  .c4initialhint{font-size:15px; color:var(--muted); margin-bottom:12px;}
+
+  .c4gametabs{display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;}
+  .c4gametabs .btn.on{background:var(--amber); color:#2a1a00; font-weight:bold; border:none;}
+  .c4gcard{border:1px solid var(--line); border-radius:10px; background:var(--panel2); padding:14px 16px; margin-bottom:12px;}
+  .c4gprompt{font-size:18px; margin-bottom:12px;}
+  .c4goptions{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .c4goptions .btn.picked{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .c4gresult{margin-top:10px; padding:10px 14px; border-radius:8px; border-left:4px solid var(--line); display:none;}
+  .c4gresult.show{display:block;}
+  .c4gresult.good{border-left-color:var(--green); background:rgba(61,220,132,.08);}
+  .c4gresult.mid{border-left-color:var(--amber); background:rgba(255,180,84,.08);}
+  .c4gresult.bad{border-left-color:var(--red); background:rgba(255,107,107,.08);}
+  .c4gbtnrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+
+  .c4g2base{font-size:14px; color:var(--muted); margin-bottom:10px; border-left:3px solid var(--cyan); padding-left:12px;}
+  .c4g2event{font-size:17px; font-weight:bold; margin-bottom:10px;}
+  .c4g2moves{font-size:14px; color:var(--muted); margin-bottom:10px;}
+
+  .c4scenarios{display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .c4scname{font-size:17px; font-weight:bold;}
+  .c4sctag{font-size:14px; color:var(--muted); margin-top:4px;}
+  .c4runrow{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+  .c4pool{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+  .c4task{
+    padding:8px 14px; border-radius:10px; border:2px solid var(--line);
+    background:var(--panel2); cursor:pointer; font-size:15px;
+  }
+  .c4task:hover{border-color:var(--cyan);}
+  .c4task.selected{border-color:var(--sel); box-shadow:0 0 0 2px var(--sel);}
+  .c4cols{display:grid; grid-template-columns:repeat(4,minmax(150px,1fr)); gap:12px; margin-bottom:14px;}
+  .c4col{border:2px dashed var(--line); border-radius:10px; background:var(--panel2); padding:10px; min-height:160px;}
+  .c4col.hot{border-color:var(--cyan);}
+  .c4col h4{font-size:15px; margin-bottom:2px;}
+  .c4col .tag{font-size:13px; color:var(--muted); margin-bottom:8px;}
+  .c4chip{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:6px 8px; margin-bottom:6px; font-size:14px; cursor:pointer;
+  }
+  .c4chip:hover{border-color:var(--red);}
+  .c4bars{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:12px;}
+  .c4bar .k{font-size:14px; margin-bottom:6px;}
+  .c4barseg{display:flex; gap:3px;}
+  .c4barseg span{flex:1; height:13px; border-radius:3px; background:var(--line);}
+  .c4barseg span.on{background:var(--cyan);}
+  .c4bar .lv{font-size:16px; font-weight:bold; margin-top:4px;}
+  .c4notes{list-style:none; margin-bottom:10px;}
+  .c4notes li{font-size:15px; margin-bottom:8px; padding-left:12px; border-left:3px solid var(--amber);}
+  .c4final{font-size:16px; font-weight:bold; margin-top:10px; border-left:4px solid var(--cyan); padding-left:12px;}
+  .c4comparewrap{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px;}
+  .c4comparecol h4{font-size:15px; color:var(--muted); margin-bottom:8px;}
+  .c4comparestmt{font-size:15px; font-weight:bold; margin-top:12px; border-left:4px solid var(--cyan); padding-left:12px; grid-column:1/-1;}
+  .c4boundarynote{font-size:13px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--line); padding-top:8px;}
+
+  /* ---- 课程四 教师答案系统（c4 前缀，独立于课程二/三的防泄露弹窗）---- */
+  .c4teacherbox{max-width:640px;}
+  .c4qa-section{border-top:1px dashed var(--line); margin-top:12px; padding-top:12px;}
+  .c4qa-section h4{font-size:15px; color:var(--cyan); margin-bottom:6px;}
+  .c4qa-section p{font-size:15px; margin-bottom:6px;}
+  .c4qa-boundary{font-size:14px; color:var(--muted); font-style:italic;}
+
+  /* ---- 打印课程四答案卡 ---- */
+  .c4printonly{display:none;}
+  @media print{
+    body *{ visibility:hidden; }
+    #c4printCard, #c4printCard *{ visibility:visible; }
+    #c4printCard{ display:block !important; position:absolute; left:0; top:0; width:100%; }
+  }
+
+  /* 投影适配：#tabpage-3（课程四）专用，不改动课程二/三已有的 @media 规则 */
+  @media (max-height:1100px){
+    #tabpage-3 .board{padding:10px 16px;}
+    #tabpage-3 .c4topbar{margin-bottom:6px; padding-bottom:6px;}
+    #tabpage-3 .c4scoreitem{padding:4px 10px; font-size:13px;}
+    #tabpage-3 .c4disclaimer{padding:6px 12px; margin-bottom:6px; font-size:12px;}
+    #tabpage-3 .c4gametabs, #tabpage-3 .c4scenarios{margin-bottom:6px;}
+    #tabpage-3 .c4gcard{padding:8px 12px; margin-bottom:6px;}
+    #tabpage-3 .c4pool{margin-bottom:8px;}
+    #tabpage-3 .c4cols{gap:8px; margin-bottom:8px;}
+    #tabpage-3 .c4col{min-height:120px; padding:6px;}
+    #tabpage-3 .c4bars{gap:8px; margin-bottom:8px;}
+  }
+  @media (max-height:800px){
+    #tabpage-3 .c4topbar{gap:6px;}
+    #tabpage-3 .c4scorebar{gap:6px;}
+    #tabpage-3 .c4runrow{margin-bottom:8px;}
+    #tabpage-3 .c4col{min-height:100px;}
+    #tabpage-3 .c4notes li{font-size:13px; margin-bottom:5px;}
+  }
 </style>
 </head>
 <body>
@@ -893,30 +999,175 @@
   </div>
 </div>
 
-<!-- ============ 模块③ 芯片架构调度台 ============ -->
+<!-- ============ 第④课 · 芯片架构调度台（模块③，历史命名，c3*/c4* 前缀） ============ -->
 <div id="tabpage-3" style="display:none">
 <div class="board">
-  <h3 style="font-size:17px;color:var(--muted);margin-bottom:10px">场景（老师三选一）</h3>
-  <div class="c3top" id="c3scenarios"></div>
 
-  <h3 style="font-size:17px;color:var(--muted);margin:18px 0 10px">任务卡 · 点选一张，再点下方处理器立柱；点已放入的任务可取回</h3>
-  <div class="c3pool" id="c3pool"></div>
-
-  <div class="c3cols" id="c3cols"></div>
-
-  <div class="runbar">
-    <button class="btn primary" onclick="c3Evaluate()">📊 评估方案</button>
-    <button class="btn" onclick="c3Reset()">↺ 清空重排</button>
+  <!-- 顶部：双模式切换 + A/B 计分栏（手动±/撤销/清空，localStorage satlab_course4_v1） -->
+  <div class="c4topbar">
+    <div class="c4topmode">
+      <button class="btn on" id="c4modeQuickBtn" onclick="c4SetTopMode('quick')">A 快速闯关</button>
+      <button class="btn" id="c4modeSchedBtn" onclick="c4SetTopMode('sched')">B 架构调度</button>
+    </div>
+    <div class="c4modelabel">当前编辑/作答组：
+      <button class="btn on" id="c4teamBtnA" onclick="c4SetTeam('A')">A 组</button>
+      <button class="btn" id="c4teamBtnB" onclick="c4SetTeam('B')">B 组</button>
+    </div>
+    <div class="c4scorebar">
+      <div class="c4scoreitem teamon" id="c4scoreCardA"><span>A 组得分</span><b id="c4scoreA">0</b>
+        <div class="c4scorebtns"><button class="btn" onclick="c4ManualScore('A',1)">+1</button><button class="btn" onclick="c4ManualScore('A',-1)">-1</button></div>
+      </div>
+      <div class="c4scoreitem" id="c4scoreCardB"><span>B 组得分</span><b id="c4scoreB">0</b>
+        <div class="c4scorebtns"><button class="btn" onclick="c4ManualScore('B',1)">+1</button><button class="btn" onclick="c4ManualScore('B',-1)">-1</button></div>
+      </div>
+      <button class="btn" onclick="c4UndoScore()">↩ 撤销上一次加分</button>
+      <button class="btn" onclick="c4ClearSession()">🗑 清空课程四状态</button>
+      <button class="btn" onclick="c4OpenTeacherAssist()">🧑‍🏫 教师辅助（T）</button>
+      <button class="btn" onclick="c4DownloadGuide()">📥 下载讲师指引</button>
+      <button class="btn" onclick="c4CopyExplain()">📋 复制本题讲解</button>
+      <button class="btn" onclick="c4PrintAnswerCard()">🖨 打印答案卡</button>
+    </div>
   </div>
 
-  <div class="c3out" id="c3out" style="display:none">
-    <h3 style="font-size:17px;color:var(--muted);margin:20px 0 10px">评估结果</h3>
-    <div class="c3bars" id="c3bars"></div>
-    <ul class="c3notes" id="c3notes"></ul>
-    <div class="c3final" id="c3final"></div>
+  <!-- 永久课堂规则模型免责声明 + 架构边界说明（规格一/二，全页常显） -->
+  <div class="c4disclaimer">
+    本页评分是<b>课堂规则模型</b>，用于比较方案之间的相对取舍，不代表真实芯片的性能、功耗、价格或具体产品架构。
+    CPU / DSP / FPGA / 专用硬件加速器统一称为「<b>四类计算资源或实现选择</b>」，不是"四种平行芯片"——
+    CPU、DSP、加速器可能集成在同一颗 SoC 内；FPGA 可能是外部独立器件，也存在内置 FPGA 的 SoC，但并非所有 SoC 都带 FPGA。
+    七个评价维度全部使用"很低/低/中/高/很高"等相对等级，不代表真实瓦数、毫秒或报价。
+  </div>
+
+  <div id="c4initialHint" class="c4initialhint">先完成纸笔判断，再由教师开始调度实验。教师可切换模式和场景，也可以跳过小游戏直接进入完整调度。</div>
+
+  <!-- ============ A 快速闯关模式 ============ -->
+  <div id="c4quickWrap">
+    <div class="c4gametabs">
+      <button class="btn on" id="c4gameTabBtn1" onclick="c4GameGoTab(1)">游戏① 任务闪配</button>
+      <button class="btn" id="c4gameTabBtn2" onclick="c4GameGoTab(2)">游戏② 约束突然变化</button>
+    </div>
+
+    <!-- 游戏① 任务闪配 -->
+    <div id="c4game1Wrap">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:10px">随机出一项任务，选择应该交给哪一类计算资源。选典型答案得 2 分，选可接受的替代方案并说明理由由教师确认得 1 分，用过一级提示后答对最多 1 分，用过二/三级提示后答对不得分，答错不扣分——没有脱离场景的唯一最佳架构。</p>
+      <div class="c4gcard" id="c4g1card">
+        <div class="c4gprompt" id="c4g1prompt"></div>
+        <div class="c4goptions" id="c4g1options"></div>
+        <div class="c4gresult" id="c4g1result"></div>
+        <div class="c4gbtnrow">
+          <button class="btn" onclick="c4G1Next()">🔀 下一题（N）</button>
+          <button class="btn" onclick="c4NextHint()">💡 下一级提示（H）</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏② 约束突然变化 -->
+    <div id="c4game2Wrap" style="display:none">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:10px">先给出一套分工，随机出现一项条件变化，学生只能移动 1~2 张任务卡，提交后查看推荐调整与原方案风险——核心结论：没有脱离场景的唯一最佳架构。</p>
+      <div class="c4g2base" id="c4g2base"></div>
+      <div class="c4g2event" id="c4g2event"></div>
+      <div class="c4g2moves" id="c4g2moves"></div>
+      <div class="c4pool" id="c4g2pool"></div>
+      <div class="c4cols" id="c4g2cols"></div>
+      <div class="c4gbtnrow">
+        <button class="btn primary" onclick="c4G2Submit()">✅ 提交调整</button>
+        <button class="btn" onclick="c4G2Next()">🔀 换一题（N）</button>
+      </div>
+      <div class="c4gresult" id="c4g2result"></div>
+    </div>
+  </div>
+
+  <!-- ============ B 架构调度模式 ============ -->
+  <div id="c4schedWrap" style="display:none">
+    <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">场景（老师三选一，A/B 两组共用同一场景以便公平比较）</h3>
+    <div class="c4scenarios" id="c4scenarios"></div>
+
+    <div class="c4runrow">
+      <button class="btn" onclick="c4LoadAllCpu()">① 全部交给 CPU</button>
+      <button class="btn" onclick="c4LoadTypical('proto')">载入典型原型方案</button>
+      <button class="btn" onclick="c4LoadTypical('rescue')">载入典型救援方案</button>
+      <button class="btn" onclick="c4LoadTypical('mass')">载入典型量产方案</button>
+      <span style="font-size:13px;color:var(--muted);align-self:center">以上为教师演示工具，载入后不会自动显示评估结果</span>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">任务卡 · 点选一张，再点下方资源立柱；点已放入的任务可取回（当前编辑：<span id="c4schedTeamLabel">A 组</span>）</h3>
+    <div class="c4pool" id="c4pool"></div>
+    <div class="c4cols" id="c4cols"></div>
+
+    <div class="c4runrow">
+      <button class="btn primary" onclick="c4Evaluate()">📊 评估当前组方案</button>
+      <button class="btn" onclick="c4ResetPlacement()">↺ 清空当前组重排</button>
+      <button class="btn" onclick="c4Compare()">⚖ 比较两组</button>
+    </div>
+
+    <div class="c4out" id="c4out" style="display:none">
+      <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">评估结果（<span id="c4outTeamLabel"></span>）</h3>
+      <div class="c4bars" id="c4bars"></div>
+      <ul class="c4notes" id="c4notes"></ul>
+      <div class="c4final" id="c4final"></div>
+    </div>
+
+    <div class="c4out" id="c4compareOut" style="display:none">
+      <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">A/B 方案比较</h3>
+      <div class="c4comparewrap">
+        <div class="c4comparecol"><h4>A 组</h4><div class="c4bars" id="c4compareBarsA"></div></div>
+        <div class="c4comparecol"><h4>B 组</h4><div class="c4bars" id="c4compareBarsB"></div></div>
+        <div class="c4comparestmt" id="c4compareStmt"></div>
+      </div>
+    </div>
+
+    <div class="c4boundarynote">
+      典型口径参考：协议/界面/连接管理→典型优先 CPU；滤波/FFT→典型 DSP 或 FPGA，专用硬件也可以；解调/纠错→科研原型阶段 DSP/FPGA，数据量大且实时性要求高时 FPGA/专用硬件，算法稳定大规模量产时专用硬件更有优势；波束方向与策略计算→CPU 或 DSP，多通道高速更新→FPGA 或专用硬件；温度监控→CPU（真实产品可能有独立低功耗管理控制器）；数据搬运与缓存管理→CPU 负责配置管理，真实高速搬运通常由内存控制器/DMA 完成，课堂不展开。
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- 教师答案系统防泄露弹窗（c4 前缀，独立 DOM，不复用课程二/三的隐私确认） -->
+<div class="modalmask" id="c4teacherModal" style="display:none">
+  <div class="modalbox" id="c4teacherPrivacyGate">
+    <h3>🔒 教师答案即将显示</h3>
+    <p style="font-size:16px;color:var(--text);margin-bottom:10px">请先确认当前未向学生投影：</p>
+    <ul style="font-size:15px;color:var(--muted);margin:0 0 16px 20px;line-height:1.8">
+      <li>投影已切到黑屏 / 暂停键，或已切到其它画面</li>
+      <li>或学生现在没有看着这块屏幕</li>
+    </ul>
+    <p style="font-size:14px;color:var(--muted)">这一步只是流程提醒，网页本身无法探测投影是否切走——请老师自行确认后再继续。按 Esc 可随时立即关闭。</p>
+    <div class="modalbtns">
+      <button class="btn" onclick="c4CloseTeacherAssist()">取消</button>
+      <button class="btn primary" onclick="c4ConfirmTeacherAssist()">✅ 确认显示教师答案</button>
+    </div>
+  </div>
+  <div class="modalbox c4teacherbox" id="c4teacherAssistPanel" style="display:none">
+    <h3>🧑‍🏫 教师辅助视图 · 第④课</h3>
+    <div id="c4teacherAssistContent"><p style="color:var(--muted);font-size:15px">当前没有活动的任务/题目——请先在闯关模式中开始一题，或在架构调度模式中点选一张任务卡，再打开教师辅助。</p></div>
+    <div class="modalbtns">
+      <button class="btn" onclick="c4CloseTeacherAssist()">关闭（Esc）</button>
+    </div>
   </div>
 </div>
+
+<!-- 打印课程四答案卡：平时隐藏，仅 @media print 显示 -->
+<div id="c4printCard" class="c4printonly">
+  <h2>第④课 · 芯片架构调度台 · 快速答案卡（打印版）</h2>
+  <h3>统一口径</h3>
+  <p>CPU/DSP/FPGA/专用硬件加速器统一称"四类计算资源或实现选择"，不叫"四种平行芯片"。CPU/DSP/加速器可能集成在同一 SoC 内；FPGA 可能是外部器件，也有内置 FPGA 的 SoC，但并非所有 SoC 都带 FPGA。</p>
+  <h3>七维指标</h3>
+  <p>延迟↓ 吞吐量↑ 功耗↓ 灵活性↑ 前期开发成本↓ 量产单台成本↓ 数据搬运压力（低/中/高）。全部为课堂规则模型中的相对等级，不是真实瓦数/毫秒/报价。</p>
+  <h3>三场景权重</h3>
+  <p>科研原型：重灵活性与前期开发成本。应急救援：重延迟、吞吐量、功耗与可靠运行。十万台量产：重功耗与单台成本，容忍更高前期开发投入。</p>
+  <h3>典型任务口径</h3>
+  <p>协议/界面/连接管理→CPU；滤波/FFT→DSP 或 FPGA，专用硬件也可以；解调/纠错→科研原型 DSP/FPGA，数据量大实时性高 FPGA/专用硬件，稳定量产专用硬件更优；波束方向策略→CPU/DSP，多通道高速更新→FPGA/专用硬件；温度监控→CPU（真实产品可能有独立管理控制器）；数据搬运管理→CPU 负责配置，真实高速搬运由 DMA/内存控制器完成。</p>
+  <h3>游戏① 任务闪配计分</h3>
+  <p>选典型 2 分／选可接受替代并说明理由由教师确认 1 分／一级提示后答对最多 1 分／二三级提示后 0 分／答错不扣分。</p>
+  <h3>游戏② 约束突然变化</h3>
+  <p>算法频繁修改→挪回DSP/FPGA；电池不足→降功耗挪去专用硬件或减任务；延迟提高→CPU挪去DSP/FPGA/专用硬件；准备量产十万台→稳定任务挪去专用硬件；研发预算有限→少用FPGA/专用硬件；单台成本必须下降→规整重复任务挪去专用硬件；现场需快速升级→避免用专用硬件；数据量突增→把处理任务从CPU挪出。</p>
+  <h3>快捷键</h3>
+  <p>T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。</p>
+  <h3>网页故障纸笔备用方案</h3>
+  <p>投影或网页故障时，教师可直接口述任务卡与四类资源，让学生在纸上写出分工与理由，再对照本答案卡逐条口头核对，不影响教学进度。</p>
 </div>
+
 </main>
 
 <footer>课堂节奏：先讲现实问题 → 学生纸笔判断 → 上台操作 → 观察后果 → 老师解释原理（本页所有结构均为典型教学架构）</footer>
@@ -3432,10 +3683,976 @@ function c3Init(){
   c3ClearOutput();
 }
 
+/* =============================================================================================
+   第④课 v2 · 芯片架构调度台（c4 前缀，仅服务 #tabpage-3；c3* 上面的旧数据/函数保留不动，仅不再被调用）
+   规则模型说明：latencyImpact/throughputImpact/powerImpact/dataMovementImpact 由
+   "资源基础特性 C4_PROC_BASE + 任务适配度 C4_FIT" 公式化推导（c4TaskProcRaw），而不是逐条手填
+   ~300 个数值——这样能保证同一套推导规则在 11 任务×4资源×3场景下自洽，也方便复核。
+   devCost/unitCost 走场景专属乘数 C4_SCENARIOS[].devCostAdj/unitCostAdj；flexibility 直接取资源基础值。
+   ============================================================================================= */
+const C4_PROCESSORS = [
+  {id:'cpu', name:'CPU', icon:'🧮', tagline:'通用可编程，适合控制、协议、常变软件逻辑。'},
+  {id:'dsp', name:'DSP', icon:'〰️', tagline:'针对重复数字信号运算做了优化。'},
+  {id:'fpga',name:'FPGA', icon:'🔧', tagline:'内部逻辑和连接可重新配置，适合高速并行或需要反复修改的算法。'},
+  {id:'asic',name:'专用硬件加速器', icon:'🔒', tagline:'针对固定任务定制，效率高，但制造后核心功能不易更改。'},
+];
+const C4_TASKS = [
+  {id:'ui',      name:'设备界面'},
+  {id:'proto',   name:'协议栈与连接管理'},
+  {id:'filt',    name:'数字滤波'},
+  {id:'fft',     name:'FFT'},
+  {id:'demod',   name:'解调'},
+  {id:'ecc',     name:'FEC 纠错解码'},
+  {id:'beamdir', name:'波束：方向与策略计算'},
+  {id:'beamupd', name:'波束：多通道权重高速更新'},
+  {id:'temp',    name:'温度监控'},
+  {id:'wifi',    name:'Wi-Fi 管理'},
+  {id:'datamove',name:'数据搬运和缓存管理'},
+];
+const C4_FIT = {
+  ui:      {cpu:5, dsp:1, fpga:2, asic:1},
+  proto:   {cpu:5, dsp:2, fpga:3, asic:2},
+  filt:    {cpu:2, dsp:5, fpga:5, asic:5},
+  fft:     {cpu:1, dsp:5, fpga:5, asic:5},
+  demod:   {cpu:1, dsp:5, fpga:5, asic:4},
+  ecc:     {cpu:2, dsp:4, fpga:5, asic:5},
+  beamdir: {cpu:4, dsp:5, fpga:3, asic:2},
+  beamupd: {cpu:1, dsp:2, fpga:5, asic:5},
+  temp:    {cpu:5, dsp:2, fpga:3, asic:3},
+  wifi:    {cpu:4, dsp:2, fpga:3, asic:3},
+  datamove:{cpu:5, dsp:2, fpga:3, asic:2},
+};
+// 资源结构性基础特性（1-5，相对等级，不是真实瓦数/毫秒/报价）
+// latency/power/devCost/unitCost/dataMovement：数值越高越差；throughput/flexibility：数值越高越好
+const C4_PROC_BASE = {
+  cpu: {latency:2, throughput:2, power:2, flexibility:5, devCost:1, unitCost:3, dataMovement:4},
+  dsp: {latency:2, throughput:4, power:2, flexibility:3, devCost:2, unitCost:2, dataMovement:3},
+  fpga:{latency:1, throughput:4, power:3, flexibility:4, devCost:4, unitCost:4, dataMovement:2},
+  asic:{latency:1, throughput:5, power:1, flexibility:1, devCost:5, unitCost:1, dataMovement:1},
+};
+const C4_SCENARIOS = [
+  {id:'proto', name:'科研原型', tagline:'算法仍在改，重灵活与前期成本',
+    weights:{latency:2, throughput:2, power:1, flexibility:5, devCost:5, unitCost:1, dataMovement:1},
+    devCostAdj:{cpu:1, dsp:1.1, fpga:1.4, asic:2.6},
+    unitCostAdj:{cpu:1, dsp:1, fpga:1.1, asic:1.6}},
+  {id:'rescue', name:'应急救援', tagline:'重延迟、吞吐、功耗与可靠运行',
+    weights:{latency:5, throughput:4, power:3, flexibility:1, devCost:1, unitCost:1, dataMovement:2},
+    devCostAdj:{cpu:1, dsp:1, fpga:1.2, asic:1.4},
+    unitCostAdj:{cpu:1, dsp:1, fpga:1.1, asic:1.2}},
+  {id:'mass', name:'十万台量产', tagline:'重功耗与单台成本，容忍更高前期投入',
+    weights:{latency:1, throughput:2, power:5, flexibility:1, devCost:2, unitCost:5, dataMovement:2},
+    devCostAdj:{cpu:1, dsp:1, fpga:0.95, asic:1.05},
+    unitCostAdj:{cpu:1.3, dsp:1.1, fpga:0.8, asic:0.3}},
+];
+const C4_LEVEL_LABEL = {1:'很低', 2:'低', 3:'中', 4:'高', 5:'很高'};
+const C4_PRESSURE_LABEL = {1:'低', 2:'低', 3:'中', 4:'高', 5:'高'};
+const C4_METRIC_ORDER = ['latency','throughput','power','flexibility','devCost','unitCost','dataMovement'];
+const C4_METRIC_DIR  = {latency:'down', throughput:'up', power:'down', flexibility:'up', devCost:'down', unitCost:'down', dataMovement:'down'};
+const C4_METRIC_NAME = {latency:'延迟', throughput:'吞吐量', power:'功耗', flexibility:'灵活性', devCost:'前期开发成本', unitCost:'量产单台成本', dataMovement:'数据搬运压力'};
+
+function c4Level(v,min,max){
+  if(max===min) return 3;
+  const t=(v-min)/(max-min);
+  return Math.min(5, Math.max(1, Math.round(t*4)+1));
+}
+function c4TaskProcRaw(taskId, procId){
+  const fit = C4_FIT[taskId][procId];
+  const base = C4_PROC_BASE[procId];
+  return {
+    fit,
+    latency: base.latency + (6-fit),
+    throughput: base.throughput * (fit/5),
+    power: base.power + (6-fit),
+    dataMovement: base.dataMovement + (6-fit)*0.4,
+  };
+}
+function c4Bounds(){
+  const lat=[],thr=[],pow=[],dm=[];
+  C4_TASKS.forEach(t=>{
+    C4_PROCESSORS.forEach(p=>{
+      const r = c4TaskProcRaw(t.id,p.id);
+      lat.push(r.latency); thr.push(r.throughput); pow.push(r.power); dm.push(r.dataMovement);
+    });
+  });
+  const mm=arr=>({min:Math.min(...arr), max:Math.max(...arr)});
+  return {lat:mm(lat), thr:mm(thr), pow:mm(pow), dm:mm(dm)};
+}
+const C4_BOUNDS = c4Bounds();
+
+// 纯函数：给定 placement({taskId:procId}) 和场景 id，返回七维档位 —— 不读写任何 DOM/全局状态，便于测试
+function c4EvalPlacement(placement, scenarioId){
+  const scenario = C4_SCENARIOS.find(s=>s.id===scenarioId);
+  const entries = Object.entries(placement);
+  if(!entries.length) return null;
+  let latRaw=0, thrSum=0, powSum=0, dmSum=0, flexSum=0;
+  const usedProcs = new Set();
+  const perTask = [];
+  entries.forEach(([taskId,procId])=>{
+    const r = c4TaskProcRaw(taskId,procId);
+    latRaw = Math.max(latRaw, r.latency);
+    thrSum += r.throughput; powSum += r.power; dmSum += r.dataMovement;
+    flexSum += C4_PROC_BASE[procId].flexibility;
+    usedProcs.add(procId);
+    perTask.push({taskId, procId, fit:r.fit});
+  });
+  const n = entries.length;
+  const thrRaw = thrSum/n, powRaw = powSum/n, dmRaw = dmSum/n, flexRaw = flexSum/n;
+  // 前期开发成本(NRE)：按"用到的不同资源类型"累加——用一次 ASIC 就付一次流片/开发费，与任务多少无关。
+  let devCostRaw=0;
+  usedProcs.forEach(p=>{
+    devCostRaw += C4_PROC_BASE[p].devCost * scenario.devCostAdj[p];
+  });
+  // 量产单台成本：按"每个任务落在哪种资源"平均——多数任务放便宜的资源（如量产时的 ASIC）→ 单台成本低。
+  // 不能按 usedProcs 累加，否则会把"用了几种资源"误当成本，反而让 ASIC 密集方案显得更贵（终审修复）。
+  let unitCostRaw=0;
+  entries.forEach(([taskId,procId])=>{
+    unitCostRaw += C4_PROC_BASE[procId].unitCost * scenario.unitCostAdj[procId];
+  });
+  unitCostRaw = unitCostRaw / n;
+  const devCostPerProc = C4_PROCESSORS.map(p=>C4_PROC_BASE[p.id].devCost*scenario.devCostAdj[p.id]);
+  const unitCostPerProc = C4_PROCESSORS.map(p=>C4_PROC_BASE[p.id].unitCost*scenario.unitCostAdj[p.id]);
+  const devMin=Math.min(...devCostPerProc), devMax=devCostPerProc.reduce((a,b)=>a+b,0);
+  const unitMin=Math.min(...unitCostPerProc), unitMax=Math.max(...unitCostPerProc);
+  const levels = {
+    latency: c4Level(latRaw, C4_BOUNDS.lat.min, C4_BOUNDS.lat.max),
+    throughput: c4Level(thrRaw, C4_BOUNDS.thr.min, C4_BOUNDS.thr.max),
+    power: c4Level(powRaw, C4_BOUNDS.pow.min, C4_BOUNDS.pow.max),
+    flexibility: c4Level(flexRaw, 1, 5),
+    devCost: c4Level(devCostRaw, devMin, devMax),
+    unitCost: c4Level(unitCostRaw, unitMin, unitMax),
+    dataMovement: c4Level(dmRaw, C4_BOUNDS.dm.min, C4_BOUNDS.dm.max),
+  };
+  const raw = {latency:latRaw, throughput:thrRaw, power:powRaw, flexibility:flexRaw, devCost:devCostRaw, unitCost:unitCostRaw, dataMovement:dmRaw};
+  return {levels, raw, perTask, usedProcs:[...usedProcs], scenario, placedCount:n};
+}
+function c4Badness(metric, level){ return C4_METRIC_DIR[metric]==='down' ? level : (6-level); }
+function c4GenericWeightNotes(levels, scenario){
+  const notes=[];
+  Object.keys(levels).forEach(metric=>{
+    const w = scenario.weights[metric];
+    if(w>=4){
+      const b = c4Badness(metric, levels[metric]);
+      const name = C4_METRIC_NAME[metric];
+      if(b>=4) notes.push({text:`${scenario.name}场景很看重「${name}」，当前方案在这一维度档位偏「${C4_LEVEL_LABEL[levels[metric]]}」，需要重点权衡。`, weight:w+2});
+      else if(b<=2) notes.push({text:`${scenario.name}场景很看重「${name}」，当前方案在这一维度表现较好（${C4_LEVEL_LABEL[levels[metric]]}）。`, weight:w});
+    }
+  });
+  return notes;
+}
+function c4BuildNotes(evalRes){
+  const {perTask, usedProcs, scenario, placedCount, levels} = evalRes;
+  const rules = c4GenericWeightNotes(levels, scenario).map(n=>({text:n.text, weight:n.weight}));
+  perTask.forEach(({taskId,procId,fit})=>{
+    if(fit<=2){
+      const t=C4_TASKS.find(x=>x.id===taskId).name;
+      const p=C4_PROCESSORS.find(x=>x.id===procId).name;
+      rules.push({text:`「${t}」放在 ${p}：适配度较低，在课堂规则模型里既没有明显性能优势，也浪费了灵活性或成本，但不代表真实${p}绝对无法完成这项任务。`, weight:6});
+    }
+  });
+  const cpuCount = perTask.filter(x=>x.procId==='cpu').length;
+  if(cpuCount===placedCount && placedCount>=6){
+    rules.push({text:'全部任务都交给了 CPU：任务高度集中在一处，信号处理类任务会排队等待，延迟和吞吐量都可能不占优——这是课堂规则模型的相对判断，不代表真实 CPU 一定无法完成这些任务。', weight:9});
+  }
+  const asicCount = perTask.filter(x=>x.procId==='asic').length;
+  if(scenario.id==='proto' && asicCount>=1){
+    rules.push({text:`科研原型阶段有 ${asicCount} 项任务放进了专用硬件加速器：算法一旦还要修改，这部分会被提前锁定，前期成本风险明显增加。`, weight:8});
+  }
+  if(scenario.id==='mass' && asicCount===0 && placedCount>=6){
+    rules.push({text:'量产十万台的场景下完全没有使用专用硬件加速器：单台成本和功耗可能都没有压到最低，但这不代表方案不可行，只是在本课堂规则模型下还有优化空间。', weight:7});
+  }
+  const bd = perTask.find(x=>x.taskId==='beamdir'), bu = perTask.find(x=>x.taskId==='beamupd');
+  if(bd && bu && bd.procId===bu.procId){
+    rules.push({text:'波束方向策略计算和多通道高速更新被放进了同一类资源：两者的运算特征不同（前者偏判断、后者偏高速并行），可以分开考虑，不必绑在一起。', weight:5});
+  }
+  const seen=new Set();
+  const uniq = rules.filter(r=>{ if(seen.has(r.text)) return false; seen.add(r.text); return true; });
+  uniq.sort((a,b)=>b.weight-a.weight);
+  return uniq.slice(0,7).map(r=>r.text);
+}
+function c4CompareStatement(levelsA, levelsB){
+  const advA=[], advB=[];
+  Object.keys(levelsA).forEach(metric=>{
+    const dir=C4_METRIC_DIR[metric];
+    const a=levelsA[metric], b=levelsB[metric];
+    if(a===b) return;
+    const aBetter = dir==='down' ? a<b : a>b;
+    (aBetter? advA : advB).push(C4_METRIC_NAME[metric]);
+  });
+  if(!advA.length && !advB.length) return '在当前课堂规则模型和场景权重下，A组和B组在七个维度上的档位完全一致，没有出现明显差异。';
+  let s = '在当前课堂规则模型和场景权重下，';
+  const parts=[];
+  if(advA.length) parts.push(`A组在${advA.join('、')}方面更有优势`);
+  if(advB.length) parts.push(`B组在${advB.join('、')}方面更有优势`);
+  s += parts.join('，') + '。这只是本课堂规则模型下的相对取舍比较，不代表A组或B组的架构一定比对方的真实产品更好，教师可结合两组的解释理由手动加分。';
+  return s;
+}
+
+/* ============================= 教师答案数据（规格九节：十一字段） ============================= */
+const C4_TASK_ANSWERS = {
+  ui: {
+    preferred:['cpu'], acceptable:[],
+    reason:'设备界面主要是事件响应和分支逻辑，CPU 通用灵活最合适，不需要为界面单独设计固定电路。',
+    conditionChange:'如果界面需要处理超高帧率的图形渲染，可能会引入专门的图形加速模块，但这已超出本课堂讨论范围。',
+    hint1:'先想：这项任务的计算量大不大？重复吗？',
+    hint2:'设备界面主要是"响应用户操作、显示状态"，计算量不大，逻辑分支多。',
+    hint3:'四类资源里最擅长处理分支逻辑和常变软件的是哪一类？',
+    commonMistakes:'把界面这种轻量、多分支的任务也交给 FPGA/专用硬件，白白增加开发难度。',
+    teacher20s:'设备界面是分支逻辑为主的轻量任务，CPU 通用灵活最合适，不需要为它单独定制电路。',
+    teacher60s:'设备界面处理的是用户操作、状态显示这类事件驱动的逻辑，计算量不大但分支很多，这正是 CPU 最擅长的场景——通用可编程、能灵活应对各种条件判断。把这种任务放进 FPGA 或专用硬件加速器意义不大：它们的优势是高速重复运算，而不是复杂分支逻辑，反而会白白增加开发成本和复杂度。',
+    boundary:'这里的"CPU"是课堂对"负责通用控制逻辑的处理器"的统一说法，实际产品里可能是应用处理器或 SoC 内的某个核心。',
+  },
+  proto: {
+    preferred:['cpu'], acceptable:['fpga'],
+    reason:'协议栈处理大量分支判断和状态机，CPU 最省心；只有连接数极多、需要硬件卸载包处理时才会考虑 FPGA。',
+    conditionChange:'如果连接数暴增、需要硬件级别的包处理卸载，可以把部分协议处理下放到 FPGA；但这会显著增加开发复杂度。',
+    hint1:'协议栈本质上是"收到什么消息，做什么处理"的一长串状态机判断。',
+    hint2:'状态机和分支判断多的任务，通常交给最灵活的那一类资源。',
+    hint3:'典型答案是 CPU；只有在连接数极多、需要硬件包处理卸载时才考虑 FPGA。',
+    commonMistakes:'认为协议管理需要"高速并行"就交给 FPGA，其实协议栈的瓶颈通常不是运算量而是分支判断的复杂度。',
+    teacher20s:'协议栈是状态机加分支判断，CPU 处理这类逻辑最省心，也最容易调试和维护。',
+    teacher60s:'协议连接管理需要跟踪连接状态、解析消息类型、处理各种异常分支，这是一长串的条件判断而不是重复的数值运算。CPU 的通用可编程特性正好适合这种任务，而且协议逻辑经常需要打补丁修改，CPU 上改代码远比改 FPGA 逻辑或流片快。只有当连接数极多、需要硬件级别的包处理卸载时，才会考虑把部分工作下放到 FPGA，但那属于更复杂的系统设计，不是本课堂的默认选择。',
+    boundary:'真实系统的协议栈可能分层运行在应用处理器和某些硬件卸载引擎上，这里只讨论课堂简化后的"谁来管理连接状态"这一层。',
+  },
+  filt: {
+    preferred:['dsp','fpga'], acceptable:['asic'],
+    reason:'数字滤波是重复的乘加运算，DSP 和 FPGA 都为此类运算做了优化；算法定型、要量产时专用硬件也是合理选择。',
+    conditionChange:'算法还在调整时优先 DSP/FPGA，方便修改系数；一旦滤波器系数固定且要大规模量产，专用硬件优势会上升。',
+    hint1:'滤波是"对每个采样点反复做乘法和加法"的运算。',
+    hint2:'重复的数字信号运算，通常交给针对这类运算优化过的资源。',
+    hint3:'典型答案是 DSP 或 FPGA；算法稳定后专用硬件也合理，但不是唯一答案。',
+    commonMistakes:'认为滤波只有唯一正确资源，或者把滤波交给 CPU 却不知道这会造成延迟和功耗问题。',
+    teacher20s:'数字滤波是重复的乘加运算，DSP 和 FPGA 都为此做了优化，量产阶段专用硬件也是合理选择，不止一个正确答案。',
+    teacher60s:'数字滤波的核心操作是对每个采样点反复执行乘法和累加，这类运算是 DSP 电路结构专门优化的对象，FPGA 也能通过并行逻辑高效实现。如果算法还在调整阶段，DSP/FPGA 便于修改系数；一旦滤波器结构定型且要大规模量产，专用硬件加速器能把这部分逻辑固化，进一步降低功耗和单台成本。用 CPU 做滤波也不是"不能用"，只是遇到高采样率时容易造成延迟升高、功耗上升。',
+    boundary:'"滤波"这里指数字域的采样点乘加运算，不代表所有滤波场景的性能都完全等价于本课堂给出的相对档位。',
+  },
+  fft: {
+    preferred:['dsp','fpga'], acceptable:['asic'],
+    reason:'FFT 是高度标准化的重复计算，DSP 的乘加单元和 FPGA 的并行结构都适合；算法长期不变时专用硬件效率更高。',
+    conditionChange:'原型阶段可能还在试不同变换长度，适合 DSP/FPGA；一旦变换长度固定且大批量生产，专用硬件更划算。',
+    hint1:'FFT 的计算步骤是固定的标准算法，重复率很高。',
+    hint2:'和数字滤波类似，重复的标准化运算适合专门优化过的资源。',
+    hint3:'典型答案是 DSP 或 FPGA；专用硬件在量产且算法稳定时也合理。',
+    commonMistakes:'把 FFT 交给 CPU 硬算，导致延迟和功耗明显变差却没有意识到原因。',
+    teacher20s:'FFT 是标准化的重复计算，DSP/FPGA 都适合，算法稳定后专用硬件效率更高，不是唯一答案。',
+    teacher60s:'FFT（快速傅里叶变换）的计算流程是固定的标准算法，涉及大量重复的蝶形运算，这正是 DSP 专用乘加单元和 FPGA 并行逻辑结构的强项。如果算法参数（比如变换长度）还在实验阶段，用 DSP 或 FPGA 方便调整；一旦确定下来并要大规模量产，把 FFT 固化进专用硬件加速器能显著降低功耗和单台成本。用 CPU 完成 FFT 在原理上可行，但重复运算量大时会明显拖慢延迟、拉高功耗。',
+    boundary:'这里的评价只针对课堂设定的相对适配度，不代表某具体型号 DSP/FPGA/ASIC 做 FFT 的真实运算速度对比。',
+  },
+  demod: {
+    preferred:['dsp','fpga'], acceptable:['asic'],
+    reason:'解调涉及连续的信号运算，科研阶段用 DSP/FPGA 方便调参；算法稳定且大规模量产时专用硬件更有优势。',
+    conditionChange:'数据量增大、实时性要求提高时优先 FPGA/专用硬件；算法定型且大批量生产时专用硬件优势更明显。',
+    hint1:'解调是把接收到的模拟/数字信号还原成比特的连续运算过程。',
+    hint2:'科研原型阶段更看重能不能快速改算法，大批量生产阶段更看重效率和成本。',
+    hint3:'典型答案：科研原型用 DSP/FPGA；数据量大、实时性要求高用 FPGA/专用硬件；算法稳定量产用专用硬件更有优势。',
+    commonMistakes:'认为解调只能用一种资源，或者忽视了"科研阶段"和"量产阶段"应该给出不同建议。',
+    teacher20s:'解调是连续的信号处理运算，科研阶段用 DSP/FPGA 方便调参，量产阶段专用硬件更有优势，答案会随场景变化。',
+    teacher60s:'解调需要把接收到的信号连续地转换回比特流，运算量较大且需要一定的实时性。科研原型阶段，算法细节还会调整，DSP 或 FPGA 便于快速修改参数；当数据量增大、实时性要求提高时，FPGA 或专用硬件加速器能提供更稳定的高速处理；一旦算法稳定并进入大规模量产，把解调逻辑固化进专用硬件，能同时压低功耗和单台成本。这是一个会随场景变化推荐答案的典型任务，没有脱离场景的唯一最佳选择。',
+    boundary:'课堂只讨论"这类信号处理适合哪类资源"，不代表任何具体调制方式的真实解调实现细节。',
+  },
+  ecc: {
+    preferred:['fpga','asic'], acceptable:['dsp'],
+    reason:'FEC 纠错解码计算量大且结构规整，FPGA/专用硬件效率更高；数据量较小或算法还在调试时 DSP 也可以接受。',
+    conditionChange:'纠错算法还可能调整时，DSP/FPGA 更灵活；算法定型、追求效率和量产成本时专用硬件更合适。',
+    hint1:'纠错解码通常涉及规整的迭代运算，重复率很高。',
+    hint2:'这类运算量大、结构固定的处理，FPGA 或专用硬件通常效率更高。',
+    hint3:'典型答案是 FPGA 或专用硬件；数据量较小、算法未定型时 DSP 也可以接受。',
+    commonMistakes:'把纠错解码交给 CPU 处理大数据量的场景，导致延迟明显上升。',
+    teacher20s:'FEC 纠错解码计算量大且结构规整，FPGA 或专用硬件效率更高，数据量较小时 DSP 也可以接受。',
+    teacher60s:'FEC（前向纠错）解码通常涉及规整的迭代运算，比如反复的校验和似然计算，运算量较大但结构固定，这正是 FPGA 并行逻辑和专用硬件加速器的强项，能在低延迟下处理大数据量。如果数据量较小、纠错算法还在验证调整阶段，用 DSP 处理也是可以接受的替代方案，只是效率会打折扣。选择应该结合数据量和算法成熟度综合判断。',
+    boundary:'这里的相对适配度只是课堂教学简化，不代表某具体 FEC 算法（如 LDPC、Turbo 码等）在真实芯片上的性能对比。',
+  },
+  beamdir: {
+    preferred:['cpu','dsp'], acceptable:['fpga'],
+    reason:'波束方向和策略计算涉及较多判断和相对较低频率的更新，CPU/DSP 足够；如果这部分也要求极高更新速率，可以考虑 FPGA。',
+    conditionChange:'如果方向计算的更新速率大幅提高、逼近实时高速更新的量级，可以考虑挪去 FPGA；正常场景下 CPU/DSP 已经足够。',
+    hint1:'先区分：这是"算出该往哪个方向调整"的策略计算，还是"实际把每个通道权重快速刷新"的高速执行？',
+    hint2:'策略计算涉及判断和相对不那么频繁的数值运算。',
+    hint3:'典型答案是 CPU 或 DSP；如果这部分更新速率也变得极高，可以考虑 FPGA。',
+    commonMistakes:'把"方向策略计算"和"多通道高速更新"混为一谈，误以为波束相关任务只能整体丢给 FPGA。',
+    teacher20s:'波束方向和策略计算是判断加相对低频的数值运算，CPU 或 DSP 就够用，不需要一开始就上 FPGA。',
+    teacher60s:'波束赋形任务其实包含两个层次：一层是"往哪个方向调整、用什么策略"的计算，这类计算涉及较多逻辑判断，更新频率相对没有那么高，CPU 或 DSP 足以胜任；另一层是"把计算结果实时下发到每个天线通道"的高速权重更新，这才是需要 FPGA 或专用硬件的部分。本课堂特意把这两层拆成两张独立任务卡，就是为了避免"波束就该整体丢给 FPGA"这种笼统印象。',
+    boundary:'真实相控阵系统里，方向策略计算和权重更新之间的界线可能更复杂，这里只做课堂简化的两层拆分。',
+  },
+  beamupd: {
+    preferred:['fpga','asic'], acceptable:[],
+    reason:'多通道波束权重的高速更新需要大量并行运算和很低延迟，只有 FPGA 或专用硬件能跟上更新速率。',
+    conditionChange:'通道数进一步增加或更新速率进一步提高时，专用硬件的效率优势会更明显；算法仍需频繁调整时优先 FPGA。',
+    hint1:'"多通道"+"高速更新"，意味着同一时刻有大量并行的数值计算要在很短时间内完成。',
+    hint2:'这种高并行、低延迟的重复运算，是四类资源里哪一类的看家本领？',
+    hint3:'典型答案是 FPGA 或专用硬件加速器；CPU/DSP 通常跟不上这种更新速率。',
+    commonMistakes:'把高速多通道权重更新交给 CPU，结果更新跟不上，波束方向出现明显滞后。',
+    teacher20s:'多通道波束权重的高速更新需要大量并行运算和很低延迟，只有 FPGA 或专用硬件能跟上这个速率。',
+    teacher60s:'相控阵天线的每个通道都需要独立的相位/幅度权重，波束方向变化时，这些权重需要在很短时间内同时更新完毕，通道数越多、更新越频繁，对并行处理能力和延迟的要求就越高。FPGA 内部可以针对这种"多路并行、结构固定"的运算搭出专门的并行数据通路；专用硬件加速器则可以把这套逻辑进一步固化以追求更低功耗和更小体积。CPU 和 DSP 按顺序或有限并行处理这类任务，通常难以满足高速多通道更新的实时性要求。',
+    boundary:'这里说的"跟不上"是课堂规则模型里的相对适配度差异，不代表某具体 CPU/DSP 型号完全无法实现多通道更新。',
+  },
+  temp: {
+    preferred:['cpu'], acceptable:[],
+    reason:'温度监控通常只需要简单读数和阈值判断，CPU 或简单的低功耗管理模块就够用；本页没有单独 MCU 选项时放 CPU。',
+    conditionChange:'如果需要极低功耗的常驻监控（主处理器休眠时也要工作），实际产品通常会有独立的低功耗管理控制器负责，但本页不提供这个选项。',
+    hint1:'温度监控需要做的事情是什么？读数、比较阈值、必要时报警或降频。',
+    hint2:'这类任务计算量很小，不需要专门的高速运算资源。',
+    hint3:'典型答案是 CPU；真实产品里也可能由独立的低功耗管理控制器负责。',
+    commonMistakes:'把温度监控这种极轻量任务也放进 FPGA 或专用硬件，浪费资源。',
+    teacher20s:'温度监控只是简单读数和阈值判断，CPU 就够用；本页没有单独的低功耗管理控制器选项，所以典型答案放在 CPU。',
+    teacher60s:'温度监控需要做的事情很简单：定期读取传感器数值、和阈值比较、超限时触发降频或告警，这是非常轻量的任务，不需要专门的高速运算资源，CPU 完全能够胜任。需要提醒的是，真实产品里，温度监控和电源管理经常由一个独立的低功耗管理控制器（有时候是电源管理芯片里的一部分）负责，这样主 CPU 甚至可以在这段时间休眠以省电；本课堂的四类资源选项里没有单独的"管理控制器"，所以把它归入 CPU 是课堂简化，不代表真实产品架构。',
+    boundary:'"本网页没有单独的 MCU/管理控制器选项"是课堂简化，真实产品里温度监控常由独立的低功耗控制器负责。',
+  },
+  wifi: {
+    preferred:['cpu'], acceptable:[],
+    reason:'Wi-Fi 协议栈管理同样是分支逻辑为主的任务，CPU 通用灵活最合适。',
+    conditionChange:'如果需要处理极高吞吐量的数据转发，可能会引入专门的网络处理硬件，但这超出本课堂讨论范围。',
+    hint1:'Wi-Fi 管理主要在做什么？建立连接、维护协议状态、处理各种网络事件。',
+    hint2:'和协议栈管理类似，分支判断和状态机为主的任务适合最灵活的资源。',
+    hint3:'典型答案是 CPU。',
+    commonMistakes:'把 Wi-Fi 管理和"数字滤波"这类信号运算任务混淆，误以为需要专门的信号处理资源。',
+    teacher20s:'Wi-Fi 管理是分支逻辑为主的协议管理任务，和协议栈类似，CPU 通用灵活最合适。',
+    teacher60s:'Wi-Fi 管理涉及建立连接、维护协议状态、响应各种网络事件，这和协议栈与连接管理是同一类任务——分支判断多、计算量相对不大，CPU 的通用可编程能力正好适合。不需要为这类管理逻辑单独设计固定电路或高速并行结构。',
+    boundary:'这里的"Wi-Fi 管理"指协议状态管理这一层，不包括射频前端和物理层的信号处理。',
+  },
+  datamove: {
+    preferred:['cpu'], acceptable:[],
+    reason:'本页只讨论"谁负责配置和管理数据搬运"，CPU 负责配置和调度是典型答案；真实系统里高速搬运通常由内存控制器/DMA 完成。',
+    conditionChange:'如果数据吞吐量进一步增大，实际产品会更依赖专门的硬件数据通路（如 DMA），但本课堂不展开这部分设计。',
+    hint1:'先区分：是"决定怎么搬、配置搬运参数"，还是"真正执行高速搬运动作"？',
+    hint2:'本页只讨论前者——谁来配置和管理，不展开谁执行真正的高速搬运。',
+    hint3:'典型答案是 CPU 负责配置和管理；实际高速搬运通常由内存控制器/DMA/硬件数据通路完成。',
+    commonMistakes:'误以为选了 CPU 就代表"所有数据搬运都是 CPU 一个字节一个字节地亲自去搬"。',
+    teacher20s:'这里只讨论谁负责配置和管理数据搬运，CPU 负责配置调度是典型答案；真正的高速搬运通常由内存控制器/DMA 完成，课堂不展开。',
+    teacher60s:'数据搬运和缓存管理可以拆成两层：一层是"配置搬运参数、决定什么时候搬、搬到哪里"的管理逻辑，这一层适合 CPU 处理，因为它是分支判断为主的调度工作；另一层是"真正把大量数据从一个地方搬到另一个地方"的执行动作，这在真实系统里通常由专门的内存控制器、DMA（直接内存访问）控制器或硬件数据通路完成，几乎不占用 CPU 的运算时间。本课堂的资源选项里没有单独的 DMA 选项，所以把"数据搬运和缓存管理"这张任务卡归入 CPU，代表的是"配置和管理"这一层，不代表 CPU 亲自执行每一次数据搬运。',
+    boundary:'课堂不展开 DMA/内存控制器的具体设计，只提醒"配置管理"和"实际执行搬运"是两回事。',
+  },
+};
+const C4_TYPICAL_SCHEMES = {
+  proto: {ui:'cpu', proto:'cpu', filt:'dsp', fft:'dsp', demod:'dsp', ecc:'dsp', beamdir:'cpu', beamupd:'fpga', temp:'cpu', wifi:'cpu', datamove:'cpu'},
+  rescue:{ui:'cpu', proto:'cpu', filt:'fpga', fft:'fpga', demod:'fpga', ecc:'fpga', beamdir:'dsp', beamupd:'fpga', temp:'cpu', wifi:'cpu', datamove:'cpu'},
+  mass:  {ui:'cpu', proto:'cpu', filt:'asic', fft:'asic', demod:'asic', ecc:'asic', beamdir:'dsp', beamupd:'asic', temp:'cpu', wifi:'cpu', datamove:'cpu'},
+};
+const C4_CONDITION_EVENTS = [
+  {id:'algochange', label:'算法还要频繁修改',
+    guidance:'把之前放进专用硬件的信号处理任务（滤波/FFT/解调/纠错）挪回 DSP 或 FPGA。',
+    risk:'专用硬件一旦流片就很难改，算法频繁变动会导致反复投片，前期成本急剧上升。',
+    why:'算法稳定性直接决定了"改起来贵不贵"——越不稳定的算法，越应该放在容易修改的资源上。',
+    teacher20s:'算法还要频繁改，就应该把信号处理任务放回 DSP/FPGA，专用硬件改一次代价太大。',
+    teacher60s:'当算法还处于频繁修改阶段时，把计算逻辑放进专用硬件加速器意味着每次算法调整都可能要重新设计电路甚至重新流片，这个代价远高于在 DSP 上改系数或在 FPGA 上重新烧写逻辑。这也是为什么科研原型阶段的典型分工会优先选择 DSP/FPGA——它们保留了修改的空间，而专用硬件是用"修改的自由度"换取"运行时的效率"，只有算法基本定型后才划算。'},
+  {id:'battery', label:'电池只剩 30%',
+    guidance:'优先把高功耗任务（尤其放在 FPGA 上的密集运算）挪去功耗更低的专用硬件，或者降低同时运行的任务数量。',
+    risk:'继续维持高功耗方案会加速耗尽剩余电量，可能导致关键通信中断。',
+    why:'电量紧张时，功耗这一维度的权重会临时上升，即使专用硬件灵活性差，换来的低功耗也更重要。',
+    teacher20s:'电量只剩 30%，应该优先降功耗，把密集运算挪去更省电的专用硬件或减少并行任务。',
+    teacher60s:'电池电量紧张会临时改变优先级排序：平时可能优先考虑开发速度或灵活性，但电量告急时，"能不能撑到任务结束"变成第一位的问题。这时应该优先把功耗较高的资源换成更省电的选项，即使专用硬件的灵活性较差，在这个紧急节点上功耗优势更重要。这也说明架构选择不是一次性决定，而要随运行状态动态权衡。'},
+  {id:'latency', label:'延迟要求提高',
+    guidance:'把关键链路上的任务从 CPU 挪去 DSP/FPGA/专用硬件，减少排队等待。',
+    risk:'继续用 CPU 顺序处理关键任务，可能无法满足新的延迟指标，导致响应变慢甚至丢数据。',
+    why:'延迟主要来自"资源是不是顺序处理、适不适合这类运算"，CPU 通用但不是低延迟专精，遇到高要求时容易成为瓶颈。',
+    teacher20s:'延迟要求提高，就要把关键任务从 CPU 挪到 DSP/FPGA/专用硬件，减少排队等待。',
+    teacher60s:'CPU 通常按程序顺序处理任务，遇到多个信号处理任务同时需要执行时容易排队等待，这在延迟要求不高的场景下问题不大，但一旦延迟指标收紧，排队时间就会变成明显的短板。DSP、FPGA、专用硬件加速器要么有专门的运算单元，要么支持大量并行处理，能够显著缩短关键路径上的处理时间。'},
+  {id:'mass10w', label:'准备生产十万台',
+    guidance:'把已经稳定的信号处理任务（滤波/FFT/解调/纠错、多通道波束更新）逐步挪去专用硬件，压低单台成本和功耗。',
+    risk:'继续用 DSP/FPGA 量产十万台，单台成本和功耗都会明显高于专用硬件方案，十万台的差距会被放大很多倍。',
+    why:'量产规模越大，前期投入被摊薄得越多，专用硬件"前期贵、单台省"的特性就越划算。',
+    teacher20s:'准备量产十万台，应该把稳定的信号处理任务挪去专用硬件，靠规模摊薄前期成本换取更低单台成本和功耗。',
+    teacher60s:'专用硬件加速器的前期开发成本很高，但一旦分摊到十万台的产量上，每台承担的前期成本就会大幅下降；同时专用硬件在功耗和运行效率上通常优于通用资源。所以进入量产阶段后，只要算法已经稳定，把信号处理这类重复性任务迁移到专用硬件，往往能同时压低单台成本和整体功耗，这是量产规模放大后架构选择应该调整的方向。'},
+  {id:'devbudget', label:'前期研发预算有限',
+    guidance:'避免同时引入多种专用硬件/FPGA 设计，优先用 CPU/DSP 这类开发成本较低的资源完成任务。',
+    risk:'预算有限时仍然大量使用 FPGA/专用硬件，会导致开发阶段就超支，项目可能无法按时完成。',
+    why:'前期开发成本和资源种类、专用硬件占比直接相关，预算紧张时应该优先控制这个维度。',
+    teacher20s:'前期研发预算有限，就要少用 FPGA/专用硬件，优先用开发成本较低的 CPU/DSP 完成任务。',
+    teacher60s:'前期开发成本不仅取决于任务本身，也取决于用了多少种不同的资源类型——每多引入一种 FPGA 或专用硬件设计，就多一份开发、验证和调试的工作量。当预算有限时，应该优先考虑用 CPU/DSP 这类开发门槛较低、工具链成熟的资源去覆盖尽可能多的任务，把 FPGA/专用硬件留给真正必须的少数关键任务。'},
+  {id:'unitcost', label:'单台成本必须下降',
+    guidance:'把量大且计算规整的任务（滤波/FFT/纠错/波束高速更新）迁移去专用硬件，同时保留少量必须灵活的任务在 CPU/DSP。',
+    risk:'继续用通用性强但单价较高的资源方案，单台成本很难达到目标。',
+    why:'单台成本主要由所选资源的量产单价决定，专用硬件在大规模场景下单价优势最明显。',
+    teacher20s:'单台成本必须下降，就要把规整的重复计算任务迁移到专用硬件，用规模效应压低单价。',
+    teacher60s:'当单台成本成为硬性指标时，最有效的手段是把计算量大、结构规整、算法已经稳定的任务迁移到专用硬件加速器——它们在大规模生产下单位成本最低。同时也不需要把所有任务都做成专用硬件，界面、协议管理这类分支逻辑多的任务留在 CPU 上通常更划算，因为专用硬件处理这类任务反而没有优势。'},
+  {id:'fieldupgrade', label:'现场需快速升级算法',
+    guidance:'把需要频繁现场升级的任务放在 CPU/DSP（软件升级）或 FPGA（可远程重新烧写逻辑），避免放进专用硬件。',
+    risk:'如果关键算法被固化进专用硬件，现场几乎无法升级，只能等下一代硬件。',
+    why:'"现场能不能改"取决于所用资源是否支持软件/固件级别的更新，专用硬件在这一点上几乎没有弹性。',
+    teacher20s:'需要现场快速升级算法，就不能把它放进专用硬件，CPU/DSP 或可远程烧写的 FPGA 才行。',
+    teacher60s:'如果某项任务预期需要在设备已经部署到现场之后还能快速升级算法，那么专用硬件加速器几乎是不能选的——它在制造完成后核心功能很难更改。CPU/DSP 上的算法通常以软件形式存在，可以远程推送更新；FPGA 的逻辑也可以通过重新烧写来更新，虽然比软件升级复杂，但仍然可行。这类需求应该优先排除专用硬件方案。'},
+  {id:'datasurge', label:'数据量突然增加',
+    guidance:'把首当其冲的数据处理任务（滤波/FFT/解调/纠错/数据搬运管理）从 CPU 挪去 DSP/FPGA/专用硬件。',
+    risk:'继续用 CPU 处理暴增的数据量，会迅速成为瓶颈，出现明显的延迟升高甚至丢数据。',
+    why:'数据量增大直接放大了"吞吐量"和"数据搬运压力"这两个维度的重要性，CPU 在这两项上通常不占优势。',
+    teacher20s:'数据量突然增加，要把数据处理任务从 CPU 挪到 DSP/FPGA/专用硬件，避免吞吐量成为瓶颈。',
+    teacher60s:'数据量增加会同时放大对吞吐量和数据搬运压力的要求。CPU 按顺序处理数据，遇到数据量暴增时很容易成为瓶颈，导致延迟升高甚至丢数据；DSP、FPGA、专用硬件加速器要么有专门优化的运算单元，要么能并行处理大量数据，更适合应对数据量突增的场景。同时也要留意数据搬运和缓存管理这类配置调度任务是否需要更频繁地介入。'},
+];
+
+/* ============================= 顶部：双模式 + A/B 计分栏 + localStorage ============================= */
+const C4_STORAGE_KEY = 'satlab_course4_v1'; // 独立 key，不与课程二/三的 key 冲突
+let c4TopMode = 'quick';       // 'quick' 快速闯关 / 'sched' 架构调度
+let c4CurrentTeam = 'A';
+let c4ScoreA = 0, c4ScoreB = 0;
+let c4ScoreHistory = [];
+let c4Scenario = 'proto';
+let c4Placement = {A:{}, B:{}};  // 每组各存一套分工
+let c4Selected = {A:null, B:null};
+
+function c4RenderScore(){
+  document.getElementById('c4scoreA').textContent = c4ScoreA;
+  document.getElementById('c4scoreB').textContent = c4ScoreB;
+}
+function c4AddScore(team, delta, reason){
+  if(team==='A') c4ScoreA += delta; else c4ScoreB += delta;
+  c4ScoreHistory.push({team, delta, reason: reason||'手动调整'});
+  c4RenderScore();
+  c4SaveState();
+}
+function c4ManualScore(team, delta){ c4AddScore(team, delta, '教师手动'+(delta>0?'+1':'-1')); }
+function c4UndoScore(){
+  const last = c4ScoreHistory.pop();
+  if(!last){ toast('没有可撤销的加分记录'); return; }
+  if(last.team==='A') c4ScoreA -= last.delta; else c4ScoreB -= last.delta;
+  c4RenderScore();
+  c4SaveState();
+  toast('已撤销上一次加分（'+last.team+' 组 '+(last.delta>0?'+':'')+last.delta+'）');
+}
+function c4ClearSession(){
+  if(typeof confirm==='function' && !confirm('确定要清空课程四的分数、分工和进度吗？此操作不可撤销。')) return;
+  c4ScoreA=0; c4ScoreB=0; c4ScoreHistory=[];
+  c4Placement={A:{}, B:{}}; c4Selected={A:null,B:null};
+  c4RenderScore();
+  c4SetTeam('A');
+  c4RenderScheduleAll();
+  c4ClearOutput();
+  c4G1Next();
+  c4G2Start();
+  try{ localStorage.removeItem(C4_STORAGE_KEY); }catch(e){}
+  toast('课程四分数、分工与进度已清空');
+}
+function c4SaveState(){
+  try{
+    localStorage.setItem(C4_STORAGE_KEY, JSON.stringify({
+      scoreA:c4ScoreA, scoreB:c4ScoreB, currentTeam:c4CurrentTeam, topMode:c4TopMode,
+      history:c4ScoreHistory, scenario:c4Scenario, placement:c4Placement,
+    }));
+  }catch(e){ /* localStorage 不可用时静默跳过，不影响课堂使用 */ }
+}
+function c4LoadState(){
+  try{
+    const raw = localStorage.getItem(C4_STORAGE_KEY);
+    if(!raw) return false;
+    const d = JSON.parse(raw);
+    c4ScoreA = d.scoreA||0; c4ScoreB = d.scoreB||0;
+    c4CurrentTeam = d.currentTeam==='B' ? 'B' : 'A';
+    c4ScoreHistory = Array.isArray(d.history) ? d.history : [];
+    if(d.topMode==='quick' || d.topMode==='sched') c4TopMode = d.topMode;
+    if(C4_SCENARIOS.find(s=>s.id===d.scenario)) c4Scenario = d.scenario;
+    if(d.placement && typeof d.placement==='object') c4Placement = {A:d.placement.A||{}, B:d.placement.B||{}};
+    return true;
+  }catch(e){ return false; }
+}
+function c4SetTopMode(m){
+  c4TopMode = m;
+  document.getElementById('c4modeQuickBtn').classList.toggle('on', m==='quick');
+  document.getElementById('c4modeSchedBtn').classList.toggle('on', m==='sched');
+  document.getElementById('c4quickWrap').style.display = m==='quick' ? '' : 'none';
+  document.getElementById('c4schedWrap').style.display = m==='sched' ? '' : 'none';
+  c4SaveState();
+}
+function c4SetTeam(t){
+  c4CurrentTeam = t;
+  document.getElementById('c4teamBtnA').classList.toggle('on', t==='A');
+  document.getElementById('c4teamBtnB').classList.toggle('on', t==='B');
+  document.getElementById('c4scoreCardA').classList.toggle('teamon', t==='A');
+  document.getElementById('c4scoreCardB').classList.toggle('teamon', t==='B');
+  const label = t==='A' ? 'A 组' : 'B 组';
+  document.getElementById('c4schedTeamLabel').textContent = label;
+  c4RenderScheduleAll();
+  c4ClearOutput();
+  c4SaveState();
+}
+
+/* ============================= 教师答案系统：防泄露弹窗（c4 前缀） ============================= */
+let c4ActiveQuestion = null; // {kind:'task'|'event', gated:bool, ...C4_TASK_ANSWERS[x] 或 C4_CONDITION_EVENTS[x]}
+let c4ActiveHintLevel = 0;
+function c4OpenTeacherAssist(){
+  document.getElementById('c4teacherModal').style.display='flex';
+  document.getElementById('c4teacherPrivacyGate').style.display='';
+  document.getElementById('c4teacherAssistPanel').style.display='none';
+}
+function c4ConfirmTeacherAssist(){
+  document.getElementById('c4teacherPrivacyGate').style.display='none';
+  document.getElementById('c4teacherAssistPanel').style.display='';
+  c4RenderTeacherAssistContent();
+}
+function c4CloseTeacherAssist(){
+  document.getElementById('c4teacherModal').style.display='none';
+  document.getElementById('c4teacherPrivacyGate').style.display='';
+  document.getElementById('c4teacherAssistPanel').style.display='none';
+}
+function c4TeacherAssistIsShowing(){
+  const modal=document.getElementById('c4teacherModal');
+  const panel=document.getElementById('c4teacherAssistPanel');
+  return modal.style.display!=='none' && panel.style.display!=='none';
+}
+function c4RenderTeacherAssistContent(){
+  const box=document.getElementById('c4teacherAssistContent');
+  const q=c4ActiveQuestion;
+  if(!q){
+    box.innerHTML = '<p style="color:var(--muted);font-size:15px">当前没有活动的任务/题目——请先在闯关模式中开始一题，或在架构调度模式中点选一张任务卡，再打开教师辅助。</p>';
+    return;
+  }
+  if(q.kind==='event'){
+    box.innerHTML = `
+      <div class="c4qa-section"><h4>条件变化</h4><p><b>${q.label}</b></p></div>
+      <div class="c4qa-section"><h4>推荐调整</h4><p>${q.guidance}</p></div>
+      <div class="c4qa-section"><h4>原方案风险</h4><p>${q.risk}</p></div>
+      <div class="c4qa-section"><h4>为什么场景变化会改变架构</h4><p>${q.why}</p></div>
+      <div class="c4qa-section"><h4>20 秒照读稿</h4><p>${q.teacher20s}</p></div>
+      <div class="c4qa-section"><h4>60 秒照读稿</h4><p>${q.teacher60s}</p></div>
+    `;
+    return;
+  }
+  const procName = pid => (C4_PROCESSORS.find(p=>p.id===pid)||{}).name || pid;
+  const level = q.gated ? c4ActiveHintLevel : 3;
+  let hintsHtml='';
+  for(let lv=1; lv<=3; lv++){
+    if(level>=lv) hintsHtml += `<p><b>${lv} 级提示：</b>${q['hint'+lv]||''}</p>`;
+  }
+  box.innerHTML = `
+    <div class="c4qa-section">
+      <h4>典型答案 / 可接受替代</h4>
+      <p><b>典型：${q.preferred.map(procName).join('、')}</b>${q.acceptable.length?'（可接受替代：'+q.acceptable.map(procName).join('、')+'）':''}</p>
+      <p>${q.reason}</p>
+    </div>
+    <div class="c4qa-section">
+      <h4>什么条件改变后选择可能变化</h4>
+      <p>${q.conditionChange}</p>
+    </div>
+    <div class="c4qa-section">
+      <h4>分级提示（已显示 ${level}/3 级${q.gated?'，快捷键 H 显示下一级':''}）</h4>
+      ${hintsHtml || '<p style="color:var(--muted)">按 H 键或点"下一级提示"逐级显示。</p>'}
+    </div>
+    <div class="c4qa-section"><h4>常见错误</h4><p>${q.commonMistakes}</p></div>
+    <div class="c4qa-section"><h4>20 秒照读稿</h4><p>${q.teacher20s}</p></div>
+    <div class="c4qa-section"><h4>60 秒照读稿</h4><p>${q.teacher60s}</p></div>
+    <div class="c4qa-section"><p class="c4qa-boundary">技术边界：${q.boundary}</p></div>
+  `;
+}
+function c4NextHint(){
+  if(!c4ActiveQuestion || !c4ActiveQuestion.gated) return;
+  c4ActiveHintLevel = Math.min(3, c4ActiveHintLevel+1);
+  if(c4TeacherAssistIsShowing()) c4RenderTeacherAssistContent();
+  if(c4TopMode==='quick' && c4GameTab===1) c4G1RefreshHintBadge();
+}
+function c4CopyExplain(){
+  if(!c4ActiveQuestion || !c4ActiveQuestion.teacher20s){ toast('当前没有活动题目可复制，请先在闯关模式中开始一题，或在架构调度模式中点选一张任务卡'); return; }
+  const text = c4ActiveQuestion.teacher20s;
+  if(typeof navigator!=='undefined' && navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>toast('已复制本题20秒讲解')).catch(()=>toast('复制失败，请手动选取文本'));
+  } else {
+    toast('当前环境不支持自动复制，请手动选取文本');
+  }
+}
+function c4PrintAnswerCard(){
+  if(typeof window!=='undefined' && typeof window.print==='function') window.print();
+}
+
+/* ============================= 架构调度模式：场景 + 任务卡 + 处理器立柱 + 评估 ============================= */
+function c4InitScenarios(){
+  const wrap=document.getElementById('c4scenarios');
+  wrap.innerHTML='';
+  C4_SCENARIOS.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='c4task'+(c4Scenario===s.id?' selected':'');
+    el.innerHTML=`<div class="c4scname">${s.name}</div><div class="c4sctag">${s.tagline}</div>`;
+    el.onclick=()=>{ c4Scenario=s.id; c4InitScenarios(); c4ClearOutput(); document.getElementById('c4compareOut').style.display='none'; c4SaveState(); };
+    wrap.appendChild(el);
+  });
+}
+function c4CurrentPlacement(){ return c4Placement[c4CurrentTeam]; }
+function c4RenderPool(){
+  const wrap=document.getElementById('c4pool');
+  const placement=c4CurrentPlacement();
+  wrap.innerHTML='';
+  C4_TASKS.forEach(t=>{
+    if(placement[t.id]) return;
+    const el=document.createElement('div');
+    el.className='c4task'+(c4Selected[c4CurrentTeam]===t.id?' selected':'');
+    el.textContent=t.name;
+    el.onclick=()=>{
+      c4Selected[c4CurrentTeam] = (c4Selected[c4CurrentTeam]===t.id ? null : t.id);
+      if(c4Selected[c4CurrentTeam]){ c4ActiveQuestion = Object.assign({kind:'task', gated:false, taskName:t.name}, C4_TASK_ANSWERS[t.id]); c4ActiveHintLevel=3; }
+      c4RenderScheduleAll();
+    };
+    wrap.appendChild(el);
+  });
+  if(!wrap.children.length) wrap.innerHTML='<div style="color:var(--muted);font-size:15px">任务卡已全部上板。</div>';
+}
+function c4RenderCols(){
+  const wrap=document.getElementById('c4cols');
+  const placement=c4CurrentPlacement();
+  const sel = c4Selected[c4CurrentTeam];
+  wrap.innerHTML='';
+  C4_PROCESSORS.forEach(p=>{
+    const col=document.createElement('div');
+    col.className='c4col'+(sel?' hot':'');
+    let chipsHtml='';
+    Object.entries(placement).forEach(([taskId,procId])=>{
+      if(procId!==p.id) return;
+      const t=C4_TASKS.find(x=>x.id===taskId);
+      chipsHtml += `<div class="c4chip" data-task="${taskId}">${t.name} ↩</div>`;
+    });
+    col.innerHTML = `<h4>${p.icon} ${p.name}</h4><div class="tag">${p.tagline}</div><div class="c4chipwrap">${chipsHtml}</div>`;
+    col.onclick=(e)=>{
+      const chip = e.target.closest('.c4chip');
+      if(chip){ delete placement[chip.dataset.task]; c4Selected[c4CurrentTeam]=null; c4RenderScheduleAll(); c4SaveState(); return; }
+      if(!sel){ toast('先在下方点选一张任务卡'); return; }
+      placement[sel]=p.id; c4Selected[c4CurrentTeam]=null; c4RenderScheduleAll(); c4SaveState();
+    };
+    wrap.appendChild(col);
+  });
+}
+function c4RenderScheduleAll(){ c4RenderPool(); c4RenderCols(); }
+function c4ClearOutput(){
+  const out=document.getElementById('c4out');
+  if(out) out.style.display='none';
+}
+function c4ResetPlacement(){
+  c4Placement[c4CurrentTeam]={}; c4Selected[c4CurrentTeam]=null;
+  c4RenderScheduleAll(); c4ClearOutput(); c4SaveState();
+}
+function c4LoadAllCpu(){
+  const p={}; C4_TASKS.forEach(t=>p[t.id]='cpu');
+  c4Placement[c4CurrentTeam]=p; c4Selected[c4CurrentTeam]=null;
+  c4RenderScheduleAll(); c4ClearOutput(); c4SaveState();
+  toast('已为 '+c4CurrentTeam+' 组载入"全部交给CPU"（教师演示工具）');
+}
+function c4LoadTypical(scenarioId){
+  c4Placement[c4CurrentTeam] = Object.assign({}, C4_TYPICAL_SCHEMES[scenarioId]);
+  c4Selected[c4CurrentTeam]=null;
+  c4RenderScheduleAll(); c4ClearOutput(); c4SaveState();
+  toast('已为 '+c4CurrentTeam+' 组载入典型'+(C4_SCENARIOS.find(s=>s.id===scenarioId)||{}).name+'方案（教师演示工具，未自动评估）');
+}
+function c4RenderBars(containerId, levels){
+  const bars=document.getElementById(containerId);
+  bars.innerHTML = C4_METRIC_ORDER.map(k=>{
+    const lv=levels[k];
+    const label = k==='dataMovement' ? C4_PRESSURE_LABEL[lv] : C4_LEVEL_LABEL[lv];
+    let segs=''; for(let i=1;i<=5;i++) segs+=`<span class="${i<=lv?'on':''}"></span>`;
+    const dirArrow = C4_METRIC_DIR[k]==='down' ? '↓' : '↑';
+    return `<div class="c4bar"><div class="k">${C4_METRIC_NAME[k]}${k!=='dataMovement'?dirArrow:''}</div><div class="c4barseg">${segs}</div><div class="lv">${label}</div></div>`;
+  }).join('');
+}
+function c4Evaluate(){
+  const placement=c4CurrentPlacement();
+  if(!Object.keys(placement).length){ toast('先放置至少一个任务，再评估'); return; }
+  const res = c4EvalPlacement(placement, c4Scenario);
+  document.getElementById('c4out').style.display='';
+  document.getElementById('c4outTeamLabel').textContent = c4CurrentTeam+' 组 · '+res.scenario.name;
+  c4RenderBars('c4bars', res.levels);
+  const notes = c4BuildNotes(res);
+  document.getElementById('c4notes').innerHTML = notes.length
+    ? notes.map(n=>`<li>${n}</li>`).join('')
+    : '<li>暂无特别提示——当前摆法没有触发明显的取舍警告。</li>';
+  document.getElementById('c4final').textContent = '本场景下没有唯一标准答案，请两组各自陈述取舍理由；教师可在"解释理由"环节手动加分。';
+}
+function c4Compare(){
+  const pa=c4Placement.A, pb=c4Placement.B;
+  if(!Object.keys(pa).length || !Object.keys(pb).length){ toast('A/B 两组都需要至少放置一个任务才能比较'); return; }
+  const resA=c4EvalPlacement(pa, c4Scenario), resB=c4EvalPlacement(pb, c4Scenario);
+  document.getElementById('c4compareOut').style.display='';
+  c4RenderBars('c4compareBarsA', resA.levels);
+  c4RenderBars('c4compareBarsB', resB.levels);
+  document.getElementById('c4compareStmt').textContent = c4CompareStatement(resA.levels, resB.levels);
+}
+
+/* ============================= 快速闯关：游戏①任务闪配 / 游戏②约束突然变化 ============================= */
+let c4GameTab = 1;
+function c4GameGoTab(n){
+  c4GameTab = n;
+  document.getElementById('c4gameTabBtn1').classList.toggle('on', n===1);
+  document.getElementById('c4gameTabBtn2').classList.toggle('on', n===2);
+  document.getElementById('c4game1Wrap').style.display = n===1 ? '' : 'none';
+  document.getElementById('c4game2Wrap').style.display = n===2 ? '' : 'none';
+}
+function c4G1ScoreForPick(tier, hintLevel){
+  if(tier==='wrong') return {auto:0, needsTeacher:false};
+  if(hintLevel>=2) return {auto:0, needsTeacher:false};
+  if(hintLevel===1) return {auto:1, needsTeacher:false};
+  if(tier==='preferred') return {auto:2, needsTeacher:false};
+  return {auto:null, needsTeacher:true}; // acceptable + 未用提示：教师确认解释是否合理
+}
+let c4G1State = {taskId:null, hintLevel:0, answered:false, picked:null, pool:[]};
+function c4G1Next(){
+  if(!c4G1State.pool.length) c4G1State.pool = shuffle(C4_TASKS.map(t=>t.id));
+  c4G1State.taskId = c4G1State.pool.pop();
+  c4G1State.hintLevel = 0; c4G1State.answered=false; c4G1State.picked=null;
+  c4ActiveHintLevel = 0;
+  c4ActiveQuestion = Object.assign({kind:'task', gated:true, taskName:C4_TASKS.find(t=>t.id===c4G1State.taskId).name}, C4_TASK_ANSWERS[c4G1State.taskId]);
+  c4G1Render();
+}
+function c4G1RefreshHintBadge(){
+  c4G1State.hintLevel = c4ActiveHintLevel;
+  if(!c4G1State.answered) c4G1Render();
+}
+function c4G1Render(){
+  const taskName = C4_TASKS.find(t=>t.id===c4G1State.taskId).name;
+  document.getElementById('c4g1prompt').textContent = `现在随机出的任务是：${taskName}——应该交给哪一类计算资源？（当前提示级别：${c4G1State.hintLevel}/3）`;
+  const opts=document.getElementById('c4g1options');
+  opts.innerHTML='';
+  C4_PROCESSORS.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='btn'+(c4G1State.picked===p.id?' picked':'');
+    btn.textContent=p.name;
+    btn.disabled=c4G1State.answered;
+    btn.onclick=()=>c4G1Pick(p.id);
+    opts.appendChild(btn);
+  });
+  const result=document.getElementById('c4g1result');
+  result.className='c4gresult'; result.innerHTML='';
+}
+function c4G1Pick(procId){
+  if(c4G1State.answered) return;
+  c4G1State.picked = procId; c4G1State.answered = true;
+  const ans = C4_TASK_ANSWERS[c4G1State.taskId];
+  const tier = ans.preferred.includes(procId) ? 'preferred' : (ans.acceptable.includes(procId) ? 'acceptable' : 'wrong');
+  const score = c4G1ScoreForPick(tier, c4G1State.hintLevel);
+  const procName = C4_PROCESSORS.find(p=>p.id===procId).name;
+  const result = document.getElementById('c4g1result');
+  result.classList.add('show');
+  let body='';
+  if(tier==='preferred'){
+    result.classList.add('good');
+    c4AddScore(c4CurrentTeam, score.auto, '任务闪配·典型答案');
+    body = `<p><b>✅ ${procName} 是典型答案。</b>${ans.reason}</p><p>本题得分：${score.auto} 分</p>`;
+  } else if(tier==='acceptable'){
+    result.classList.add('mid');
+    body = `<p><b>🟡 ${procName} 是可接受的替代方案。</b>${ans.reason}</p>`;
+    if(score.needsTeacher){
+      body += `<p>请教师判断学生是否给出了合理解释：
+        <button class="btn" onclick="c4G1AwardAcceptable(1)">✅ 解释合理 +1</button>
+        <button class="btn" onclick="c4G1AwardAcceptable(0)">跳过不加分</button></p>`;
+    } else {
+      c4AddScore(c4CurrentTeam, score.auto, '任务闪配·替代方案(提示后)');
+      body += `<p>本题得分：${score.auto} 分（已使用提示）</p>`;
+    }
+  } else {
+    result.classList.add('bad');
+    body = `<p><b>这不是典型或可接受的替代方案。</b>${ans.reason}</p><p>不扣分。什么条件改变后选择可能变化：${ans.conditionChange}</p>`;
+  }
+  result.innerHTML = body;
+}
+function c4G1AwardAcceptable(pts){
+  if(pts>0) c4AddScore(c4CurrentTeam, pts, '任务闪配·替代方案(教师确认)');
+  const result=document.getElementById('c4g1result');
+  result.innerHTML += `<p>教师已确认：本题得分 ${pts} 分。</p>`;
+}
+
+let c4G2State = {scenarioId:null, base:{}, current:{}, event:null, modified:new Set(), maxMoves:2, submitted:false};
+function c4G2Start(){
+  const scenarios=['proto','rescue','mass'];
+  c4G2State.scenarioId = scenarios[Math.floor(Math.random()*scenarios.length)];
+  c4G2State.base = Object.assign({}, C4_TYPICAL_SCHEMES[c4G2State.scenarioId]);
+  c4G2State.current = Object.assign({}, c4G2State.base);
+  c4G2State.event = C4_CONDITION_EVENTS[Math.floor(Math.random()*C4_CONDITION_EVENTS.length)];
+  c4G2State.modified = new Set();
+  c4G2State.submitted = false;
+  c4ActiveQuestion = Object.assign({kind:'event'}, c4G2State.event);
+  c4G2Render();
+}
+function c4G2Next(){ c4G2Start(); }
+function c4G2Render(){
+  const scName = (C4_SCENARIOS.find(s=>s.id===c4G2State.scenarioId)||{}).name;
+  document.getElementById('c4g2base').innerHTML = `初始场景：<b>${scName}</b>典型分工——` +
+    Object.entries(c4G2State.base).map(([taskId,procId])=>{
+      const t=C4_TASKS.find(x=>x.id===taskId).name, p=C4_PROCESSORS.find(x=>x.id===procId).name;
+      return `${t}→${p}`;
+    }).join('，');
+  document.getElementById('c4g2event').textContent = '⚡ 条件变化：' + c4G2State.event.label;
+  document.getElementById('c4g2moves').textContent = `已移动 ${c4G2State.modified.size} / 最多 ${c4G2State.maxMoves} 张任务卡`;
+
+  const pool=document.getElementById('c4g2pool');
+  pool.innerHTML='<div style="color:var(--muted);font-size:13px">点选下方任务卡，再点资源立柱完成移动（最多改 2 张）。</div>';
+
+  const cols=document.getElementById('c4g2cols');
+  cols.innerHTML='';
+  C4_PROCESSORS.forEach(p=>{
+    const col=document.createElement('div');
+    col.className='c4col';
+    let chipsHtml='';
+    Object.entries(c4G2State.current).forEach(([taskId,procId])=>{
+      if(procId!==p.id) return;
+      const t=C4_TASKS.find(x=>x.id===taskId);
+      const changed = c4G2State.modified.has(taskId);
+      chipsHtml += `<div class="c4chip" data-task="${taskId}" style="${changed?'border-color:var(--sel)':''}">${t.name}${changed?' ★':''}</div>`;
+    });
+    col.innerHTML = `<h4>${p.icon} ${p.name}</h4><div class="tag">${p.tagline}</div><div class="c4chipwrap">${chipsHtml}</div>`;
+    col.onclick=(e)=>{
+      if(c4G2State.submitted) return;
+      const chip = e.target.closest('.c4chip');
+      const taskId = chip ? chip.dataset.task : c4G2State._selected;
+      if(chip){ c4G2State._selected = (c4G2State._selected===taskId ? null : taskId); c4G2Render(); return; }
+      if(!c4G2State._selected){ toast('先点选一张任务卡'); return; }
+      c4G2Move(c4G2State._selected, p.id);
+    };
+    cols.appendChild(col);
+  });
+}
+function c4G2Move(taskId, newProc){
+  if(c4G2State.current[taskId]===newProc){ c4G2State._selected=null; c4G2Render(); return; }
+  const willBeModified = newProc !== c4G2State.base[taskId];
+  const alreadyModified = c4G2State.modified.has(taskId);
+  if(willBeModified && !alreadyModified && c4G2State.modified.size>=c4G2State.maxMoves){
+    toast('最多只能移动 '+c4G2State.maxMoves+' 张任务卡');
+    return;
+  }
+  c4G2State.current[taskId] = newProc;
+  if(newProc===c4G2State.base[taskId]) c4G2State.modified.delete(taskId);
+  else c4G2State.modified.add(taskId);
+  c4G2State._selected=null;
+  c4G2Render();
+}
+function c4G2Submit(){
+  c4G2State.submitted = true;
+  const ev = c4G2State.event;
+  const moves = [...c4G2State.modified].map(taskId=>{
+    const t=C4_TASKS.find(x=>x.id===taskId).name;
+    return `${t}：${C4_PROCESSORS.find(p=>p.id===c4G2State.base[taskId]).name}→${C4_PROCESSORS.find(p=>p.id===c4G2State.current[taskId]).name}`;
+  }).join('；') || '（未调整任何任务卡）';
+  const result=document.getElementById('c4g2result');
+  result.classList.add('show','mid');
+  result.innerHTML = `
+    <p><b>你的调整：</b>${moves}</p>
+    <p><b>推荐调整：</b>${ev.guidance}</p>
+    <p><b>原方案风险：</b>${ev.risk}</p>
+    <p><b>为什么场景变化会改变架构：</b>${ev.why}</p>
+    <p>核心结论：没有脱离场景的唯一最佳架构。</p>
+  `;
+  c4AddScore(c4CurrentTeam, 1, '约束突然变化·完成提交');
+}
+
+/* ============================= 快捷键：T/Esc/H/R/N（仅课程四 #tabpage-3 激活时生效） ============================= */
+document.addEventListener('keydown', function(e){
+  const tp3=document.getElementById('tabpage-3');
+  if(!tp3 || tp3.style.display==='none') return; // 只在课程四激活时生效，与课程二/三互斥
+  const tag=(e.target && e.target.tagName) || '';
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT') return;
+  if(e.key==='t' || e.key==='T'){ c4OpenTeacherAssist(); }
+  else if(e.key==='Escape'){ c4CloseTeacherAssist(); }
+  else if(e.key==='h' || e.key==='H'){ c4NextHint(); }
+  else if(e.key==='r' || e.key==='R'){
+    if(c4TopMode==='quick' && c4GameTab===1 && !c4G1State.answered){ c4ActiveHintLevel=3; c4G1Pick(C4_TASK_ANSWERS[c4G1State.taskId].preferred[0]); }
+    else if(c4TopMode==='quick' && c4GameTab===2 && !c4G2State.submitted){ c4G2Submit(); }
+  }
+  else if(e.key==='n' || e.key==='N'){
+    if(c4TopMode==='quick' && c4GameTab===1) c4G1Next();
+    else if(c4TopMode==='quick' && c4GameTab===2) c4G2Next();
+  }
+});
+
+/* ============================= 讲师指引 md：由 c4BuildGuideMarkdown() 从上面的同一份数据生成 =============================
+   与仓库里 course4-teacher-guide.md 逐字一致——两者都是这个函数的输出（生成脚本见 scripts/gen-course4-guide 说明，
+   本次未入库脚本文件，仅在本地临时生成后 diff 校验，md 内容与本函数运行时输出保持单一数据源）。 */
+function c4BuildGuideMarkdown(){
+  const procName = pid => (C4_PROCESSORS.find(p=>p.id===pid)||{}).name || pid;
+  const lines = [];
+  lines.push('# 第④课 · 芯片架构调度台 · 讲师指引（course4-teacher-guide.md）');
+  lines.push('');
+  lines.push('本课不做真实芯片性能模拟器，全部评分是课堂规则模型，用于比较方案之间的相对取舍，不代表真实芯片的性能、功耗、价格或具体产品架构。CPU/DSP/FPGA/专用硬件加速器统一称为"四类计算资源或实现选择"：CPU/DSP/加速器可能集成在同一颗 SoC 内；FPGA 可能是外部器件，也存在内置 FPGA 的 SoC，但并非所有 SoC 都带 FPGA。');
+  lines.push('');
+  lines.push('## 一、课堂使用顺序');
+  lines.push('');
+  lines.push('1. 进入课程四默认显示"先完成纸笔判断，再由教师开始调度实验"，A/B 两组分数都是 0，不自动显示正确方案或运行评价。');
+  lines.push('2. 教师可选择直接进入快速闯关模式（游戏①任务闪配 → 游戏②约束突然变化），也可以跳过小游戏直接切到架构调度模式。');
+  lines.push('3. 架构调度模式：第一轮点"全部交给CPU"演示任务集中和瓶颈风险；第二轮学生按资源特点重新分工；第三轮教师切换三场景，学生只修改部分任务再比较变化。');
+  lines.push('4. A/B 两组各自完成一套分工后，点"比较两组"，先看七个分维度差异，再看综合评价（非最高级措辞）。');
+  lines.push('5. 教师随时可按 T 打开教师辅助（先弹隐私确认），Esc 关闭并复位；H 显示下一级提示；R 直接显示参考答案；N 换一题——全部只在课程四标签激活时生效。');
+  lines.push('');
+  lines.push('## 二、游戏①任务闪配 · 全部题库（11 题）与计分规则');
+  lines.push('');
+  lines.push('计分：选典型答案 2 分／选可接受替代方案且教师确认解释合理 1 分／用过一级提示后答对最多 1 分／用过二三级提示后答对 0 分／答错不扣分。核心结论：没有脱离场景的唯一最佳架构。');
+  lines.push('');
+  C4_TASKS.forEach(t=>{
+    const a = C4_TASK_ANSWERS[t.id];
+    lines.push(`### ${t.name}`);
+    lines.push(`- 典型答案：${a.preferred.map(procName).join('、')}${a.acceptable.length ? '；可接受替代：'+a.acceptable.map(procName).join('、') : '（无可接受替代）'}`);
+    lines.push(`- 理由：${a.reason}`);
+    lines.push(`- 什么条件改变后选择可能变化：${a.conditionChange}`);
+    lines.push(`- 一级提示：${a.hint1}`);
+    lines.push(`- 二级提示：${a.hint2}`);
+    lines.push(`- 三级提示：${a.hint3}`);
+    lines.push(`- 常见错误：${a.commonMistakes}`);
+    lines.push(`- 20 秒讲稿：${a.teacher20s}`);
+    lines.push(`- 60 秒讲稿：${a.teacher60s}`);
+    lines.push(`- 技术边界：${a.boundary}`);
+    lines.push('');
+  });
+  lines.push('## 三、游戏②约束突然变化 · 全部条件变化事件（8 个）');
+  lines.push('');
+  lines.push('规则：先给出三场景之一的典型分工作为初始状态，随机出现一项条件变化，学生只能移动 1~2 张任务卡，提交后即得 1 分参与分并显示以下讲解。');
+  lines.push('');
+  C4_CONDITION_EVENTS.forEach(ev=>{
+    lines.push(`### ${ev.label}`);
+    lines.push(`- 推荐调整：${ev.guidance}`);
+    lines.push(`- 原方案风险：${ev.risk}`);
+    lines.push(`- 为什么场景变化会改变架构：${ev.why}`);
+    lines.push(`- 20 秒讲稿：${ev.teacher20s}`);
+    lines.push(`- 60 秒讲稿：${ev.teacher60s}`);
+    lines.push('');
+  });
+  lines.push('## 四、三场景推荐分工（架构调度模式"载入典型方案"按钮对应内容）');
+  lines.push('');
+  C4_SCENARIOS.forEach(s=>{
+    lines.push(`### ${s.name}（${s.tagline}）`);
+    const scheme = C4_TYPICAL_SCHEMES[s.id];
+    C4_TASKS.forEach(t=>{ lines.push(`- ${t.name} → ${procName(scheme[t.id])}`); });
+    lines.push('');
+  });
+  lines.push('## 五、七维评价指标定义');
+  lines.push('');
+  lines.push('延迟（越低越好）／吞吐量（越高越好）／功耗（越低越好）／灵活性（越高越好）／前期开发成本（越低越好）／量产单台成本（越低越好）／数据搬运压力（低/中/高，描述性维度）。全部使用"很低/低/中/高/很高"等相对等级，不代表真实瓦数、毫秒或报价，只用于同一课堂规则模型内的相对比较。');
+  lines.push('');
+  lines.push('## 六、快速答案卡（可另外用网页"打印答案卡"按钮打印同等内容）');
+  lines.push('');
+  lines.push('- 统一口径：四类计算资源或实现选择，不叫"四种平行芯片"。');
+  lines.push('- 典型任务口径：协议/界面/连接管理→CPU；滤波/FFT→DSP 或 FPGA，专用硬件也可以；解调/纠错→科研原型 DSP/FPGA，数据量大实时性高 FPGA/专用硬件，稳定量产专用硬件更优；波束方向策略→CPU/DSP，多通道高速更新→FPGA/专用硬件；温度监控→CPU；数据搬运管理→CPU 负责配置。');
+  lines.push('- 快捷键：T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。');
+  lines.push('');
+  lines.push('## 七、网页故障纸笔备用方案');
+  lines.push('');
+  lines.push('投影或网页出现故障时，教师可以直接口述本指引"四、三场景推荐分工"表格，让学生在纸上把 11 项任务分配给 CPU/DSP/FPGA/专用硬件加速器四类资源中的一类，再对照"二、游戏①任务闪配"和本节的典型/替代答案逐条口头核对；游戏②可以直接口头描述某个条件变化，让学生说出想调整哪 1~2 项任务、为什么，再对照"三、游戏②"里的推荐调整讲解。全程不依赖网页也能完成本课的核心教学目标。');
+  lines.push('');
+  return lines.join('\n');
+}
+const C4_TEACHER_GUIDE_MD = c4BuildGuideMarkdown();
+function c4DownloadGuide(){
+  if(typeof Blob==='undefined' || typeof document.createElement!=='function'){ toast('当前环境不支持下载'); return; }
+  const blob = new Blob([C4_TEACHER_GUIDE_MD], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'course4-teacher-guide.md';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('已下载 course4-teacher-guide.md');
+}
+
+// 测试辅助：jsdom vm 环境里顶层 let/const 不会挂到 window 上，只有 function 声明可以从外部访问，
+// 这个只读访问器专供自动化测试内省内部状态使用，不影响任何 UI 逻辑。
+function c4DebugState(){
+  return { g1:c4G1State, g2:c4G2State, scoreA:c4ScoreA, scoreB:c4ScoreB,
+    taskAnswers:C4_TASK_ANSWERS, tasks:C4_TASKS, processors:C4_PROCESSORS, fit:C4_FIT,
+    typicalSchemes:C4_TYPICAL_SCHEMES, conditionEvents:C4_CONDITION_EVENTS, scenarios:C4_SCENARIOS };
+}
+function c4Init(){
+  const restored = c4LoadState();
+  c4RenderScore();
+  c4InitScenarios();
+  c4RenderScheduleAll();
+  c4ClearOutput();
+  c4SetTopMode(c4TopMode);
+  c4SetTeam(c4CurrentTeam);
+  c4G1Next();
+  c4G2Start();
+  c4GameGoTab(1);
+  if(!restored) c4SaveState();
+}
+
 /* ============================= 启动 ============================= */
 initCourse2();
 n2Init();
-c3Init();
+c4Init();
 showTab(1);
 </script>
 </body>
