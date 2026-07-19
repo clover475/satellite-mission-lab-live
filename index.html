@@ -2567,12 +2567,21 @@ function n2RenderTeacherAssistContent(){
   for(let lv=1; lv<=3; lv++){
     if(n2ActiveHintLevel>=lv) hintsHtml += `<p><b>${lv} 级提示：</b>${q['hint'+lv]||''}</p>`;
   }
+  const isL4Plan = !!q.recommendedPlan;
   box.innerHTML = `
     <div class="n2qa-section">
-      <h4>正确答案</h4>
-      <p><b>${q.answer||''}</b>${(q.acceptedAnswers&&q.acceptedAnswers.length) ? '（可接受：'+q.acceptedAnswers.join('、')+'）' : ''}</p>
-      <p>${q.reason||''}</p>
+      <h4>${isL4Plan?'推荐方案（无唯一标准答案）':'正确答案'}</h4>
+      <p><b>${q.answer||''}</b>${(q.acceptedAnswers&&q.acceptedAnswers.length) ? '（可接受替代：'+q.acceptedAnswers.join('、')+'）' : ''}</p>
+      <p>${q.answerLogic||q.reason||''}</p>
     </div>
+    ${isL4Plan?`<div class="n2qa-section">
+      <h4>显示可接受方案</h4>
+      <p>${q.acceptedPlans.join('；')}</p>
+    </div>
+    <div class="n2qa-section">
+      <h4>高风险方案</h4>
+      <p>${q.riskyPlans.join(' ｜ ')}</p>
+    </div>`:''}
     <div class="n2qa-section">
       <h4>分级提示（已显示 ${n2ActiveHintLevel}/3 级，快捷键 H 显示下一级）</h4>
       ${hintsHtml || '<p style="color:var(--muted)">按 H 键或点"下一级提示"逐级显示。</p>'}
@@ -2667,7 +2676,7 @@ function n2QuestResetProgress(){
   n2L1State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
   n2L2State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
   n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
-  if(typeof n2L4Restart==='function') n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+  if(typeof n2L4Restart==='function') n2L4State = {idx:0, submitted:new Array(8).fill(false), hintLevel:new Array(8).fill(0), picks:new Array(8).fill(null).map(n2L4DefaultPick), scores:new Array(8).fill(null)};
   if(n2TopMode==='quest') n2QuestGoLevel(n2QLevel);
 }
 
@@ -2818,6 +2827,8 @@ function n2L1Restart(){
    复用实验①已验证的 N2_CONST 星座数据 + n2Decide1 最近点判决函数，不重新实现数学逻辑
    三档：简单(明显靠近一点)/中等(靠近边界未跨过)/困难(已跨过边界)，坐标固定写死，不生成边界歧义题
    --------------------------------------------------------------------------- */
+// 第②关复盘固定句（规格三，逐字保留，不因题目而变化）：
+const N2_L2_FIXED_DEBRIEF = '噪声先让接收点偏离理想位置；当点跨过判决边界，接收机才会判断成另一个symbol，随后形成bit错误。';
 function n2L2Common(mod){
   if(mod==='bpsk') return {
     hint1:'先看这个点落在哪个判决区域——BPSK 只有左右两个区域。',
@@ -2907,13 +2918,14 @@ function n2L2Render(){
       <p>发送端实际发送符号：「${q.cfg.points[q.sentIdx].bits}」　是否产生符号错误：${q.symErr?'是':'否'}　对应 bit 错误数：${q.bitErr}</p>
       <p>${q.reason}</p>
       <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
+      <p style="color:var(--muted)">复盘固定句：${N2_L2_FIXED_DEBRIEF}</p>
     </div>`;
   }
   let summaryHtml='';
   if(i===7 && answered){
     const correctCount=n2L2State.correct.filter(Boolean).length;
     const totalPts=n2L2State.points.reduce((a,b)=>a+b,0);
-    summaryHtml = `<div class="n2qsummary"><h4>第②关结束</h4><p>共 8 题，判断正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L2Restart()">↺ 重新开始本关</button></div>`;
+    summaryHtml = `<div class="n2qsummary"><h4>第②关结束</h4><p>共 8 题，判断正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><p style="color:var(--muted)">${N2_L2_FIXED_DEBRIEF}</p><button class="btn" onclick="n2L2Restart()">↺ 重新开始本关</button></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
     <div class="n2qprogress">第②关 · 点云判决挑战　第 ${i+1}/8 题　难度：${q.diff}　当前作答组：${n2CurrentTeam}</div>
@@ -2987,18 +2999,21 @@ function n2L3Build(sentBits, errPositions, qid){
     commonMistakes:'把分母错填成"正确的位数"，或漏数/多数错误位置，尤其是首尾位置容易漏看。',
     teacher20s:`BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。本题错了 ${count} 位，总共 ${total} 位，BER = ${count}/${total}。`,
     teacher60s:`BER（误码率）的计算只需要两个数字：分子是错误 bit 数，分母是总传输 bit 数，二者相除就是 BER。本题发送串和接收串逐位比较后，在第 ${errPositions.join('、')} 位（从0开始计数）出现不同，一共 ${count} 处错误，总长度是 ${total} bit，所以 BER = ${count}/${total}。BER 不是网速，也不是信号强度，它只描述"错了多少、共传了多少"这一个比例关系。`,
-    boundary:'本题使用简单分数（1/8、2/8、3/12、1/16），刻意避免出现循环小数，方便课堂心算核对。',
+    boundary:'本题使用简单分数（1/8、2/8、3/12、2/16、4/16），刻意避免出现循环小数，方便课堂心算核对。',
   };
 }
+/* BER 允许分数集固定为 {1/8, 2/8, 3/12, 2/16, 4/16}（2026-07-20 规格覆盖上一轮"2/16→1/16"的裁决，回到本集合）。
+   8 题分布：1/8×2、2/8×2、3/12×2、2/16×1、4/16×1——保留"同 BER 不同分母"教学点：
+   2/8 = 3/12 = 4/16 = 25%；1/8 = 2/16 = 12.5%，同一比例可以用不同分母表示。 */
 const N2_L3_QUESTIONS = [
-  n2L3Build([1,0,1,0,1,0,1,0], [5], 'l3-1'),
-  n2L3Build([1,1,0,0,1,1,0,0], [1,6], 'l3-2'),
-  n2L3Build([1,0,0,1,1,0,1,1,0,0,1,0], [2,7,10], 'l3-3'),
-  n2L3Build([1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1], [3], 'l3-4'),
-  n2L3Build([0,1,1,0,1,0,0,1], [2], 'l3-5'),
-  n2L3Build([0,0,1,1,0,1,1,0], [0,5], 'l3-6'),
-  n2L3Build([0,1,1,0,0,1,0,1,1,0,0,1], [1,4,9], 'l3-7'),
-  n2L3Build([1,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0], [6], 'l3-8'),
+  n2L3Build([1,0,1,0,1,0,1,0], [5], 'l3-1'),                                       // 1/8 = 12.5%
+  n2L3Build([1,1,0,0,1,1,0,0], [1,6], 'l3-2'),                                     // 2/8 = 25%
+  n2L3Build([1,0,0,1,1,0,1,1,0,0,1,0], [2,7,10], 'l3-3'),                          // 3/12 = 25%
+  n2L3Build([1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1], [3,12], 'l3-4'),                    // 2/16 = 12.5%
+  n2L3Build([0,1,1,0,1,0,0,1], [2], 'l3-5'),                                       // 1/8 = 12.5%
+  n2L3Build([0,0,1,1,0,1,1,0], [0,5], 'l3-6'),                                     // 2/8 = 25%
+  n2L3Build([0,1,1,0,0,1,0,1,1,0,0,1], [1,4,9], 'l3-7'),                           // 3/12 = 25%
+  n2L3Build([1,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0], [2,6,9,13], 'l3-8'),                // 4/16 = 25%
 ];
 let n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
 function n2L3ToggleMark(pos){
@@ -3098,115 +3113,227 @@ function n2L3Restart(){
 }
 
 /* ---------------------------------------------------------------------------
-   第④关 · 海岛通信指挥官：综合应用题，无唯一标准答案。
-   学生选五项（调制档位/CRC/FEC/重传/业务调整），系统按四个维度各 0~5 分评分
-   （核心任务保障/可靠性/数据开销/电量消耗），不判对错，只给推荐方案、可接受替代方案、风险提示。
+   第④关 · 海岛通信指挥官（2026-07-20 大改）：综合应用题，无唯一标准答案。
+   CRC 作为基础错误检测默认开启、学生不可关；学生只选 5 项：调制档位/FEC强度/重传策略/业务降级/业务发送顺序。
+   场景 = 链路(4档)×电量(4档)×任务(5类)×网络压力(3档)。评分 20 分 5 维：
+   核心任务保障0-5 / 可靠性0-5 / 资源开销把控0-4 / 电量管理0-3 / 业务降级0-3。
+   设计原则（终审重点）：评分是"规则引擎 + 每题预设推荐/可接受/高风险方案"的组合，不是单一公式算出唯一答案——
+   规则引擎按链路/电量/压力条件给出连续的多维评分（同一选择在不同场景下得分不同，多种组合都可能接近满分）；
+   每题另外手写 recommendedPlan/acceptedPlans/riskyPlans/reason 供教师参考比对。
+   评分明确不奖励过度保护：强FEC在链路好时不加分（甚至倒扣资源开销）；全部重传在电量紧张时电量管理和资源开销都扣分；
+   业务降级维度按"链路+电量+网络压力"的综合严重度评估是否降级到位，而不是"降得越狠越好"。
    --------------------------------------------------------------------------- */
-const N2_L4_SCENARIOS = [
-  { id:'l4-1', link:'很差', power:'只够一小时', task:'救援坐标',
-    recommended:'稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 只保留位置和文字',
-    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字'],
-    risk:'链路很差、电量只剩一小时：选择"全部保留"业务或"高速档"调制会明显推高数据开销和电量消耗，可能导致坐标还没发完就断电或断链。',
-    reason:'救援坐标是最高优先级数据，链路很差、电量紧张时应优先保证它送达，而不是兼顾语音图片。' },
-  { id:'l4-2', link:'一般', power:'有限', task:'求救文字',
-    recommended:'稳定档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字',
-    acceptable:['高速档 + CRC 开 + FEC 中等 + 允许重传 + 降低语音质量'],
-    risk:'电量有限时，若同时选择"强 FEC"和"允许重传"，开销和电量消耗都会偏高，可能撑不到任务结束。',
-    reason:'求救文字数据量小，链路一般时有条件优先保证可靠送达，代价可以接受。' },
-  { id:'l4-3', link:'好', power:'充足', task:'短语音',
-    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留',
-    acceptable:['高速档 + CRC 开 + FEC 不用 + 允许重传 + 降低语音质量'],
-    risk:'链路好、电量充足时过度保守（比如仍然暂停语音）会浪费当前良好的条件。',
-    reason:'链路好、电量充足时，语音这类中优先级业务也可以争取全部保留。' },
-  { id:'l4-4', link:'很差', power:'有限', task:'低清图片',
-    recommended:'稳定档 + CRC 开 + FEC 不用 + 不允许重传 + 暂停图片',
-    acceptable:['稳定档 + CRC 开 + FEC 中等 + 不允许重传 + 暂停图片'],
-    risk:'链路很差、电量有限时仍坚持传输图片（尤其选高速档或允许重传）会大量消耗本该留给位置文字的资源。',
-    reason:'低清图片优先级最低，链路差、电量紧张时应该优先暂停，把资源留给关键数据。' },
-  { id:'l4-5', link:'一般', power:'只够一小时', task:'救援坐标',
-    recommended:'稳定档 + CRC 开 + FEC 中等 + 仅关键数据重传 + 只保留位置和文字',
-    acceptable:['稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 只保留位置和文字'],
-    risk:'电量只够一小时时，若选择"允许重传"+"强 FEC"+"全部保留"的组合，电量消耗评分会很高，存在任务未完成就断电的风险。',
-    reason:'救援坐标优先级最高，电量紧张时要把有限的电量集中用在它身上。' },
-  { id:'l4-6', link:'好', power:'有限', task:'求救文字',
-    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 只保留位置和文字',
-    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 降低语音质量'],
-    risk:'电量有限时选择"全部保留"业务会让电量消耗评分偏高，且求救文字本身数据量小，不需要额外开销支撑语音图片。',
-    reason:'链路好可以用高速档节省时间，但电量有限仍需控制业务范围。' },
-  { id:'l4-7', link:'很差', power:'充足', task:'短语音',
-    recommended:'稳定档 + CRC 开 + FEC 强 + 仅关键数据重传 + 降低语音质量',
-    acceptable:['稳定档 + CRC 开 + FEC 强 + 允许重传 + 降低语音质量'],
-    risk:'链路很差时坚持"高速档"或"全部保留"会让核心任务保障评分下降，即使电量充足也无法弥补链路本身的限制。',
-    reason:'链路很差时语音这类中优先级业务应主动降质，把有限的可靠传输能力留给关键内容。' },
-  { id:'l4-8', link:'一般', power:'充足', task:'低清图片',
-    recommended:'高速档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留',
-    acceptable:['稳定档 + CRC 开 + FEC 中等 + 允许重传 + 全部保留'],
-    risk:'电量充足、链路一般时过度保守（暂停图片）不是必须的，但仍要注意 CRC 开启以避免图片数据损坏不可察觉。',
-    reason:'链路一般、电量充足时，即使是低优先级的图片也有条件传输，只是仍需基本的检错保护。' },
+const N2_L4_LINK_SEV = {'良好':0,'一般':1,'较差':2,'非常差':3};
+const N2_L4_POWER_SEV = {'充足':0,'50%':1,'30%':2,'只够一小时':3};
+const N2_L4_PRESSURE_SEV = {'较低':0,'一般':1,'拥塞':2};
+const N2_L4_FEC_LEVEL = {'关闭':0,'中等保护':1,'强保护':2};
+const N2_L4_RETRANS_LEVEL = {'不允许':0,'仅关键数据允许':1,'全部允许':2};
+const N2_L4_DEGRADE_LEVEL = {'全部保留':0,'降低语音码率':1,'降低图片分辨率':2,'暂停图片':3,'只保留位置和文字':4};
+// 只有"任务本身就是位置坐标/求救文字/综合救援"时，才检查"业务发送顺序"是否把核心数据排在语音图片之前；
+// 短语音/低清图片本身是任务目标时不能拿它跟自己比顺序，另有专门规则处理（见 n2L4Score）。
+const N2_L4_ORDER_CORE_TASK = { '报告坐标':['位置坐标'], '发送求救文字':['求救文字'], '综合救援通信':['位置坐标','求救文字'] };
+const N2_L4_SEND_ORDER_OPTIONS = [
+  '位置坐标>求救文字>短语音>低清图片',
+  '位置坐标>求救文字>低清图片>短语音',
+  '求救文字>位置坐标>短语音>低清图片',
+  '短语音>位置坐标>求救文字>低清图片',
+  '低清图片>位置坐标>求救文字>短语音',
+  '低清图片>短语音>位置坐标>求救文字',
 ];
-function n2L4Common(){
-  return {
-    hint1:'先判断这次任务哪种数据最不能出错。',
-    hint2:'再看当前链路和电量是否支持高开销方案。',
-    hint3:'先保位置和文字，再考虑语音和图片。',
-    commonMistakes:'不考虑当前链路和电量条件，固定选择"全部保留＋高速档＋强保护"，或反过来固定选择"最省"而不顾任务优先级。',
-    teacher60s:'这道题没有唯一正确组合，打分只反映当前条件下的取舍是否合理。评分维度包括核心任务保障、可靠性、数据开销、电量消耗——高分方案不是某一项拉满，而是能在当前链路和电量条件下，保住最重要的任务，并能说明清楚取舍理由。位置坐标和求救文字优先级最高，通常应该可靠性优先；语音可以降质或短时中断；图片优先级最低，链路差或电量紧张时可以暂停。',
-    boundary:'没有唯一正确组合。高分方案需要在当前条件下保住最重要任务，并能说明取舍理由。',
-  };
+function n2L4Describe(c){
+  return `${c.modTier} + CRC默认开启 + FEC${c.fec} + 重传${c.retrans} + 业务${c.bizAdjust} + 发送顺序：${c.sendOrder.replace(/>/g,' → ')}`;
 }
+// 三级提示逻辑（规格十一，逐字固定，8 题共用同一套算法，不因场景变化）：
+const N2_L4_HINT1 = '先判断这次任务哪种数据最重要、最不能出错。';
+const N2_L4_HINT2 = '再看当前链路和电量能不能承担强保护——强 FEC、全部重传都有资源开销和电量代价，不是选得越强越好。';
+const N2_L4_HINT3 = '优先保住位置坐标和求救文字，再决定短语音、低清图片怎样降级、按什么顺序发送。';
+// 技术边界与反误解提醒（规格六，逐字固定，8 题共用）：
+const N2_L4_BOUNDARY = '没有唯一正确组合。高分方案不是某一项拉满，而是能在当前链路和电量条件下保住最重要的任务，并能说明取舍理由。业务降级是主动减少需要传输的数据，不等于允许数据随便出错；短语音降码率后仍需 CRC 检错；低清图片即使降分辨率或暂停，剩下发送的数据依然需要 CRC 检错，不存在"允许随意出错"的豁免。';
+// 60 秒逐字稿固定收尾（规格十，必须讲清 CRC/FEC/重传/业务降级四者功能不同）：
+const N2_L4_TEACHER60S_TAIL = '这四种手段功能不同：CRC 负责检错，发现数据可能坏了但不会自动把它修好；FEC 负责在数据送达前提前加入冗余，修复一定范围内的错误；重传负责发现问题后重新发一遍，用增加流量换正确性；业务降级负责主动减少需要传输的数据量，但不等于允许数据随便出错——降级之后剩下要发的数据仍然需要 CRC 检错。';
+
+const N2_L4_SCENARIOS = [
+  { id:'l4-1', link:'非常差', power:'只够一小时', pressure:'拥塞', task:'报告坐标',
+    recommended:{modTier:'稳定档', fec:'强保护', retrans:'仅关键数据允许', bizAdjust:'只保留位置和文字', sendOrder:'位置坐标>求救文字>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'只保留位置和文字', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'不允许', bizAdjust:'全部保留', sendOrder:'低清图片>短语音>位置坐标>求救文字'}, why:'链路非常差还用高速档＋关闭FEC＋不允许重传，坐标很可能出错且无法修复；图片语音排在发送顺序最前面，会在电量耗尽前抢占本该留给坐标的资源。'},
+      {combo:{modTier:'稳定档', fec:'强保护', retrans:'全部允许', bizAdjust:'全部保留', sendOrder:'位置坐标>求救文字>短语音>低清图片'}, why:'电量只够一小时时选择全部重传＋全部保留业务，电量消耗和资源开销都会偏高，可能坐标还没发完就断电，属于过度保护。'},
+    ],
+    reason:'救援坐标是唯一必须送达的数据，链路非常差、电量只够一小时、网络还拥塞时，应把所有能力集中在坐标上，其余业务全部让路。',
+    commonMistakes:'误以为"电量紧张就该关闭FEC省电"，其实链路非常差时关闭FEC会让坐标本身传不对；也有队伍反过来"全部重传＋全部保留"，电量撑不到任务结束。' },
+  { id:'l4-2', link:'较差', power:'30%', pressure:'一般', task:'发送求救文字',
+    recommended:{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'暂停图片', sendOrder:'求救文字>位置坐标>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'强保护', retrans:'仅关键数据允许', bizAdjust:'暂停图片', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'不允许', bizAdjust:'全部保留', sendOrder:'低清图片>短语音>位置坐标>求救文字'}, why:'链路较差还用高速档＋不设FEC＋不允许重传，求救文字很容易出错且无法挽回。'},
+      {combo:{modTier:'稳定档', fec:'强保护', retrans:'全部允许', bizAdjust:'全部保留', sendOrder:'位置坐标>求救文字>短语音>低清图片'}, why:'电量只剩30%时选择全部重传＋全部保留图片语音，开销和耗电都偏高，不是这个电量水平该有的选择。'},
+    ],
+    reason:'求救文字数据量小，链路较差、电量剩30%时可以适度保护求救文字，但没必要为图片语音继续消耗资源。',
+    commonMistakes:'以为文字数据量小就不用管保护，直接沿用"全部保留"默认设置，忽略了链路较差带来的出错风险。' },
+  { id:'l4-3', link:'良好', power:'充足', pressure:'较低', task:'保持短语音联系',
+    recommended:{modTier:'高速档', fec:'关闭', retrans:'仅关键数据允许', bizAdjust:'全部保留', sendOrder:'位置坐标>求救文字>短语音>低清图片'},
+    accepted:[{modTier:'高速档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'全部保留', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'稳定档', fec:'强保护', retrans:'全部允许', bizAdjust:'暂停图片', sendOrder:'位置坐标>求救文字>短语音>低清图片'}, why:'链路良好、电量充足时还用强FEC＋全部重传＋暂停图片，是过度保守，浪费了本可以争取的服务质量，也是本题最容易丢分的地方。'},
+    ],
+    reason:'链路好、电量充足时可以用高速档节省时间，FEC关闭或中等即可，语音可以全部保留，不需要过度保护。',
+    commonMistakes:'误以为"条件越好就要保护越强"，在链路良好、电量充足的场景仍然选强FEC＋全部重传，属于典型的过度保护，会在资源开销和电量管理上失分。' },
+  { id:'l4-4', link:'非常差', power:'50%', pressure:'拥塞', task:'发送现场图片',
+    recommended:{modTier:'稳定档', fec:'中等保护', retrans:'不允许', bizAdjust:'降低图片分辨率', sendOrder:'位置坐标>求救文字>低清图片>短语音'},
+    accepted:[{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'暂停图片', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'全部允许', bizAdjust:'全部保留', sendOrder:'低清图片>短语音>位置坐标>求救文字'}, why:'链路非常差还坚持发送原始分辨率图片、全部重传、全部保留，会占满本该留给坐标文字的通信资源，也几乎不可能真的传完整。'},
+    ],
+    reason:'这题任务是发送现场图片，但链路非常差、网络拥塞：应该降低分辨率或暂停，不能为了图片占满全部通信资源，位置坐标和求救文字仍要优先送达。',
+    commonMistakes:'看到任务是"发图片"就想着无论如何都要把原始图片发出去，选高速档＋全部重传硬扛，结果既传不完整，又挤占了坐标文字的资源。' },
+  { id:'l4-5', link:'一般', power:'只够一小时', pressure:'一般', task:'报告坐标',
+    recommended:{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'只保留位置和文字', sendOrder:'位置坐标>求救文字>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'强保护', retrans:'仅关键数据允许', bizAdjust:'只保留位置和文字', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'全部允许', bizAdjust:'全部保留', sendOrder:'短语音>低清图片>位置坐标>求救文字'}, why:'电量只够一小时，还全部重传＋全部保留＋把坐标排到发送顺序最后，电量耗尽前坐标可能根本没发出去。'},
+    ],
+    reason:'电量只够一小时时，要把有限的电量集中用在坐标上，业务发送顺序也要把坐标排在最前。',
+    commonMistakes:'只关注链路条件选保护档位，却忽略了发送顺序——即使FEC选得再合适，如果坐标排在语音图片后面发送，电量耗尽时坐标可能还没轮到。' },
+  { id:'l4-6', link:'良好', power:'50%', pressure:'一般', task:'发送求救文字',
+    recommended:{modTier:'高速档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'降低语音码率', sendOrder:'求救文字>位置坐标>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'降低语音码率', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'强保护', retrans:'全部允许', bizAdjust:'全部保留', sendOrder:'位置坐标>求救文字>短语音>低清图片'}, why:'电量已经用掉一半，还选强FEC＋全部重传＋全部保留，电量消耗评分会明显偏高，不是这个电量阶段该有的选择。'},
+    ],
+    reason:'链路好可以用高速档节省时间，但电量已经过半，业务上适度降低语音码率、控制重传范围，把资源留给还剩的一小时任务。',
+    commonMistakes:'看到链路好就默认"全部保留＋强保护"，忽略了电量已经消耗过半这个约束条件。' },
+  { id:'l4-7', link:'非常差', power:'充足', pressure:'较低', task:'保持短语音联系',
+    recommended:{modTier:'稳定档', fec:'强保护', retrans:'仅关键数据允许', bizAdjust:'降低语音码率', sendOrder:'位置坐标>求救文字>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'强保护', retrans:'全部允许', bizAdjust:'降低语音码率', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'不允许', bizAdjust:'全部保留', sendOrder:'低清图片>短语音>位置坐标>求救文字'}, why:'链路非常差还用高速档＋关闭FEC＋全部保留原始语音质量，语音联系很可能频繁中断，核心任务保障会明显扣分，即使电量充足也补不回来。'},
+    ],
+    reason:'链路非常差时，即使电量充足，语音这类中优先级业务也应该主动降质，把有限的可靠传输能力留给关键内容，而不是硬扛原始质量。',
+    commonMistakes:'认为"电量充足就可以什么都不用降级"，忽略了链路本身很差这个更关键的限制条件。' },
+  { id:'l4-8', link:'一般', power:'充足', pressure:'较低', task:'综合救援通信',
+    recommended:{modTier:'高速档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'降低图片分辨率', sendOrder:'位置坐标>求救文字>短语音>低清图片'},
+    accepted:[{modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'降低图片分辨率', sendOrder:'位置坐标>求救文字>短语音>低清图片'}],
+    risky:[
+      {combo:{modTier:'高速档', fec:'关闭', retrans:'不允许', bizAdjust:'全部保留', sendOrder:'低清图片>短语音>位置坐标>求救文字'}, why:'综合救援通信涉及全部四类业务，把图片排在发送顺序最前面、又不设FEC和重传，坐标文字这类关键数据反而没有优先保障。'},
+    ],
+    reason:'综合救援通信需要兼顾四类业务，链路一般、电量充足时可以用高速档节省时间，但发送顺序必须把位置坐标和求救文字排在最前面，图片可适度降分辨率。',
+    commonMistakes:'综合任务下容易平均用力，四项业务同等对待，而不是按位置>文字>语音>图片的优先级安排发送顺序和保护资源。' },
+];
+
 function n2L4Build(raw){
-  return Object.assign({}, raw, n2L4Common(), {
-    answer:raw.recommended, acceptedAnswers:raw.acceptable,
-    teacher20s:`当前链路「${raw.link}」、电量「${raw.power}」、任务「${raw.task}」——推荐方案：${raw.recommended}。${raw.reason}`,
+  const recommendedStr = n2L4Describe(raw.recommended);
+  const acceptedStrs = raw.accepted.map(n2L4Describe);
+  const riskyStrs = raw.risky.map(r=>`${n2L4Describe(r.combo)}——${r.why}`);
+  return Object.assign({}, raw, {
+    answer:recommendedStr, acceptedAnswers:acceptedStrs,
+    answerLogic:`本题没有唯一固定答案。先判断当前任务「${raw.task}」最需要保住哪类数据；再看链路「${raw.link}」、电量「${raw.power}」、网络压力「${raw.pressure}」能否支撑更强的保护；最后确定业务降级档位和发送顺序是否与条件匹配。推荐方案：${recommendedStr}。`,
+    recommendedPlan:recommendedStr, acceptedPlans:acceptedStrs, riskyPlans:riskyStrs,
+    reason:raw.reason, hint1:N2_L4_HINT1, hint2:N2_L4_HINT2, hint3:N2_L4_HINT3,
+    commonMistakes:raw.commonMistakes,
+    teacher20s:`当前链路「${raw.link}」、电量「${raw.power}」、网络压力「${raw.pressure}」、任务「${raw.task}」——推荐方案：${recommendedStr}。${raw.reason}`,
+    teacher60s:`${raw.reason}推荐方案是${recommendedStr}。${raw.risky[0]?('如果选择'+n2L4Describe(raw.risky[0].combo)+'这类方案，'+raw.risky[0].why):''} ${N2_L4_TEACHER60S_TAIL}`,
+    boundary:N2_L4_BOUNDARY,
   });
 }
 const N2_L4_QUESTIONS = N2_L4_SCENARIOS.map(n2L4Build);
-let n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+function n2L4DefaultPick(){ return {modTier:'稳定档', fec:'中等保护', retrans:'仅关键数据允许', bizAdjust:'全部保留', sendOrder:N2_L4_SEND_ORDER_OPTIONS[0]}; }
+let n2L4State = {idx:0, submitted:new Array(8).fill(false), hintLevel:new Array(8).fill(0), picks:new Array(8).fill(null).map(n2L4DefaultPick), scores:new Array(8).fill(null)};
 
-function n2L4Clamp(v){ return Math.max(0, Math.min(5, Math.round(v))); }
+function n2L4Clamp(v, max){ return Math.max(0, Math.min(max, Math.round(v))); }
+/* 5 维评分引擎：规则按场景严重度连续给分，不是"某个固定组合=满分，其余全错"的机械公式——
+   同一选择在不同链路/电量/压力下得分不同，多种组合都可能接近满分，具体解释见 docs/design-rationale.md。
+   评分明确不奖励过度保护：强FEC只在链路差时才拿满可靠性分；全部重传在任何场景资源开销都要扣分，电量紧张时电量管理也扣分。 */
 function n2L4Score(q, p){
-  const isReliabilityTask = (q.task==='救援坐标' || q.task==='求救文字');
-  const isImageTask = (q.task==='低清图片');
-  // ① 核心任务保障
+  const linkSev=N2_L4_LINK_SEV[q.link], powSev=N2_L4_POWER_SEV[q.power], pressureSev=N2_L4_PRESSURE_SEV[q.pressure];
+  const fecLv=N2_L4_FEC_LEVEL[p.fec], degLv=N2_L4_DEGRADE_LEVEL[p.bizAdjust];
+  const orderArr = (p.sendOrder||'').split('>');
+  const orderCoreNeeds = N2_L4_ORDER_CORE_TASK[q.task] || [];
+
+  // ① 核心任务保障（最重要数据是否优先传送）
   let core=5;
-  if(isReliabilityTask){
-    if(p.crc==='关') core-=2;
-    if(p.fec==='不用') core-=1;
-    if(p.retrans==='不允许' && q.link==='很差') core-=2;
-  } else if(q.task==='短语音'){
-    if(p.retrans==='不允许' && q.link==='很差') core-=1;
-    if(p.crc==='关') core-=1;
-  } else if(isImageTask){
-    const heavy = (p.modTier==='高速档' && p.fec==='强' && p.retrans==='允许');
-    if(heavy && (q.link==='很差' || q.power==='只够一小时')) core-=2;
+  if(orderCoreNeeds.length){
+    const nonCore=['短语音','低清图片'];
+    const nonCoreIdx = nonCore.map(x=>orderArr.indexOf(x)).filter(x=>x>=0);
+    const coreIdx = orderCoreNeeds.map(x=>orderArr.indexOf(x)).filter(x=>x>=0);
+    if(nonCoreIdx.length && coreIdx.length){
+      if(Math.max(...coreIdx) > Math.min(...nonCoreIdx)) core -= 2; // 核心数据被排到某个次要业务后面
+    }
+    if(linkSev>=2){
+      if(p.fec==='关闭') core -= 2;      // 链路差还不设FEC，坐标/文字很可能传错
+      if(p.retrans==='不允许') core -= 1; // 链路差又不允许重传，出错也没法补救
+    }
   }
-  core = n2L4Clamp(core);
-  // ② 可靠性
-  let reliability=2;
-  if(p.crc==='开') reliability+=1;
-  if(p.fec==='中等') reliability+=1; else if(p.fec==='强') reliability+=2;
-  if(p.modTier==='稳定档') reliability+=1;
-  if(p.retrans!=='不允许') reliability+=1;
-  reliability = n2L4Clamp(reliability);
-  // ③ 数据开销（描述性：数值越高代表额外开销越大，不是"越高越好"）
-  let overhead=0;
-  if(p.crc==='开') overhead+=1;
-  if(p.fec==='中等') overhead+=1; else if(p.fec==='强') overhead+=2;
-  if(p.retrans==='允许') overhead+=2; else if(p.retrans==='仅关键数据') overhead+=1;
-  if(p.modTier==='稳定档') overhead+=1;
-  if(p.bizAdjust==='全部保留') overhead+=1;
-  overhead = n2L4Clamp(overhead);
-  // ④ 电量消耗（描述性：数值越高代表耗电越多）
-  let powerUse=0;
-  powerUse += (p.modTier==='高速档') ? 2 : 1;
-  if(p.retrans==='允许') powerUse+=2; else if(p.retrans==='仅关键数据') powerUse+=1;
-  if(p.fec==='强') powerUse+=1;
-  if(p.bizAdjust==='全部保留') powerUse+=1;
-  powerUse = n2L4Clamp(powerUse);
-  return {core, reliability, overhead, powerUse};
+  if(q.task==='保持短语音联系'){
+    if(degLv>=4) core -= 4; // 业务降级把语音整个砍掉了，任务本身没完成
+    else if(linkSev>=3 && p.fec==='关闭') core -= 1;
+  }
+  if(q.task==='发送现场图片'){
+    if(degLv>=3) core -= 3; // 暂停图片/只保坐标文字＝任务目标没有真正达成（但其余维度会体现这是省资源的合理取舍）
+    else if(degLv<=1 && linkSev>=2) core -= 1; // 不降分辨率、链路又差，大概率传不完整
+  }
+  core = n2L4Clamp(core, 5);
+
+  // ② 可靠性（调制档位/FEC/重传是否符合链路条件——匹配才给分，不是"越强越好"）
+  const idealFec = linkSev===0 ? 0 : (linkSev===3 ? 2 : 1);
+  const fecScore = Math.max(0, 2-Math.abs(idealFec-fecLv));
+  const modScore = (linkSev>=2) ? (p.modTier==='稳定档'?1:0) : 1;
+  const retransScore = (p.retrans==='仅关键数据允许') ? 2 : 1;
+  const reliability = n2L4Clamp(fecScore+modScore+retransScore, 5);
+
+  // ③ 资源开销把控（是否过度使用强FEC和全部重传；分数越高代表没有过度使用，不是开销越大越好）
+  let overhead=4;
+  if(p.fec==='强保护' && linkSev<=1) overhead-=2;
+  else if(p.fec==='强保护' && linkSev===2) overhead-=1;
+  if(p.retrans==='全部允许') overhead-=2;
+  if(p.retrans==='全部允许' && pressureSev===2) overhead-=1;
+  if(p.modTier==='稳定档' && linkSev===0) overhead-=1;
+  overhead = n2L4Clamp(overhead, 4);
+
+  // ④ 电量管理（策略是否符合剩余电量；分数越高代表越匹配当前电量，不是耗电越多越好或越少越好）
+  let power=3;
+  if(powSev>=3){
+    if(p.retrans==='全部允许') power-=2;
+    if(p.fec==='强保护') power-=1;
+    if(degLv<=1) power-=1;
+  } else if(powSev===2){
+    if(p.retrans==='全部允许') power-=1;
+    if(p.fec==='强保护' && degLv<=1) power-=1;
+  }
+  power = n2L4Clamp(power, 3);
+
+  // ⑤ 业务降级（是否合理减少低优先级业务；按链路+电量+网络压力的综合严重度评估匹配度，不是降得越狠越好）
+  const sevIndex = linkSev+powSev+pressureSev; // 0..8
+  const idealDeg = Math.min(4, Math.floor(sevIndex/2));
+  const degrade = n2L4Clamp(3-Math.abs(idealDeg-degLv), 3);
+
+  const total = core+reliability+overhead+power+degrade;
+  return {core, reliability, overhead, power, degrade, total};
 }
-function n2L4PickDescribe(p){
-  return `${p.modTier} + CRC${p.crc==='开'?' 开':' 关'} + FEC${p.fec} + 重传${p.retrans} + 业务${p.bizAdjust}`;
+function n2L4WeakHint(name){
+  if(name==='核心任务保障') return '请检查发送顺序是否把最重要的数据排在前面，以及链路差时是否关闭了FEC或不允许重传。';
+  if(name==='可靠性') return '请检查调制档位、FEC强度是否匹配当前链路条件，不是越强越好，而是越匹配越好。';
+  if(name==='资源开销把控') return '强FEC和全部重传都会增加数据量和延迟，请确认当前链路是否真的需要这么强的保护。';
+  if(name==='电量管理') return '电量紧张时，全部重传和强FEC都会加速耗电，请确认当前电量是否支撑得起。';
+  return '请确认业务降级档位是否匹配当前链路、电量和网络压力的综合严重程度。';
+}
+/* 结果反馈十项（规格十）：总分/五维分/推荐方案/可接受替代/最大优点/最大风险/可靠性开销/是否保住核心任务/20s/60s 稿 */
+function n2L4Feedback(q, p, s){
+  const dims=[['核心任务保障',s.core,5],['可靠性',s.reliability,5],['资源开销把控',s.overhead,4],['电量管理',s.power,3],['业务降级',s.degrade,3]];
+  const ratios=dims.map(d=>({name:d[0], val:d[1], max:d[2], ratio:d[1]/d[2]}));
+  const strongest=ratios.reduce((a,b)=>b.ratio>a.ratio?b:a);
+  const weakest=ratios.reduce((a,b)=>b.ratio<a.ratio?b:a);
+  const coreHeld = s.core>=4;
+  const fecLv=N2_L4_FEC_LEVEL[p.fec], retransLv=N2_L4_RETRANS_LEVEL[p.retrans];
+  const protectSum=fecLv+retransLv;
+  const protectLabel = protectSum>=3?'较高':(protectSum>=1?'中等':'较低');
+  return {
+    total:s.total,
+    strongestText:`最大优点：${strongest.name}（${strongest.val}/${strongest.max}）。`,
+    weakestText:`最大风险：${weakest.name}偏低（${weakest.val}/${weakest.max}）——${n2L4WeakHint(weakest.name)}`,
+    coreHeldText: coreHeld ? '判定：核心任务保障达标，最重要的数据基本能优先、完整送达。' : '判定：核心任务保障不足，最重要的数据可能无法优先或完整送达，建议重新检查发送顺序和保护强度。',
+    reliabilityCostText:`可靠性开销：FEC${p.fec} ＋ 重传${p.retrans}，属于${protectLabel}强度的保护投入（资源开销把控 ${s.overhead}/4，电量管理 ${s.power}/3——数值越高代表越匹配当前条件，不是开销越大越好）。`,
+  };
 }
 function n2L4SetPick(field, val){
   const i=n2L4State.idx;
@@ -3215,50 +3342,63 @@ function n2L4SetPick(field, val){
 }
 function n2L4Render(){
   const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
-  n2ActiveQuestion=q; n2ActiveHintLevel = n2L4State.scores[i] ? 0 : 0; // 第④关不设逐题分级提示计数，H键仅展示三级提示文案供教师参考
+  n2ActiveQuestion=q; n2ActiveHintLevel=n2L4State.hintLevel[i];
   const p=n2L4State.picks[i];
   const submitted=n2L4State.submitted[i];
-  const sel=(field,options)=>`<select onchange="n2L4SetPick('${field}',this.value)" ${submitted?'disabled':''}>${options.map(o=>`<option value="${o}" ${p[field]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  const sel=(field,options,labelFn)=>`<select onchange="n2L4SetPick('${field}',this.value)" ${submitted?'disabled':''}>${options.map(o=>`<option value="${o}" ${p[field]===o?'selected':''}>${labelFn?labelFn(o):o}</option>`).join('')}</select>`;
+  let hintHtml='';
+  for(let lv=1; lv<=n2L4State.hintLevel[i]; lv++) hintHtml += `<p style="font-size:14px;color:var(--amber)">提示${lv}：${q['hint'+lv]}</p>`;
   let resultHtml='';
   if(submitted){
     const s=n2L4State.scores[i];
-    const bar=(label,val)=>{
-      let segs=''; for(let k=1;k<=5;k++) segs+=`<span class="${k<=val?'on':''}"></span>`;
-      return `<div class="n2l4bar"><div class="k">${label}</div><div class="n2l4barseg">${segs}</div><div class="lv">${val}/5</div></div>`;
+    const fb=n2L4Feedback(q,p,s);
+    const bar=(label,val,max)=>{
+      let segs=''; for(let k=1;k<=max;k++) segs+=`<span class="${k<=val?'on':''}"></span>`;
+      return `<div class="n2l4bar"><div class="k">${label}</div><div class="n2l4barseg">${segs}</div><div class="lv">${val}/${max}</div></div>`;
     };
     resultHtml = `<div class="n2qresultbox show good">
+      <p><b>总分：${s.total} / 20</b></p>
       <div class="n2l4bars">
-        ${bar('核心任务保障', s.core)}
-        ${bar('可靠性', s.reliability)}
-        ${bar('数据开销（越高代表开销越大）', s.overhead)}
-        ${bar('电量消耗（越高代表耗电越多）', s.powerUse)}
+        ${bar('核心任务保障', s.core, 5)}
+        ${bar('可靠性', s.reliability, 5)}
+        ${bar('资源开销把控', s.overhead, 4)}
+        ${bar('电量管理', s.power, 3)}
+        ${bar('业务降级', s.degrade, 3)}
       </div>
-      <p>你的方案：${n2L4PickDescribe(p)}</p>
-      <p><b>推荐方案：</b>${q.recommended}</p>
-      <p><b>可接受替代方案：</b>${q.acceptable.join('；')}</p>
-      <p><b>方案风险：</b>${q.risk}</p>
-      <p style="font-size:15px;color:var(--cyan)">教师复盘稿：${q.teacher20s}</p>
+      <p>你的方案：${n2L4Describe(p)}</p>
+      <p><b>推荐方案：</b>${q.recommendedPlan}</p>
+      <p><b>可接受替代方案：</b>${q.acceptedPlans.join('；')}</p>
+      <p>${fb.strongestText}</p>
+      <p>${fb.weakestText}</p>
+      <p>${fb.coreHeldText}</p>
+      <p>${fb.reliabilityCostText}</p>
+      <p style="font-size:15px;color:var(--cyan)">20秒教师逐字稿：${q.teacher20s}</p>
+      <p style="font-size:14px;color:var(--cyan)">60秒教师逐字稿：${q.teacher60s}</p>
       <p class="n2qa-boundary">${q.boundary}</p>
     </div>`;
   }
   let summaryHtml='';
   if(i===7 && submitted){
-    summaryHtml = `<div class="n2qsummary"><h4>第④关结束</h4><p>共 8 个场景，已全部提交方案。第④关无唯一对错，请两组各自陈述取舍理由。</p><button class="btn" onclick="n2L4Restart()">↺ 重新开始本关</button></div>`;
+    const totalSum = n2L4State.scores.reduce((a,s)=>a+(s?s.total:0),0);
+    summaryHtml = `<div class="n2qsummary"><h4>第④关结束</h4><p>共 8 个场景，已全部提交方案，8 题总分 ${totalSum} / 160。第④关无唯一对错，请两组各自陈述取舍理由。</p><button class="btn" onclick="n2L4Restart()">↺ 重新开始本关</button></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
     <div class="n2qprogress">第④关 · 海岛通信指挥官　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
     <div class="n2qcard">
-      <div class="n2l4scenario">链路状态：<b>${q.link}</b>　电量：<b>${q.power}</b>　任务：<b>${q.task}</b></div>
-      <div class="n2qprompt">请为当前场景选择通信策略，系统会按四个维度评分（不判唯一对错）。</div>
+      <div class="n2l4scenario">链路状态：<b>${q.link}</b>　剩余电量：<b>${q.power}</b>　当前任务：<b>${q.task}</b>　网络压力：<b>${q.pressure}</b></div>
+      <div class="n2qprompt">请为当前场景选择通信策略，系统会按五个维度评分（不判唯一对错）。</div>
       <div class="n2l4choices">
+        <div><label>CRC</label><div style="padding:8px 10px;color:var(--muted)">CRC：基础检错，默认开启（不可关闭）</div></div>
         <div><label>① 调制档位</label>${sel('modTier',['高速档','稳定档'])}</div>
-        <div><label>② CRC</label>${sel('crc',['开','关'])}</div>
-        <div><label>③ FEC</label>${sel('fec',['不用','中等','强'])}</div>
-        <div><label>④ 重传</label>${sel('retrans',['允许','仅关键数据','不允许'])}</div>
-        <div><label>⑤ 业务调整</label>${sel('bizAdjust',['全部保留','降低语音质量','暂停图片','只保留位置和文字'])}</div>
+        <div><label>② FEC 强度</label>${sel('fec',['关闭','中等保护','强保护'])}</div>
+        <div><label>③ 重传策略</label>${sel('retrans',['不允许','仅关键数据允许','全部允许'])}</div>
+        <div><label>④ 业务降级</label>${sel('bizAdjust',['全部保留','降低语音码率','降低图片分辨率','暂停图片','只保留位置和文字'])}</div>
+        <div><label>⑤ 业务发送顺序</label>${sel('sendOrder',N2_L4_SEND_ORDER_OPTIONS,o=>o.replace(/>/g,' → '))}</div>
       </div>
+      <p style="font-size:13px;color:var(--muted)">提醒：业务降级是主动减少需要传输的数据，不等于允许数据随便出错；短语音降码率、低清图片降分辨率后仍然需要 CRC 检错。</p>
+      ${hintHtml}
       <div class="n2qbtnrow">
-        <button class="btn" onclick="n2L4Hint()">💡 提示（H）</button>
+        <button class="btn" onclick="n2L4Hint()" ${submitted?'disabled':''}>💡 提示（H）</button>
         <button class="btn primary" onclick="n2L4Submit()" ${submitted?'disabled':''}>提交方案</button>
         <button class="btn" onclick="n2L4Next()" ${submitted?'':'disabled'}>下一题（N）</button>
       </div>
@@ -3268,15 +3408,18 @@ function n2L4Render(){
   `;
 }
 function n2L4Hint(){
-  const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
-  toast('提示：'+q.hint1);
+  const i=n2L4State.idx;
+  if(n2L4State.submitted[i]) return;
+  n2L4State.hintLevel[i]=Math.min(3, n2L4State.hintLevel[i]+1);
+  n2ActiveHintLevel=n2L4State.hintLevel[i];
+  n2L4Render();
 }
 function n2L4Submit(){
   const i=n2L4State.idx, q=N2_L4_QUESTIONS[i];
   if(n2L4State.submitted[i]) return;
   n2L4State.scores[i] = n2L4Score(q, n2L4State.picks[i]);
   n2L4State.submitted[i]=true;
-  n2AddScore(n2CurrentTeam, 1, '第④关第'+(i+1)+'题（参与分，无唯一对错）');
+  n2AddScore(n2CurrentTeam, 1, '第④关第'+(i+1)+'题（参与分，无唯一对错，得分见五维评分）');
   n2L4Render();
 }
 function n2L4Next(){ const i=n2L4State.idx; if(!n2L4State.submitted[i]) return; if(i<7) n2L4State.idx++; n2L4Render(); }
@@ -3288,149 +3431,178 @@ function n2L4Reveal(){
   n2L4Render();
 }
 function n2L4Restart(){
-  n2L4State = {idx:0, submitted:new Array(8).fill(false), picks:new Array(8).fill(null).map(()=>({modTier:'稳定档',crc:'开',fec:'中等',retrans:'允许',bizAdjust:'全部保留'})), scores:new Array(8).fill(null)};
+  n2L4State = {idx:0, submitted:new Array(8).fill(false), hintLevel:new Array(8).fill(0), picks:new Array(8).fill(null).map(n2L4DefaultPick), scores:new Array(8).fill(null)};
   n2L4Render();
 }
 
 /* ---------------------------------------------------------------------------
-   讲师指引：内嵌 Markdown 常量与 teacher-guide.md 文件内容逐字一致（规格十八/十九）
+   讲师指引：n2BuildGuideMarkdown() 从闯关四关的同一份题库数据
+   （N2_L1_QUESTIONS/N2_L2_QUESTIONS/N2_L3_QUESTIONS/N2_L4_QUESTIONS）生成 md 文本，
+   与网页「下载讲师指引」按钮下载内容、仓库 teacher-guide.md 文件三处逐字一致——
+   是同一个函数的确定性输出，不是手写两份靠 diff 对齐（沿用课程四 c4BuildGuideMarkdown 的模式）。
+   实验模式（子实验①②③）部分内容固定不变（本轮未改实验模式），仍是手写说明段落。
    --------------------------------------------------------------------------- */
-const N2_TEACHER_GUIDE_MD = `# 课程三 HTML 实验与闯关讲师指引
-
-本指引与网页内「🧑‍🏫 教师辅助 → 下载讲师指引」按钮下载的 \`课程三_HTML讲师指引.md\` 内容完全一致，供手机、打印或另一台设备离线查看。
-
-## 一、课堂使用总流程
-
-建议总时长：45 分钟（实验模式约 20 分钟 + 闯关模式约 25 分钟），可根据班级进度调整。
-
-> **与 PPT／故事板联动**：闯关四关分别对应故事板第 17（符号配对赛）、31（点云判决挑战）、35（BER 侦探）、49（海岛通信指挥官）页的规则页，每关打完后回到 PPT 对应的 30 秒复盘页；实验模式在教学页随讲随演，不单独占 PPT 页。
-
-1. **开场（3 分钟）**：讲清楚两条写死的技术边界（见第四节「快速答案卡」），再让学生知道今天会用网页验证判断，而不是老师直接讲结论。
-2. **实验模式（约 20 分钟，教师随讲随演）**：
-   - 先讲一个简单概念 → 学生纸上预测 → 网页验证 → 显示答案 → 教师复盘。
-   - 三个子实验按顺序演示：① 星座图与判决 → ② 误码与 BER → ③ CRC 与 FEC。
-   - **哪些答案不能提前显示**：子实验①的判决结果颜色和 bit 标签（点"隐藏答案"后）、子实验②的错误标记（点"隐藏错误标记"后）——这些都是"先让学生猜，再核对"的环节，不要提前点开。
-3. **切换到闯关模式（约 25 分钟，学生 A/B 两组竞赛）**：
-   - 顶部先选好当前作答组（A/B），四关可以按顺序打，也可以教师跳关、重复某一关。
-   - **哪些答案不能提前显示**：每道题在学生提交答案之前，正确答案不会出现在投影区；教师如果想自己先确认答案，必须用 T 键打开"教师辅助"，会先弹出隐私确认页，确认现在没有对着学生投影才能看到内容，Esc 随时关闭。
-4. **结束复盘（3 分钟）**：用第四节「快速答案卡」带全班过一遍固定结论，公布 A/B 两组总分。
-
-## 二、实验模式讲师指引
-
-### 实验① 星座图与判决
-
-- **实验目的**：让学生看到"噪声让接收点偏离理想位置，点跨过判决边界才会被判错"，不是"噪声直接把 bit 改错"。
-- **建议参数**：先固定种子演示 σ=0（理想点集中）→ 中噪声预设 → 高噪声预设，BPSK 演示完再切 QPSK 对比。
-- **操作步骤**：① 展示 σ=0 理想点；② 逐步提高噪声观察点云扩散；③ 比较 BPSK 与 QPSK 同噪声下的误判情况；④ 让学生指出哪些点越过了判决边界；⑤ 需要"先猜后核对"时，点"隐藏答案"再点"显示答案"核对。
-- **正常现象**：噪声越大，红点（判决错误）越多；QPSK 比 BPSK 更容易在同噪声下出错（相邻理想点间距更小）。
-- **正确结论**：噪声会让接收点偏离理想位置。只要点仍留在原来的判决区域，接收端通常还能判断正确；当点越过边界，就可能被判断成另一个符号。
-- **常见异常**：无（本实验是确定性可视化面板，不涉及随机报错）。
-- **学生可能误解**：以为"噪声直接改变了 bit 的值"，而不是"噪声先让接收点移动位置，判决错误后才产生 bit 错误"。
-- **20 秒逐字稿**：这个星座图上，蓝色点是发送端理想发出的符号。噪声会把接收点往四周推。只要红色的接收点还留在原来的区域里，接收端还是能判断正确；一旦跨过虚线判决边界，才会被判成另一个符号。
-- **60 秒逐字稿**：我们发送的每个符号，理论上应该落在星座图上的一个固定理想点。但信道里的噪声会让接收点"抖动"，偏离理想位置，抖动幅度由这个 σ 滑杆控制。判决规则很简单：接收端只看这个抖动后的点距离哪个理想点最近，就判成哪个符号。只要抖动没有让点跨过虚线（判决边界），结果仍然正确；一旦跨过边界，就会被判成邻近的另一个符号，这时才会产生 bit 错误。注意 QPSK 因为理想点之间挨得更近，同样的噪声下更容易被跨界判错，这不代表 QPSK "更差"，只是阶数更高、抗噪能力的代价。
-- **技术边界**：本实验的噪声 σ 只影响这个星座图的点云和判决，和实验②③里的"bit 翻转概率"是两个完全独立的变量，互不影响。
-
-### 实验② 误码与 BER
-
-- **实验目的**：让学生亲手数出"错了几位、共传了几位"，理解 BER 只是这两个数字的比值。
-- **建议参数**：先用「A 简单 bit 串」层级（发送 10110010），手动翻转 2 位（例如变成 11110000），全班一起手算 BER；再切换到「B 紧急消息 TEAM SAFE」层级演示 45 bit 场景。
-- **操作步骤**：① 选难度层级（简单 bit 串 / TEAM SAFE）；② A 手动翻转模式：点击 bit 制造错误，点"隐藏错误标记"让学生自己先找错误位置，再点"显示错误位置"核对，点"计算 BER"前不要提前公布；③ B 随机信道模式：调节独立翻转概率 p，可固定随机种子复现；④ 强调分子（信道中被翻转的 bit 数）和分母（编码后发送总 bit 数）分别是什么。
-- **正常现象**：p 越大，被标红的翻转位越多，信道 BER 越高；本实验不加保护，所以"信道 BER"和"Payload BER"数值相同。
-- **正确结论**：BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。
-- **常见异常**：无。
-- **学生可能误解**：把"信道 BER"和"Payload BER"混为一谈——本实验因为没有加保护方案，两者数值相同，但下一个实验（CRC/FEC）加了保护之后，两者会出现差异，这是重要的对比点。
-- **20 秒逐字稿**：这里发送了一串 bit。信道翻转了其中几位（红色标出），这就是"信道 BER"：翻转数除以总位数。因为这次没有加任何保护，最后恢复出来的数据错误位数和信道翻转位数完全一样。
-- **60 秒逐字稿**：误码率（BER）的计算只需要两个数字：分子是错误的 bit 数，分母是传输的总 bit 数。本实验里，"信道 BER"指的是信道中被翻转的编码 bit 数除以编码后发送的总 bit 数；"Payload BER"指的是恢复之后仍然错误的原始数据 bit 数除以原始 payload 的 bit 数。因为这个实验不加任何保护方案，信道翻转多少位，恢复出来就错多少位，所以这两个数字现在相等——但这不是巧合，而是"没有保护"这个前提决定的。等到下一个实验加了 CRC 或三次重复码之后，你们会看到这两个数字开始不一样。
-- **技术边界**：本实验的 bit 翻转概率 p（或手动翻转）与实验①的连续噪声 σ 是两套完全独立的模型，bit 翻转是课堂简化模型，不代表真实无线信道的全部物理过程。
-
-### 实验③ CRC 与 FEC
-
-- **实验目的**：让学生分清"检错"（CRC）和"纠错"（三次重复码/汉明码）的区别，以及"多保护 = 多开销"的取舍。
-- **建议参数**：先演示 A 不加保护（对照基线）→ B 教学版 CRC-4（生成多项式 x⁴+x+1，二进制 10011）→ C 三次重复码 → 可选展开 D 汉明(7,4)；p 建议先设 10%-20% 观察效果，再跑批量统计 100/500 次看趋势。
-- **操作步骤**：① 选保护方案；② 调节 bit 翻转概率 p；③ 先跑单次案例，观察发送/信道/恢复三行 bit 和恢复文本；④ 再跑批量统计 100 或 500 次，比较完整恢复率、平均 Payload BER、发送总 bit 数、检错/纠错成功率；⑤ 强调"CRC 只报告校验失败，不修复数据"。
-- **正常现象**：CRC 校验失败时，原始错误数据原样保留，没有被"修好"；三次重复码大部分情况能修复单个副本错误，但如果同一 bit 的 3 个副本里有 2 个或以上被翻转，多数表决会得到错误结果；汉明(7,4)（可选扩展）单个 codeword 内 1 位错必定纠对，2 位及以上错误超出单错纠正能力，可能留下错误或发生误纠正。
-- **正确结论**：CRC 主要用于检测错误，不修复数据；FEC（三次重复码/汉明码）利用冗余修复一定能力范围内的错误；增加保护会带来传输开销（发送总 bit 数变多）。
-- **常见异常**：无（批量统计有随机性属于正常现象，不是 bug——多次统计才能看出总体趋势）。
-- **学生可能误解**：以为"CRC 校验失败=自动把数据修好了"；以为"重复码/汉明码可以修复任意数量的错误"；以为"CRC-4 能检测所有可能的错误组合"（CRC-4 只保证检出单 bit 错误和大多数、并非全部的多 bit 错误组合）。
-- **20 秒逐字稿**：CRC 只负责"体检"，告诉你数据可能坏了，它自己不会把坏的数据修好。三次重复码是真正会"修"的方法，把每个 bit 发三遍，多数表决——但如果三份里坏了两份以上，修出来的结果也会是错的。
-- **60 秒逐字稿**：这个实验对比三种保护方式。A 不加保护，发送量最小，但没有任何检错或纠错能力。B 是教学版 CRC-4，生成多项式是 x⁴+x+1（二进制 10011），接收端会用同样的多项式重新计算一次余数，和收到的校验位比较：一致就"通过"，不一致就报告"校验失败"——但无论通过还是失败，CRC 都不会去改动任何数据 bit，失败时原始错误数据原样还在。C 是三次重复码，把每个 bit 重复发送三次，接收端用多数表决决定这一位是 0 还是 1，如果三份里只错了一份，多数表决能把它修回来；但如果错了两份或三份，修出来的反而是错的。批量统计模式能让大家看到"单次结果有随机性，多次统计才能看出总体趋势和平均可靠性"这句话的真正含义。
-- **技术边界**：CRC-4 只检错不纠错，不宣称能检测所有可能的错误组合；三次重复码/汉明码的纠错能力都有明确上限，超出上限可能留下错误或发生误纠正，不是"冗余越多一定越好"，而是要在可靠性和开销之间取舍。
-
-## 三、四个闯关游戏答案
-
-### 第①关 符号配对赛（8 题，判断题）
-
-- **规则**：给 bit 选星座点，或给星座点选 bit，覆盖 BPSK 和 QPSK。
-- **正确答案逻辑**：完全按下面的固定映射表判断，不需要计算。
-- **固定映射表**：
-  - BPSK：左边的点 = 0，右边的点 = 1。
-  - QPSK（Gray 映射）：右上 = 00，左上 = 01，左下 = 11，右下 = 10。
-- **评分规则**：答对且未用提示 = 2 分；用过一级提示后答对 = 1 分；用过二级或三级提示后答对 = 0 分；答错不扣分。
-- **一二三级提示**：
-  - 一级：先数这种调制一共有几个理想点。
-  - 二级：QPSK 有四个状态，每个状态需要两个 bit 区分。
-  - 三级：看右上左上左下右下对应的固定 Gray 映射。
-- **常见错误**：把左右或四个象限的对应关系记反，或试图用"自然顺序"猜测编码而不是使用固定映射。
-- **复盘逐字稿**：bit 是信息，symbol 是一次发送选择的信号状态。QPSK 有四种状态，所以在本课映射里一个 symbol 可以表示两个 bit。
-
-### 第②关 点云判决挑战（8 题，判断题）
-
-- **规则**：给一个带噪声的接收点（发送端实际发送的符号暂时隐藏），学生判断"接收端会判成哪个 symbol"。
-- **正确答案逻辑**：接收端永远判决为距离最近的理想点，用欧氏距离比较，和"发送端原本想发什么"无关——这是本关最容易搞错的地方。
-- **固定映射表**：与第①关相同（BPSK 左 0 右 1；QPSK 右上 00 左上 01 左下 11 右下 10）。
-- **评分规则**：同第①关（2 / 1 / 0 / 答错不扣）。
-- **一二三级提示**：
-  - 一级：先看这个点落在哪个判决区域。
-  - 二级：接收端通常判为距离最近的理想点。
-  - 三级：不要猜发送端原本想发什么，只判断接收端现在会认成什么。
-- **常见错误**：把"发送端原本发的符号"当成答案，而不是看接收点实际落在哪个判决区域。
-- **复盘逐字稿**：噪声不会在屏幕上直接写出一个错误 bit。它先把接收点推离理想位置。如果点跨过判决边界，接收机才会认成另一个符号，随后形成 bit 错误。
-
-### 第③关 BER 侦探（8 题，判断题）
-
-- **规则**：给发送串和接收串，学生要：① 点击所有错误位置 ② 填错误 bit 数 ③ 选出正确的 BER。三项都对才算全部正确。
-- **正确答案逻辑**：逐位比较发送串和接收串找出所有不同的位置；BER = 错误 bit 数 ÷ 传输总 bit 数。全部 8 题只使用简单分数：1/8、2/8、3/12、1/16，不出现循环小数。
-- **评分规则**：同第①关（三项全对才算"答对"，2 / 1 / 0 / 答错不扣）。
-- **一二三级提示**：
-  - 一级：从左到右逐位比较。
-  - 二级：先数出不同的位置，再看总共多少位。
-  - 三级：BER 的分母不是错误数也不是正确数，而是总 bit 数。
-- **常见错误**：把分母错填成"正确的位数"，或漏数/多数错误位置，尤其首尾位置容易漏看。
-- **复盘逐字稿**：BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。它不是网速，也不是信号强度。
-
-### 第④关 海岛通信指挥官（8 题，综合应用题，无唯一标准答案）
-
-- **规则**：给出链路状态（好/一般/很差）× 电量（充足/有限/只够一小时）× 任务（救援坐标/求救文字/短语音/低清图片），学生选调制档位、CRC 开关、FEC 强度、重传策略、业务调整共 5 项。
-- **正确答案逻辑**：**没有唯一正确组合**。系统按四个维度各打 0-5 分：核心任务保障、可靠性、数据开销、电量消耗，高分方案不是某一项拉满，而是能在当前链路和电量条件下保住最重要的任务。
-- **推荐原则**：位置坐标、求救文字这类关键数据 → 可靠性优先，通常稳定档 + CRC 开 + 适当 FEC，链路很差时可以允许关键数据重传；语音 → 可以降低质量或短时中断，不应该优先占用所有资源；图片 → 优先级最低，链路差或电量紧张时可以暂停。
-- **评分规则**：本关不用第①-③关的判断题计分规则，提交方案即获得 1 分参与分（不判定对错），核心价值在于四维评分和教师复盘讨论，不计入"答对/答错"统计。
-- **一二三级提示**：
-  - 一级：先判断这次任务哪种数据最不能出错。
-  - 二级：再看当前链路和电量是否支持高开销方案。
-  - 三级：先保位置和文字，再考虑语音和图片。
-- **常见错误**：不考虑当前链路和电量条件，固定选择"全部保留 + 高速档 + 强保护"，或反过来固定选择"最省"而不顾任务优先级。
-- **复盘逐字稿**：这道题没有唯一正确组合，打分只反映当前条件下的取舍是否合理。高分方案不是某一项拉满，而是能在当前链路和电量条件下，保住最重要的任务，并能说明清楚取舍理由。
-
-## 四、快速答案卡（可打印，供课堂随时翻查）
-
-- **QPSK 映射**：右上 00，左上 01，左下 11，右下 10。
-- **BPSK 映射**：左边的点 = 0，右边的点 = 1。
-- **BER 公式**：BER = 错误 bit 数 ÷ 总 bit 数（信道 BER 分母是编码后总 bit 数；Payload BER 分母是原始 payload bit 数，两者必须分开标注）。
-- **CRC**：CRC-4（生成多项式 x⁴+x+1，二进制 10011）——只检测错误，不自动修复数据，也不宣称能检测所有可能的错误组合。
-- **FEC**：利用冗余修复一定能力范围内的错误，不是任意数量的错误都能修复。
-- **重复码**：三位副本中最多错一位时，多数表决通常可以恢复；错两位或三位会恢复失败。
-- **海岛原则**：先保位置和文字，再考虑语音和图片；没有唯一正确组合，能说明取舍理由就是好方案。
-- **两条写死边界**：① 模拟噪声强度和 bit 独立翻转概率是两个完全不同的参数，互不影响；② 误码率必须分别标注"信道 BER"和"Payload BER"，不能只写"BER"。
-- **快捷键**：T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。
-
-## 五、技术故障备用方案（网页不能用时的纸笔替代）
-
-- **符号配对纸笔题**：老师口头报出一个 bit 串或象限方位，学生纸上写出对应的另一半（照第四节固定映射表判断），同桌互相检查。
-- **判决区域纸笔题**：老师在黑板画一个简化的星座图坐标轴，点上一个"接收点"位置，学生纸上判断它离哪个理想点最近、是否跨过了判决边界。
-- **BER 手算题**：老师口头给出两串等长 0/1（比如 8 位），学生纸上逐位比较，数出错误位置和错误数，再算出 BER（用第三关允许的简单分数形式）。
-- **重复码多数表决题**：老师给出一个 bit 的三次重复副本（比如 1 1 0），学生纸上做多数表决，判断恢复出的 bit 是多少，并说明这是否是"多数表决失败"的情形（两份或以上不一致时）。
-- **海岛策略卡**：把第四节"海岛原则"打印发给两组，直接讨论当前假设场景该怎么选，不需要网页也能完成第④关的教学目标。
-`;
+function n2BuildGuideMarkdown(){
+  const lines=[];
+  lines.push('# 课程三 HTML 实验与闯关讲师指引');
+  lines.push('');
+  lines.push('本指引由 `n2BuildGuideMarkdown()` 从闯关四关的同一份题库数据直接生成，与网页内「🧑‍🏫 教师辅助 → 下载讲师指引」按钮下载的内容、以及仓库 `teacher-guide.md` 文件三处保持逐字一致。');
+  lines.push('');
+  lines.push('## 一、课堂使用总流程');
+  lines.push('');
+  lines.push('建议总时长：45 分钟（实验模式约 20 分钟 + 闯关模式约 25 分钟），可根据班级进度调整。');
+  lines.push('');
+  lines.push('> **与 PPT／故事板联动**：闯关四关分别对应故事板第 17（符号配对赛）、31（点云判决挑战）、35（BER 侦探）、49（海岛通信指挥官）页的规则页，每关打完后回到 PPT 对应的 30 秒复盘页；实验模式在教学页随讲随演，不单独占 PPT 页。');
+  lines.push('');
+  lines.push('1. **开场（3 分钟）**：讲清楚两条写死的技术边界（见第四节「快速答案卡」），再让学生知道今天会用网页验证判断，而不是老师直接讲结论。');
+  lines.push('2. **实验模式（约 20 分钟，教师随讲随演）**：');
+  lines.push('   - 先讲一个简单概念 → 学生纸上预测 → 网页验证 → 显示答案 → 教师复盘。');
+  lines.push('   - 三个子实验按顺序演示：① 星座图与判决 → ② 误码与 BER → ③ CRC 与 FEC。');
+  lines.push('   - **哪些答案不能提前显示**：子实验①的判决结果颜色和 bit 标签（点"隐藏答案"后）、子实验②的错误标记（点"隐藏错误标记"后）——这些都是"先让学生猜，再核对"的环节，不要提前点开。');
+  lines.push('3. **切换到闯关模式（约 25 分钟，学生 A/B 两组竞赛）**：');
+  lines.push('   - 顶部先选好当前作答组（A/B），四关可以按顺序打，也可以教师跳关、重复某一关。');
+  lines.push('   - 第④关海岛通信指挥官已改为 CRC 默认开启（学生无法关闭）+ 5 项选择（调制档位/FEC强度/重传策略/业务降级/业务发送顺序）+ 20 分 5 维评分，详见第三节。');
+  lines.push('   - **哪些答案不能提前显示**：每道题在学生提交答案之前，正确答案（或第④关的推荐方案）不会出现在投影区；教师如果想自己先确认答案，必须用 T 键打开"教师辅助"，会先弹出隐私确认页，确认现在没有对着学生投影才能看到内容，Esc 随时关闭。');
+  lines.push('4. **结束复盘（3 分钟）**：用第四节「快速答案卡」带全班过一遍固定结论，公布 A/B 两组总分。');
+  lines.push('');
+  lines.push('## 二、实验模式讲师指引');
+  lines.push('');
+  lines.push('### 实验① 星座图与判决');
+  lines.push('');
+  lines.push('- **实验目的**：让学生看到"噪声让接收点偏离理想位置，点跨过判决边界才会被判错"，不是"噪声直接把 bit 改错"。');
+  lines.push('- **建议参数**：先固定种子演示 σ=0（理想点集中）→ 中噪声预设 → 高噪声预设，BPSK 演示完再切 QPSK 对比。');
+  lines.push('- **操作步骤**：① 展示 σ=0 理想点；② 逐步提高噪声观察点云扩散；③ 比较 BPSK 与 QPSK 同噪声下的误判情况；④ 让学生指出哪些点越过了判决边界；⑤ 需要"先猜后核对"时，点"隐藏答案"再点"显示答案"核对。');
+  lines.push('- **正常现象**：噪声越大，红点（判决错误）越多；QPSK 比 BPSK 更容易在同噪声下出错（相邻理想点间距更小）。');
+  lines.push('- **正确结论**：噪声会让接收点偏离理想位置。只要点仍留在原来的判决区域，接收端通常还能判断正确；当点越过边界，就可能被判断成另一个符号。');
+  lines.push('- **学生可能误解**：以为"噪声直接改变了 bit 的值"，而不是"噪声先让接收点移动位置，判决错误后才产生 bit 错误"。');
+  lines.push('- **20 秒逐字稿**：这个星座图上，蓝色点是发送端理想发出的符号。噪声会把接收点往四周推。只要红色的接收点还留在原来的区域里，接收端还是能判断正确；一旦跨过虚线判决边界，才会被判成另一个符号。');
+  lines.push('- **60 秒逐字稿**：我们发送的每个符号，理论上应该落在星座图上的一个固定理想点。但信道里的噪声会让接收点"抖动"，偏离理想位置，抖动幅度由这个 σ 滑杆控制。判决规则很简单：接收端只看这个抖动后的点距离哪个理想点最近，就判成哪个符号。只要抖动没有让点跨过虚线（判决边界），结果仍然正确；一旦跨过边界，就会被判成邻近的另一个符号，这时才会产生 bit 错误。注意 QPSK 因为理想点之间挨得更近，同样的噪声下更容易被跨界判错，这不代表 QPSK "更差"，只是阶数更高、抗噪能力的代价。');
+  lines.push('- **技术边界**：本实验的噪声 σ 只影响这个星座图的点云和判决，和实验②③里的"bit 翻转概率"是两个完全独立的变量，互不影响。');
+  lines.push('');
+  lines.push('### 实验② 误码与 BER');
+  lines.push('');
+  lines.push('- **实验目的**：让学生亲手数出"错了几位、共传了几位"，理解 BER 只是这两个数字的比值。');
+  lines.push('- **建议参数**：先用「A 简单 bit 串」层级（发送 10110010），手动翻转 2 位（例如变成 11110000），全班一起手算 BER；再切换到「B 紧急消息 TEAM SAFE」层级演示 45 bit 场景。');
+  lines.push('- **操作步骤**：① 选难度层级（简单 bit 串 / TEAM SAFE）；② A 手动翻转模式：点击 bit 制造错误，点"隐藏错误标记"让学生自己先找错误位置，再点"显示错误位置"核对，点"计算 BER"前不要提前公布；③ B 随机信道模式：调节独立翻转概率 p，可固定随机种子复现；④ 强调分子（信道中被翻转的 bit 数）和分母（编码后发送总 bit 数）分别是什么。');
+  lines.push('- **正常现象**：p 越大，被标红的翻转位越多，信道 BER 越高；本实验不加保护，所以"信道 BER"和"Payload BER"数值相同。');
+  lines.push('- **正确结论**：BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。');
+  lines.push('- **学生可能误解**：把"信道 BER"和"Payload BER"混为一谈——本实验因为没有加保护方案，两者数值相同，但下一个实验（CRC/FEC）加了保护之后，两者会出现差异，这是重要的对比点。');
+  lines.push('- **20 秒逐字稿**：这里发送了一串 bit。信道翻转了其中几位（红色标出），这就是"信道 BER"：翻转数除以总位数。因为这次没有加任何保护，最后恢复出来的数据错误位数和信道翻转位数完全一样。');
+  lines.push('- **60 秒逐字稿**：误码率（BER）的计算只需要两个数字：分子是错误的 bit 数，分母是传输的总 bit 数。本实验里，"信道 BER"指的是信道中被翻转的编码 bit 数除以编码后发送的总 bit 数；"Payload BER"指的是恢复之后仍然错误的原始数据 bit 数除以原始 payload 的 bit 数。因为这个实验不加任何保护方案，信道翻转多少位，恢复出来就错多少位，所以这两个数字现在相等——但这不是巧合，而是"没有保护"这个前提决定的。等到下一个实验加了 CRC 或三次重复码之后，你们会看到这两个数字开始不一样。');
+  lines.push('- **技术边界**：本实验的 bit 翻转概率 p（或手动翻转）与实验①的连续噪声 σ 是两套完全独立的模型，bit 翻转是课堂简化模型，不代表真实无线信道的全部物理过程。');
+  lines.push('');
+  lines.push('### 实验③ CRC 与 FEC');
+  lines.push('');
+  lines.push('- **实验目的**：让学生分清"检错"（CRC）和"纠错"（三次重复码/汉明码）的区别，以及"多保护 = 多开销"的取舍。');
+  lines.push('- **建议参数**：先演示 A 不加保护（对照基线）→ B 教学版 CRC-4（生成多项式 x⁴+x+1，二进制 10011）→ C 三次重复码 → 可选展开 D 汉明(7,4)；p 建议先设 10%-20% 观察效果，再跑批量统计 100/500 次看趋势。');
+  lines.push('- **操作步骤**：① 选保护方案；② 调节 bit 翻转概率 p；③ 先跑单次案例，观察发送/信道/恢复三行 bit 和恢复文本；④ 再跑批量统计 100 或 500 次，比较完整恢复率、平均 Payload BER、发送总 bit 数、检错/纠错成功率；⑤ 强调"CRC 只报告校验失败，不修复数据"。');
+  lines.push('- **正常现象**：CRC 校验失败时，原始错误数据原样保留，没有被"修好"；三次重复码大部分情况能修复单个副本错误，但如果同一 bit 的 3 个副本里有 2 个或以上被翻转，多数表决会得到错误结果；汉明(7,4)（可选扩展）单个 codeword 内 1 位错必定纠对，2 位及以上错误超出单错纠正能力，可能留下错误或发生误纠正。');
+  lines.push('- **正确结论**：CRC 主要用于检测错误，不修复数据；FEC（三次重复码/汉明码）利用冗余修复一定能力范围内的错误；增加保护会带来传输开销（发送总 bit 数变多）。');
+  lines.push('- **学生可能误解**：以为"CRC 校验失败=自动把数据修好了"；以为"重复码/汉明码可以修复任意数量的错误"；以为"CRC-4 能检测所有可能的错误组合"（CRC-4 只保证检出单 bit 错误和大多数、并非全部的多 bit 错误组合）。');
+  lines.push('- **20 秒逐字稿**：CRC 只负责"体检"，告诉你数据可能坏了，它自己不会把坏的数据修好。三次重复码是真正会"修"的方法，把每个 bit 发三遍，多数表决——但如果三份里坏了两份以上，修出来的结果也会是错的。');
+  lines.push('- **60 秒逐字稿**：这个实验对比三种保护方式。A 不加保护，发送量最小，但没有任何检错或纠错能力。B 是教学版 CRC-4，生成多项式是 x⁴+x+1（二进制 10011），接收端会用同样的多项式重新计算一次余数，和收到的校验位比较：一致就"通过"，不一致就报告"校验失败"——但无论通过还是失败，CRC 都不会去改动任何数据 bit，失败时原始错误数据原样还在。C 是三次重复码，把每个 bit 重复发送三次，接收端用多数表决决定这一位是 0 还是 1，如果三份里只错了一份，多数表决能把它修回来；但如果错了两份或三份，修出来的反而是错的。批量统计模式能让大家看到"单次结果有随机性，多次统计才能看出总体趋势和平均可靠性"这句话的真正含义。');
+  lines.push('- **技术边界**：CRC-4 只检错不纠错，不宣称能检测所有可能的错误组合；三次重复码/汉明码的纠错能力都有明确上限，超出上限可能留下错误或发生误纠正，不是"冗余越多一定越好"，而是要在可靠性和开销之间取舍。');
+  lines.push('');
+  lines.push('## 三、四个闯关游戏 —— 逐题数据与答案（本节由题库数据自动生成）');
+  lines.push('');
+  lines.push('### 第①关 符号配对赛（8 题，判断题）');
+  lines.push('');
+  lines.push('- **规则**：给 bit 选星座点，或给星座点选 bit，覆盖 BPSK 和 QPSK。');
+  lines.push('- **固定映射表**：BPSK 左边的点=0，右边的点=1；QPSK（Gray 映射）右上=00，左上=01，左下=11，右下=10。');
+  lines.push('- **评分规则**：答对且未用提示=2 分；用过一级提示后答对=1 分；用过二级或三级提示后答对=0 分；答错不扣分。');
+  lines.push('- **三级提示**（本关固定算法）：一级——先数这种调制一共有几个理想点；二级——QPSK 有四个状态，每个状态需要两个 bit 区分；三级——看右上左上左下右下对应的固定 Gray 映射。');
+  lines.push('- **8 题逐题数据**：');
+  N2_L1_QUESTIONS.forEach((q,idx)=>{
+    lines.push(`  ${idx+1}. ${q.prompt}`);
+    lines.push(`     - 答案：${q.answer}｜理由：${q.reason}`);
+    lines.push(`     - 常见错误：${q.commonMistakes}`);
+    lines.push(`     - 20 秒：${q.teacher20s}`);
+  });
+  lines.push('- **复盘逐字稿**（第①关通用）：' + N2_L1_QUESTIONS[0].teacher60s);
+  lines.push('');
+  lines.push('### 第②关 点云判决挑战（8 题，判断题）');
+  lines.push('');
+  lines.push('- **规则**：给一个带噪声的接收点（发送端实际发送的符号暂时隐藏），学生判断"接收端会判成哪个 symbol"（不问"发送端原来想发什么"）。题目不生成恰好落在判决边界上的歧义点。');
+  lines.push('- **固定映射表**：与第①关相同。');
+  lines.push('- **评分规则**：同第①关（2 / 1 / 0 / 答错不扣）。');
+  lines.push('- **三级提示**（本关固定算法）：一级——先看这个点落在哪个判决区域；二级——接收端通常判为距离最近的理想点；三级——不要猜发送端原本想发什么，只判断接收点现在落在哪一侧、离哪个理想点更近。');
+  lines.push('- **8 题逐题数据**：');
+  N2_L2_QUESTIONS.forEach((q,idx)=>{
+    lines.push(`  ${idx+1}. [难度${q.diff}] 发送符号「${q.cfg.points[q.sentIdx].bits}」，接收点判决为「${q.answer}」，${q.symErr?'产生符号错误':'判决正确'}（${q.bitErr} 个 bit 错误）`);
+    lines.push(`     - 20 秒：${q.teacher20s}`);
+  });
+  lines.push('- **复盘固定句**（规格三，逐字保留，8 题共用）：' + N2_L2_FIXED_DEBRIEF);
+  lines.push('');
+  lines.push('### 第③关 BER 侦探（8 题，判断题）');
+  lines.push('');
+  lines.push('- **规则**：给发送串和接收串，学生要：① 点击所有错误位置 ② 填错误 bit 数 ③ 选出正确的 BER。三项都对才算全部正确。');
+  lines.push('- **正确答案逻辑**：逐位比较发送串和接收串找出所有不同的位置；BER = 错误 bit 数 ÷ 传输总 bit 数。全部 8 题只使用简单分数：**1/8、2/8、3/12、2/16、4/16**（2026-07-20 规格固定，同一比例可用不同分母表示：2/8=3/12=4/16=25%；1/8=2/16=12.5%），不出现循环小数。');
+  lines.push('- **评分规则**：同第①关（三项全对才算"答对"，2 / 1 / 0 / 答错不扣）。');
+  lines.push('- **三级提示**（本关固定算法）：一级——从左到右逐位比较；二级——先数出不同的位置，再看总共多少位；三级——BER 的分母不是错误数也不是正确数，而是总 bit 数。');
+  lines.push('- **8 题逐题数据**：');
+  N2_L3_QUESTIONS.forEach((q,idx)=>{
+    lines.push(`  ${idx+1}. 发送 ${q.sent.join('')}｜接收 ${q.received.join('')}｜错误位置(从0计数) ${q.errorPositions.join('、')}｜BER = ${q.errorCount}/${q.totalBits}`);
+  });
+  lines.push('- **复盘固定句**：BER 描述总 bit 中有多少比例接错。它不是网速，也不直接等于信号强度。');
+  lines.push('- 若题目涉及编码保护（CRC/FEC），结果需同时显示信道 BER 与 Payload BER——本关 8 题为原始信道场景不涉及编码，两个 BER 的对比留给实验③演示（详见第二节实验②③）。');
+  lines.push('');
+  lines.push('### 第④关 海岛通信指挥官（8 场景，综合应用题，无唯一标准答案，2026-07-20 大改）');
+  lines.push('');
+  lines.push('- **规则变化**：CRC 改为默认开启、学生不可关，界面显示"CRC：基础检错，默认开启"。学生只选 5 项：① 调制档位（高速档/稳定档） ② FEC 强度（关闭/中等保护/强保护） ③ 重传策略（不允许/仅关键数据允许/全部允许） ④ 业务降级（全部保留/降低语音码率/降低图片分辨率/暂停图片/只保留位置和文字） ⑤ 业务发送顺序（位置坐标/求救文字/短语音/低清图片 的发送先后）。');
+  lines.push('- **场景组成**：链路（良好/一般/较差/非常差）× 剩余电量（充足/50%/30%/只够一小时）× 当前任务（报告坐标/发送求救文字/保持短语音联系/发送现场图片/综合救援通信）× 网络压力（较低/一般/拥塞）。');
+  lines.push('- **20 分 5 维评分**：核心任务保障 0-5（最重要数据是否优先传送）/ 可靠性 0-5（调制档位、FEC、重传是否符合链路条件）/ 资源开销把控 0-4（是否过度使用强FEC和全部重传）/ 电量管理 0-3（策略是否符合剩余电量）/ 业务降级 0-3（是否合理减少低优先级业务）。**评分明确不奖励过度保护**：强 FEC 只在链路差时才拿满可靠性分，链路好时反而扣资源开销分；全部重传在任何场景资源开销都要扣分，电量紧张时电量管理也扣分；业务降级维度按"链路+电量+网络压力"的综合严重度评估匹配度，不是降得越狠越好。');
+  lines.push('- **CRC 默认开启原因**：CRC-4 只需要极少开销就能提供最基础的检错能力，是通信可靠性的底线保障，因此本课把它设为默认开启且学生不可关闭——现实中"完全不做任何检错"不是常见的工程取舍点，这不是一个值得让学生练习"关掉"的选项。');
+  lines.push('- **FEC 强度怎样选择**：链路越差，越需要更强的 FEC 提前修复错误；但链路好时选强 FEC 不会带来更高的可靠性评价，反而会被资源开销把控维度扣分——FEC 强度要跟链路条件匹配，不是越强越好。');
+  lines.push('- **重传的收益与代价**：重传能在检测到错误后重新发一次换取正确性，但会增加流量、延迟和耗电；"仅关键数据允许重传"通常是性价比最高的选择，"全部允许"在任何场景都会被算作较高的资源开销，电量紧张时还会进一步拉低电量管理得分。');
+  lines.push('- **业务降级不等于允许 bit 错误**：业务降级是主动减少需要传输的数据（比如降低语音码率、暂停图片），不等于允许剩下的数据随便出错——降级之后仍要发送的数据依然需要 CRC 检错；低清图片即使降低分辨率或暂停，剩下发送的数据依然需要 CRC 检错，不存在"允许随意出错"的豁免。');
+  lines.push('- **三级提示**（本关固定算法，8 场景共用）：一级——' + N2_L4_HINT1 + ' 二级——' + N2_L4_HINT2 + ' 三级——' + N2_L4_HINT3);
+  lines.push('- **海岛场景推荐策略表**：');
+  lines.push('');
+  lines.push('  | 场景 | 链路 | 电量 | 任务 | 网络压力 | 推荐方案 |');
+  lines.push('  |---|---|---|---|---|---|');
+  N2_L4_QUESTIONS.forEach((q,idx)=>{
+    lines.push(`  | ${idx+1} | ${q.link} | ${q.power} | ${q.task} | ${q.pressure} | ${q.recommendedPlan} |`);
+  });
+  lines.push('');
+  lines.push('- **8 场景逐题详情**（推荐/可接受/高风险/理由/常见错误/20s/60s）：');
+  lines.push('');
+  N2_L4_QUESTIONS.forEach((q,idx)=>{
+    lines.push(`  #### 场景${idx+1}：链路${q.link}｜电量${q.power}｜任务${q.task}｜网络压力${q.pressure}`);
+    lines.push(`  - 推荐方案：${q.recommendedPlan}`);
+    lines.push(`  - 可接受替代方案：${q.acceptedPlans.join('；')}`);
+    lines.push(`  - 高风险方案：${q.riskyPlans.join(' ｜ ')}`);
+    lines.push(`  - 理由：${q.reason}`);
+    lines.push(`  - 常见错误：${q.commonMistakes}`);
+    lines.push(`  - 20 秒讲稿：${q.teacher20s}`);
+    lines.push(`  - 60 秒讲稿：${q.teacher60s}`);
+    lines.push('');
+  });
+  lines.push('- **本关评分规则**：不用第①-③关的判断题计分规则，提交方案即获得 1 分参与分（不判定对错），核心价值在于五维评分和教师复盘讨论。');
+  lines.push('');
+  lines.push('## 四、快速答案卡（可打印，供课堂随时翻查）');
+  lines.push('');
+  lines.push('- **QPSK 映射**：右上 00，左上 01，左下 11，右下 10。');
+  lines.push('- **BPSK 映射**：左边的点 = 0，右边的点 = 1。');
+  lines.push('- **BER 公式**：BER = 错误 bit 数 ÷ 总 bit 数（信道 BER 分母是编码后总 bit 数；Payload BER 分母是原始 payload bit 数，两者必须分开标注）；第③关允许分数集固定为 1/8、2/8、3/12、2/16、4/16。');
+  lines.push('- **CRC**：CRC-4（生成多项式 x⁴+x+1，二进制 10011）——只检测错误，不自动修复数据；第④关默认开启，学生不可关闭。');
+  lines.push('- **FEC**：利用冗余修复一定能力范围内的错误，链路越差越需要更强的 FEC，链路好时选强 FEC 不加分反而扣资源开销分。');
+  lines.push('- **重传**：仅关键数据允许重传通常是性价比最高的选择；全部允许在任何场景都算较高资源开销，电量紧张时还扣电量管理分。');
+  lines.push('- **业务降级**：主动减少需要传输的数据，不等于允许数据随便出错，降级后仍要发送的数据仍需 CRC 检错。');
+  lines.push('- **海岛原则**：先保位置和文字，再考虑语音和图片；没有唯一正确组合，能说明取舍理由就是好方案。');
+  lines.push('- **两条写死边界**：① 模拟噪声强度和 bit 独立翻转概率是两个完全不同的参数，互不影响；② 误码率必须分别标注"信道 BER"和"Payload BER"，不能只写"BER"。');
+  lines.push('- **快捷键**：T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案或推荐方案／N 下一题。');
+  lines.push('');
+  lines.push('## 五、技术故障备用方案（网页不能用时的纸笔替代）');
+  lines.push('');
+  lines.push('- **符号配对纸笔题**：老师口头报出一个 bit 串或象限方位，学生纸上写出对应的另一半（照第四节固定映射表判断），同桌互相检查。');
+  lines.push('- **判决区域纸笔题**：老师在黑板画一个简化的星座图坐标轴，点上一个"接收点"位置，学生纸上判断它离哪个理想点最近、是否跨过了判决边界。');
+  lines.push('- **BER 手算题**：老师口头给出两串等长 0/1（比如 8 位），学生纸上逐位比较，数出错误位置和错误数，再算出 BER（用第三关允许的简单分数形式）。');
+  lines.push('- **重复码多数表决题**：老师给出一个 bit 的三次重复副本（比如 1 1 0），学生纸上做多数表决，判断恢复出的 bit 是多少，并说明这是否是"多数表决失败"的情形（两份或以上不一致时）。');
+  lines.push('- **海岛策略卡**：把第三节"海岛场景推荐策略表"打印发给两组，直接讨论当前假设场景该怎么选，不需要网页也能完成第④关的教学目标。');
+  lines.push('');
+  return lines.join('\n');
+}
+const N2_TEACHER_GUIDE_MD = n2BuildGuideMarkdown();
 
 function n2DownloadGuide(){
   try{
@@ -3453,6 +3625,15 @@ function n2CopyExplain(){
 }
 function n2PrintAnswerCard(){
   if(typeof window!=='undefined' && typeof window.print==='function') window.print();
+}
+// 测试辅助：jsdom vm 环境里顶层 let/const 不会挂到 window 上，只有 function 声明可以从外部访问，
+// 这个只读访问器专供自动化测试内省题库常量数据使用，不影响任何 UI 逻辑（沿用 c4DebugState 的既有模式）。
+function n2DebugState(){
+  return {
+    L1_QUESTIONS:N2_L1_QUESTIONS, L2_QUESTIONS:N2_L2_QUESTIONS, L3_QUESTIONS:N2_L3_QUESTIONS, L4_QUESTIONS:N2_L4_QUESTIONS,
+    L1_BPSK:N2_L1_BPSK_POINTS, L1_QPSK:N2_L1_QPSK_POINTS, L2_DEBRIEF:N2_L2_FIXED_DEBRIEF,
+    L4_SEND_ORDER_OPTIONS:N2_L4_SEND_ORDER_OPTIONS, TEACHER_GUIDE_MD:N2_TEACHER_GUIDE_MD,
+  };
 }
 
 
