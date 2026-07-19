@@ -58,11 +58,13 @@
   .seg{display:flex; gap:8px; margin-bottom:18px;}
   .seg .btn.on{background:var(--cyan); color:#08121f; font-weight:bold; border:none;}
 
-  /* ---- 组装视图 ---- */
-  .asm{display:flex; gap:20px; align-items:flex-start;}
-  .pool{width:300px; flex-shrink:0;}
+  /* ---- 组装视图 ----
+     仓库置顶横向多列（不再占用左侧一整列），组装区上下堆叠，
+     让主链+支撑+按钮尽量与仓库同屏，适配课堂投影一屏。 */
+  .asm{display:flex; flex-direction:column; gap:16px; align-items:stretch;}
+  .pool{width:100%;}
   .pool h3, .chainwrap h3{font-size:16px; color:var(--muted); margin-bottom:10px; letter-spacing:2px;}
-  .cards{display:flex; flex-direction:column; gap:8px;}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px;}
   .card{
     display:flex; align-items:center; gap:10px;
     background:var(--panel2); border:2px solid var(--line); border-radius:10px;
@@ -92,18 +94,23 @@
   .slot.bad{border-color:var(--red); box-shadow:0 0 10px rgba(255,107,107,.4);}
   .slot.hot{border-color:var(--cyan);}
   .slot .icon{font-size:22px;}
-  .slot .nm{font-size:15px; font-weight:bold;}
+  .slot .nm{font-size:17px; font-weight:bold;}
   .slot .en{font-size:12px; color:var(--muted);}
   .arrow{color:var(--muted); font-size:18px;}
-  .supportrow{display:flex; gap:6px; margin-top:14px; align-items:center;}
+  .supportrow{display:flex; gap:6px; margin-top:6px; align-items:center; flex-wrap:wrap;}
   .supportrow .lbl{color:var(--muted); font-size:15px; margin-right:6px;}
-  .runbar{margin-top:18px; display:flex; gap:12px; align-items:center;}
+  /* B 支撑 / C 辅助 两区并排，省一整行纵向空间 */
+  .zoneBC{display:flex; gap:20px; align-items:flex-start;}
+  .zoneCol{flex:1; min-width:0;}
+  .zonelbl{font-size:14px; color:var(--muted); margin:14px 0 4px;}
+  .runbar{margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+  .counters{color:var(--muted); font-size:15px; margin-top:8px;}
   .log{
     margin-top:16px; border:1px solid var(--line); border-radius:10px;
     background:var(--panel2); padding:14px 18px; min-height:70px;
     max-height:300px; overflow-y:auto;
   }
-  .log p{margin:4px 0; font-size:17px;}
+  .log p{margin:4px 0; font-size:18px;}
   .log p.ok{color:var(--green);}
   .log p.warn{color:var(--amber);}
   .log p.bad{color:var(--red); font-weight:bold;}
@@ -112,10 +119,6 @@
 
   /* ---- 诊断视图 ---- */
   .diagtop{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px;}
-  select{
-    background:var(--panel2); color:var(--text); border:1px solid var(--line);
-    border-radius:10px; padding:10px 14px; font-size:17px;
-  }
   .symptom{
     border:1px solid var(--amber); border-radius:10px; background:var(--panel2);
     padding:12px 18px; margin-bottom:14px; font-size:18px;
@@ -128,7 +131,7 @@
     padding:12px 18px; min-height:60px; margin-top:6px;
     max-height:280px; overflow-y:auto;
   }
-  .obslog p{margin:5px 0; font-size:17px;}
+  .obslog p{margin:5px 0; font-size:18px;}
   .obslog p b{color:var(--cyan);}
   .verdict{margin-top:14px; padding:14px 18px; border-radius:10px; display:none;}
   .verdict.show{display:block;}
@@ -143,6 +146,79 @@
   }
   footer{
     padding:10px 24px 24px; color:var(--muted); font-size:15px; text-align:center;
+  }
+
+  /* ---- 课程二专用：进度线 / 教师工具条 / 教师提示 / 教师设置故障弹窗 ---- */
+  .progressline{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; font-size:14px;}
+  .progressline .stage{
+    padding:4px 12px; border-radius:20px; border:1px solid var(--line);
+    color:var(--muted); background:var(--panel2);
+  }
+  .progressline .stage.done{border-color:var(--green); color:var(--green);}
+  .progressline .stage.future{opacity:.65;}
+  .teacherbar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .teacherhint{
+    border:1px dashed var(--line); border-radius:10px; background:var(--panel2);
+    padding:12px 18px; margin-bottom:14px; font-size:16px; color:var(--muted);
+  }
+  .teacherhint h4{color:var(--text); font-size:16px; margin-bottom:6px;}
+  .teacherhint ol{margin:0 0 12px 20px;}
+  .teacherhint ol:last-child{margin-bottom:0;}
+  .teacherhint li{margin-bottom:4px;}
+  .modalmask{
+    position:fixed; inset:0; background:rgba(0,0,0,.55);
+    display:flex; align-items:center; justify-content:center; z-index:30;
+  }
+  .modalbox{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:24px; max-width:480px; width:90%; max-height:80vh; overflow-y:auto;
+  }
+  .modalbox h3{font-size:18px; margin-bottom:14px;}
+  .modalbtns{display:flex; gap:10px; margin-top:18px; justify-content:flex-end;}
+
+  /* 投影适配：1366×768 等矮屏收紧课程二核心区留白
+     核心手段：仓库从"左侧单列纵向"改为"顶部横向多列网格"，
+     组装区由左右布局改为上下堆叠，把纵向高度从 ~1800px 压到接近一屏。 */
+  @media (max-height:1100px){
+    header{padding:6px 24px;}
+    header h1{font-size:19px;}
+    .mission{margin:4px 24px 0; padding:6px 16px; font-size:14px;}
+    .tabs{padding-top:6px;}
+    .tab{padding:8px 16px;}
+    #tabpage-1 .board{padding:8px 14px;}
+    #tabpage-1 .progressline{margin-bottom:6px; font-size:13px;}
+    #tabpage-1 .progressline .stage{padding:3px 10px;}
+    #tabpage-1 .teacherbar{margin-bottom:6px;}
+    #tabpage-1 .teacherbar .btn{padding:7px 14px; font-size:15px;}
+    #tabpage-1 .seg{margin-bottom:8px;}
+    /* 组装区改上下堆叠：仓库置顶横向铺满 */
+    #tabpage-1 .asm{flex-direction:column; gap:6px;}
+    #tabpage-1 .pool{width:100%;}
+    #tabpage-1 .cards{
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:4px;
+    }
+    #tabpage-1 .card{padding:4px 8px;}
+    #tabpage-1 .card .icon{font-size:20px;}
+    #tabpage-1 .card .nm{font-size:15px;}
+    #tabpage-1 .card .en{font-size:11px;}
+    #tabpage-1 .pool h3, #tabpage-1 .chainwrap h3{margin-bottom:5px; font-size:15px;}
+    #tabpage-1 .slot{width:100px; min-height:50px; padding:4px;}
+    #tabpage-1 .slot .nm{font-size:14px;}
+    #tabpage-1 .slot .en{display:none;}
+    #tabpage-1 .chain{gap:4px; margin-bottom:2px;}
+    #tabpage-1 .zonelbl{margin:6px 0 3px;}
+    #tabpage-1 .supportrow{margin-top:4px;}
+    #tabpage-1 .log{max-height:96px; min-height:40px; padding:8px 14px; margin-top:10px;}
+    #tabpage-1 .runbar{margin-top:10px;}
+  }
+  /* 最矮屏（1366×768 等）再收紧 ~30px，让按钮也进一屏 */
+  @media (max-height:800px){
+    .mission{margin-top:2px; padding:4px 16px;}
+    #tabpage-1 .cards{gap:3px;}
+    #tabpage-1 .card{padding:3px 8px;}
+    #tabpage-1 .slot{min-height:46px;}
+    #tabpage-1 .log{margin-top:8px; max-height:78px;}
+    #tabpage-1 .runbar{margin-top:8px;}
   }
 
   /* ---- 模块②③ 通用 ---- */
@@ -241,6 +317,41 @@
 <main>
 <div id="tabpage-1">
 <div class="board">
+
+  <!-- 进度线：课程二内五项课程进度，一行高，不占纵向空间 -->
+  <div class="progressline">
+    <span class="stage done">① 硬件结构 · 已完成</span>
+    <span class="stage">② 通信可靠性 · 待完成</span>
+    <span class="stage">③ SoC 架构 · 待完成</span>
+    <span class="stage">④ 成本与供应链 · 待完成</span>
+    <span class="stage future">⑤ 特殊环境部署 · 课程九完成</span>
+  </div>
+
+  <!-- 教师工具条：设置故障 / 教师提示 / 清空课堂状态 -->
+  <div class="teacherbar">
+    <button class="btn" onclick="openTeacherPanel()">🧑‍🏫 教师设置故障（快捷键 T）</button>
+    <button class="btn" onclick="toggleTeacherHint()">💡 教师提示（快捷键 H）</button>
+    <button class="btn" onclick="clearCourseState()">🗑 一键清空课堂状态</button>
+  </div>
+  <div class="teacherhint" id="teacherHint" style="display:none">
+    <h4>组装信号链 · 操作步骤</h4>
+    <ol>
+      <li>先让学生完成纸笔排序</li>
+      <li>按学生方案搭建</li>
+      <li>启动前让学生预测</li>
+      <li>出错后只修改一个模块</li>
+      <li>正确后逐模块复述作用</li>
+    </ol>
+    <h4>故障诊断 · 操作步骤</h4>
+    <ol>
+      <li>教师秘密选择故障</li>
+      <li>学生先写判断</li>
+      <li>点击前必须说理由</li>
+      <li>记录检修次数</li>
+      <li>找到后显示解释</li>
+    </ol>
+  </div>
+
   <div class="seg">
     <button class="btn on" id="segA" onclick="showView('asm')">① 组装信号链</button>
     <button class="btn" id="segB" onclick="showView('diag')">② 故障诊断</button>
@@ -250,20 +361,31 @@
   <div id="view-asm">
     <div class="asm">
       <div class="pool">
-        <h3>模块仓库 · 点选一张卡，再点右侧插槽</h3>
+        <h3>模块仓库 · 共 17 张，点选一张卡，再点右侧插槽</h3>
         <div class="cards" id="pool"></div>
       </div>
       <div class="chainwrap">
-        <h3>接收信号链 · 从卫星信号到用户设备</h3>
+        <h3>A 主接收信号链 · 从卫星信号到用户设备（8，有序）</h3>
         <div class="chain" id="chain"></div>
-        <div class="supportrow" id="supportrow">
-          <span class="lbl">支撑系统（不分先后）：</span>
+
+        <div class="zoneBC">
+          <div class="zoneCol">
+            <div class="zonelbl">B 支撑系统（5，不分先后）</div>
+            <div class="supportrow" id="supportrow"></div>
+          </div>
+          <div class="zoneCol">
+            <div class="zonelbl">C 辅助或其它功能（4，不分先后）</div>
+            <div class="supportrow" id="auxrow"></div>
+          </div>
         </div>
+
         <div class="runbar">
-          <button class="btn primary" id="runBtn" onclick="runBoot()">🚀 启动终端</button>
-          <button class="btn" onclick="resetAsm()">↺ 重置</button>
+          <button class="btn" id="classifyBtn" onclick="checkClassify()">✅ 验证分类</button>
+          <button class="btn primary" id="runBtn" onclick="runBoot()">🚀 启动主接收链</button>
+          <button class="btn" onclick="resetAsm()">↺ 重置本组方案</button>
         </div>
-        <div class="log" id="log"><p class="info">把模块放进插槽，然后点「启动终端」。系统会逐级通电，走到哪一步断了，就停在哪里。</p></div>
+        <div class="counters" id="asmCounters">启动 0 次｜修改 0 次</div>
+        <div class="log" id="log"><p class="info">把模块放进插槽：A 区 8 步要按顺序，B/C 区不分先后。放好后点「验证分类」检查类别，或点「启动主接收链」检查顺序。</p></div>
       </div>
     </div>
   </div>
@@ -271,20 +393,31 @@
   <!-- ============ 诊断视图 ============ -->
   <div id="view-diag" style="display:none">
     <div class="diagtop">
-      <label>故障任务：</label>
-      <select id="scSel" onchange="loadScenario()"></select>
-      <button class="btn" onclick="resetDiag()">↺ 重新开始本任务</button>
+      <div id="diagStatusLabel" style="font-size:16px;color:var(--muted)"></div>
       <div class="spacer"></div>
-      <button class="btn danger" id="accuseBtn" onclick="accuse()" disabled>⚠ 指认当前模块为故障源</button>
+      <button class="btn" onclick="resetDiag()">↺ 重新开始本任务</button>
+      <button class="btn danger" id="revealBtn" onclick="teacherReveal()">📖 结束并显示解释</button>
     </div>
     <div class="symptom" id="symptom"></div>
-    <h3 style="font-size:16px;color:var(--muted);margin-bottom:8px">终端结构（点击任意模块进行检修）</h3>
-    <div class="diagchain" id="diagchain"></div>
-    <div class="stats">检修次数：<b id="checkCount">0</b> ｜ 指认次数：<b id="accuseCount">0</b>（两组比一比：谁用更少的检修找到故障？）</div>
-    <div class="obslog" id="obslog"><p style="color:var(--muted)">检修记录会出现在这里。提示：故障通常出现在「最早开始不正常」的位置附近。</p></div>
+    <div id="diagchain" class="diagwrap"></div>
+    <div class="stats">检修次数：<b id="checkCount">0</b></div>
+    <div class="obslog" id="obslog"></div>
     <div class="verdict" id="verdict"></div>
+    <div class="hint">检修前，请先在纸上写下第一检查模块、判断依据和第二备选模块。</div>
   </div>
 </div>
+</div>
+
+<!-- 教师设置故障弹窗（遮罩）：关闭后故障名不再出现在投影上 -->
+<div class="modalmask" id="teacherModal" style="display:none">
+  <div class="modalbox">
+    <h3>教师设置故障 · 仅教师操作，请勿把此弹窗投影给学生查看</h3>
+    <div class="cards" id="teacherFaultList"></div>
+    <div class="modalbtns">
+      <button class="btn" onclick="closeTeacherPanel()">取消</button>
+      <button class="btn primary" onclick="teacherStartTask()">▶ 开始任务</button>
+    </div>
+  </div>
 </div>
 
 <!-- ============ 模块② 噪声通信实验室 ============ -->
@@ -364,20 +497,31 @@
 
 <script>
 /* ============================= 数据 ============================= */
+// 17 张模块卡：cat 标记类别 main=A主接收信号链(8,有序) / support=B支撑系统(5,无序) / aux=C辅助或其它功能(4,无序)
 const CARDS = [
-  {id:'ant', name:'相控阵天线', en:'Phased Array Antenna', icon:'📡'},
-  {id:'flt', name:'滤波器', en:'Filter', icon:'🚦'},
-  {id:'lna', name:'低噪声放大器', en:'LNA', icon:'📢'},
-  {id:'mix', name:'混频器', en:'Mixer', icon:'🔀'},
-  {id:'adc', name:'模数转换器', en:'ADC', icon:'📸'},
-  {id:'bb',  name:'基带芯片', en:'Baseband', icon:'🧩'},
-  {id:'soc', name:'SoC 主控', en:'System on Chip', icon:'🧠'},
-  {id:'itf', name:'Wi-Fi / 以太网接口', en:'Interface', icon:'🔌'},
-  {id:'pwr', name:'电源模块', en:'Power / PMIC', icon:'🔋', support:true},
-  {id:'thm', name:'散热模块', en:'Thermal', icon:'❄️', support:true},
+  {id:'ant', name:'相控阵天线', en:'Phased Array Antenna', icon:'📡', cat:'main'},
+  {id:'flt', name:'滤波器', en:'Filter', icon:'🚦', cat:'main'},
+  {id:'lna', name:'低噪声放大器', en:'LNA', icon:'📢', cat:'main'},
+  {id:'mix', name:'混频器', en:'Mixer', icon:'🔀', cat:'main'},
+  {id:'adc', name:'模数转换器', en:'ADC', icon:'📸', cat:'main'},
+  {id:'bb',  name:'基带芯片', en:'Baseband', icon:'🧩', cat:'main'},
+  {id:'soc', name:'SoC 主控', en:'System on Chip', icon:'🧠', cat:'main'},
+  {id:'itf', name:'Wi-Fi / 以太网接口', en:'Interface', icon:'🔌', cat:'main'},
+  {id:'pcb', name:'PCB', en:'Printed Circuit Board', icon:'🧱', cat:'support'},
+  {id:'pwr', name:'电源模块', en:'Power / PMIC', icon:'🔋', cat:'support'},
+  {id:'clk', name:'时钟', en:'Clock', icon:'⏱️', cat:'support'},
+  {id:'gnd', name:'接地与隔离', en:'Grounding & Isolation', icon:'🛡️', cat:'support'},
+  {id:'thm', name:'散热模块', en:'Thermal', icon:'❄️', cat:'support'},
+  {id:'gnss',name:'GNSS 定位', en:'GNSS', icon:'🧭', cat:'aux'},
+  {id:'imu', name:'IMU 惯性测量单元', en:'IMU', icon:'📐', cat:'aux'},
+  {id:'cam', name:'摄像头', en:'Camera', icon:'📷', cat:'aux'},
+  {id:'spk', name:'扬声器', en:'Speaker', icon:'🔊', cat:'aux'},
 ];
 const byId = id => CARDS.find(c=>c.id===id);
-const EXPECTED = ['ant','flt','lna','mix','adc','bb','soc','itf'];
+const EXPECTED = ['ant','flt','lna','mix','adc','bb','soc','itf']; // A 区正确顺序
+const SUPPORT_IDS = ['pcb','pwr','clk','gnd','thm'];               // B 区（无序，5）
+const AUX_IDS = ['gnss','imu','cam','spk'];                        // C 区（无序，4）
+const ALL_IDS = CARDS.map(c=>c.id);
 
 const STAGE_OK_LINE = {
   ant:'📡 天线：把空间里的电磁波接进电路，变成微弱的高频电信号。',
@@ -390,6 +534,19 @@ const STAGE_OK_LINE = {
   itf:'🔌 接口：把恢复好的数据交给手机和电脑。',
 };
 
+// 「启动主接收链」逐步失败反馈——按 EXPECTED 的步骤序号（0~7）索引，逐字取自任务书附录三
+const STEP_FAIL_MSG = [
+  '空间中的卫星信号还没有进入设备。接收链需要先从天线开始。',
+  '目标频段还没有被选出，带外信号会继续进入后面的电路。',
+  '信号仍然很弱，后续模块可能无法稳定处理。',
+  '信号仍处在较高频率，后续数字化的性能、功耗和成本要求会明显上升。',
+  'ADC 负责把整理后的模拟信号转换成数字样本，它不能替代前面的滤波和放大。',
+  '当前信号还没有完成数字化，数字基带还不能开始处理。',
+  '数字样本还没有恢复成通信数据，SoC 暂时没有可管理的数据。',
+  '网络接口负责把已经恢复的数据交给手机或电脑，不能直接接收射频信号。',
+];
+
+// 主链卡（cat==='main'）被放到 B/C 区时的反馈——解释它为什么必须留在 A 区
 const MISPLACE_REASON = {
   ant:'天线只能在链条最前端工作——它是电磁波进入设备的「门口」，放在中间没有意义。',
   flt:'滤波器要在信号刚进门、还没被放大处理之前把带外干扰挡掉；放在这里，干扰早已混进前面的环节。',
@@ -399,105 +556,48 @@ const MISPLACE_REASON = {
   bb :'基带芯片只认数字。它必须排在 ADC 之后，拿到的是一串数，而不是模拟波形。',
   soc:'SoC 是指挥官，它处理的是基带恢复出来的数据，不直接碰射频信号。',
   itf:'接口是最后一步：先有恢复好的数据，才谈得上交给用户设备。',
-  pwr:'电源不处理信号本身——它属于下方的「支撑系统」插槽。',
-  thm:'散热不处理信号本身——它属于下方的「支撑系统」插槽。',
 };
 
+// B/C 区的卡被误放进 A 主接收信号链时的反馈；GNSS/IMU/电源三条逐字取自任务书附录四，其余按同样口吻续写
+const CHAIN_MISPLACE_TEXT = {
+  gnss:'GNSS 可以提供位置和时间，帮助自动对星，但不属于本课程讨论的通信数据主接收链。',
+  imu :'IMU 提供终端的朝向、倾斜和运动状态，用于辅助波束控制，不直接恢复通信数据。',
+  pwr :'电源支持所有模块工作，但它不负责让信号从一种形态变成下一种形态。',
+  pcb :'PCB 承载并连接各个模块，但它不负责让信号从一种形态变成下一种形态。',
+  clk :'时钟为各模块提供统一的时间基准，但它不负责让信号从一种形态变成下一种形态。',
+  gnd :'接地与隔离保护电路安全、抑制干扰，但它不负责让信号从一种形态变成下一种形态。',
+  thm :'散热模块带走多余的热量，但它不负责让信号从一种形态变成下一种形态。',
+  cam :'摄像头负责采集图像画面，但它不负责让信号从一种形态变成下一种形态。',
+  spk :'扬声器负责把恢复出的语音播放出来，但它不负责让信号从一种形态变成下一种形态。',
+};
+
+// 故障诊断：5 个教师可选故障，整体替换旧集合（旧的"ADC 采样率不足"已删除）。
+// symptom 逐字取自任务书附录五；lna/pwr/thm 的 explain 逐字取自附录六，ant/flt 按同样口吻续写。
 const SCENARIOS = [
   {
-    id:'s1', title:'故障① 一颗卫星都搜不到',
-    symptom:'终端供电正常，自检全部通过，但持续搜索不到任何卫星信号。',
-    culprit:'ant',
-    obs:{
-      pwr:'各路电压输出正常。',
-      thm:'温度 32°C，一切正常。',
-      itf:'本地 Wi-Fi 正常，但没有任何数据可以转发。',
-      soc:'搜星程序在运行，一直报告「未捕获信号」。',
-      bb :'输入端只有底噪，没有任何可识别的信号。',
-      adc:'输出全是低电平噪声——说明前面几乎没有能量进来。',
-      mix:'输入端几乎没有信号能量，问题可能还在更前面。',
-      lna:'工作正常，但输入端能量极低——问题可能还在更前面。',
-      flt:'通带内几乎没有能量进来。',
-      ant:'⚠ 波束指向与轨道预测的卫星方向差了 40°——天线根本没有对准卫星！',
-    },
-    explain:'相控阵天线没有完成对星。自动对星不是「摄像头看见卫星」，它更像导航：先根据自身位置和轨道数据推算卫星在哪，再用收到的信号不断纠偏。任何一步出错，波束就指向了空无一物的天空。',
-    fix:'工程修法：重新执行对星流程（校准位置/时间/姿态 → 按星历预测方向 → 搜索并锁定信号）。',
+    id:'ant', name:'① 天线未锁定', culprit:'ant',
+    symptom:'设备可以正常上电，但始终无法完成卫星连接，接收链没有检测到有效卫星信号。',
+    explain:'设备能正常上电，说明电源和主控基本工作正常；问题出现在「能不能连上卫星」这一步，因此应优先检查负责接收和对星的天线。',
   },
   {
-    id:'s2', title:'故障② 能连上，但消息错字连篇',
-    symptom:'终端能锁定卫星，但收到的消息大量出错，误码率非常高。',
-    culprit:'flt',
-    obs:{
-      pwr:'供电正常。',
-      thm:'温度正常。',
-      itf:'接口正常，但转发出去的数据本身就是错的。',
-      soc:'运行正常，收到的数据包大量校验失败。',
-      bb :'星座图上的点散得到处都是，判决时大量认错。',
-      adc:'输出里目标信号被一大团杂乱能量淹没。',
-      mix:'干扰跟着信号一起被搬到了低频。',
-      lna:'输入里信号和强干扰混在一起，被一起放大了。',
-      flt:'⚠ 通带设置得太宽——邻近频段的强干扰大量涌了进来！',
-      ant:'对星正常，接收能量充足（甚至偏强）。',
-    },
-    explain:'滤波器是接收链的「门卫」。通带开得太宽，带外的强干扰就会混进来，后面每一级都会带着这些干扰一起工作，最后在判决时大量认错。滤波要在干扰被放大之前完成——这就是它站在链条前端的原因。',
-    fix:'工程修法：把滤波器通带收窄到目标频段。第③课我们会亲手数一数这些误码。',
+    id:'flt', name:'② 滤波器频段错误', culprit:'flt',
+    symptom:'终端能够检测到无线信号，但带外干扰明显，数据错误率很高，连接不稳定。',
+    explain:'能检测到信号、但夹杂大量带外干扰，说明天线和对星没有问题；问题出现在「信号有没有被正确筛选」这一步，因此应优先检查负责选出目标频段的滤波器。',
   },
   {
-    id:'s3', title:'故障③ 信号越强，反而错得越离谱',
-    symptom:'弱信号时通信还行；附近出现强信号源时，反而完全变成乱码。',
-    culprit:'lna',
-    obs:{
-      pwr:'供电正常。',
-      thm:'温度正常。',
-      itf:'接口正常。',
-      soc:'强信号期间收到的数据几乎全部校验失败。',
-      bb :'波形严重失真，根本无法正确判决。',
-      adc:'采到的波形顶部是平的——输入波形本身已经变形。',
-      mix:'输入波形已经失真，搬频只是照原样搬运。',
-      lna:'⚠ 输出波形顶部被「削平」了——放大器被强信号推进了饱和区！',
-      flt:'带内确实有很强的能量进入（干扰在通带之内，滤波器挡不住）。',
-      ant:'对星正常。',
-    },
-    explain:'放大器不是越用力越好。输入超过它的线性范围后，波形顶部会被「削平」，信息就被压坏了——这叫饱和。所以「信号太强」也是一种故障。',
-    fix:'工程修法：加入自动增益控制（AGC），信号强时自动把增益调低。',
+    id:'lna', name:'③ LNA 故障', culprit:'lna',
+    symptom:'终端已经找到卫星，天线方向基本正确，但接收信号一直很弱，基带无法稳定恢复数据。',
+    explain:'卫星已经锁定，说明天线和对星不是主要问题。信号一直很弱，因此应优先检查接收链前段负责低噪声放大的 LNA。',
   },
   {
-    id:'s4', title:'故障④ 模拟端一切正常，数据却始终不对',
-    symptom:'信号强度正常，但始终拼不出正确数据；换到更慢的速率反而能通。',
-    culprit:'adc',
-    obs:{
-      pwr:'供电正常。',
-      thm:'温度正常。',
-      itf:'接口正常。',
-      soc:'收到的数据自相矛盾，无法组包。',
-      bb :'拿到的数字序列和任何合法波形都对不上。',
-      adc:'⚠ 「拍照」间隔太长——波形变化快时，两次采样之间发生的事情全被漏掉了！',
-      mix:'输出波形干净正常。',
-      lna:'输出波形干净正常。',
-      flt:'通带设置正确。',
-      ant:'对星正常。',
-    },
-    explain:'ADC 像连拍相机：拍得太慢，快速变化的波形会被「看成」另一个样子——就像视频里高速车轮看起来在倒转。慢速率能通，正是因为波形变化变慢了，采样跟得上了。',
-    fix:'工程修法：提高采样率，或者降低符号速率。采样率必须和信号变化速度匹配。',
+    id:'pwr', name:'④ 电源异常', culprit:'pwr',
+    symptom:'按下启动后，多个模块无法正常上电，终端无法完成启动。',
+    explain:'多个模块同时无法上电，应优先检查所有模块共同依赖的电源，而不是逐个怀疑芯片。',
   },
   {
-    id:'s5', title:'故障⑤ 开机十分钟后，速率突然暴跌',
-    symptom:'前十分钟一切正常；之后速率从 20 Mbps 掉到 2 Mbps，外壳发烫。',
-    culprit:'thm',
-    obs:{
-      pwr:'供电正常，电流略偏高。',
-      thm:'⚠ 散热片和外壳之间的导热垫脱落，热量根本排不出去！',
-      itf:'接口正常，只是没多少数据可转发。',
-      soc:'温度 92°C，已自动降频保护——SoC 本身没坏，是热量排不出去。',
-      bb :'工作正常，但处理速度被主控限制了。',
-      adc:'工作正常。',
-      mix:'工作正常。',
-      lna:'工作正常。',
-      flt:'工作正常。',
-      ant:'对星正常。',
-    },
-    explain:'芯片算得快，不等于设备能持续工作。热量排不出去，芯片就会自动降频自保——手机夏天导航时发烫变卡，是同一个道理。注意：SoC 显示 92°C 只是「症状」，真正的故障源是散热系统。',
-    fix:'工程修法：修复散热通路。设计时就要把散热当作系统能力的一部分，而不是可有可无的配件。',
+    id:'thm', name:'⑤ 散热失效', culprit:'thm',
+    symptom:'终端刚开机时运行正常，工作一段时间后温度升高，速度下降并出现断线。',
+    explain:'系统刚开始正常，温度升高后才出现异常，时间和温度是关键线索，因此应优先检查散热和温度保护。',
   },
 ];
 
@@ -528,32 +628,46 @@ function showView(v){
   document.getElementById('segB').classList.toggle('on', v==='diag');
 }
 
+/* ============================= 工具 ============================= */
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+const C2_STORAGE_KEY='satlab_course2_v1'; // 只存课堂状态，不含任何个人信息
+
 /* ============================= 组装 ============================= */
-let slots = Array(8).fill(null);      // 信号链插槽
-let support = Array(2).fill(null);    // 支撑插槽
+let slots = Array(8).fill(null);      // A 主接收信号链插槽（有序）
+let support = Array(SUPPORT_IDS.length).fill(null); // B 支撑系统插槽（无序）
+let aux = Array(AUX_IDS.length).fill(null);         // C 辅助或其它功能插槽（无序）
 let selected = null;                  // 选中的卡 id
 let running = false;
 let timers = [];
-const POOL_ORDER = ['bb','pwr','mix','ant','soc','adc','thm','flt','itf','lna']; // 打乱的固定顺序
+let poolOrder = shuffle(ALL_IDS.slice()); // 模块仓库出现顺序，每次重置自动打乱
+let asmRunCount = 0;    // 启动次数
+let asmModifyCount = 0; // 修改次数（每次放入/取回都算一次）
 
-function placedIds(){ return slots.concat(support).filter(Boolean); }
+function placedIds(){ return slots.concat(support, aux).filter(Boolean); }
 
 function renderAsm(){
   // 仓库
   const pool = document.getElementById('pool');
   pool.innerHTML='';
-  POOL_ORDER.forEach(id=>{
+  poolOrder.forEach(id=>{
     if(placedIds().includes(id)) return;
     const c = byId(id);
     const el = document.createElement('div');
     el.className = 'card' + (selected===id?' selected':'');
+    el.dataset.id = id;
     el.innerHTML = `<span class="icon">${c.icon}</span><span><div class="nm">${c.name}</div><div class="en">${c.en}</div></span>`;
     el.onclick = ()=>{ if(running) return; selected = (selected===id?null:id); renderAsm(); };
     pool.appendChild(el);
   });
   if(!pool.children.length) pool.innerHTML = '<div style="color:var(--muted);font-size:15px">仓库已空——所有模块都已上板。</div>';
 
-  // 信号链
+  // A 信号链
   const chain = document.getElementById('chain');
   chain.innerHTML = '<div class="endnode">🛰️<br>卫星信号</div><span class="arrow">→</span>';
   slots.forEach((id,i)=>{
@@ -562,6 +676,7 @@ function renderAsm(){
     el.id = 'slot-'+i;
     if(id){
       const c=byId(id);
+      el.dataset.id = id;
       el.innerHTML = `<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
     }else{
       el.innerHTML = `<div class="ph">第 ${i+1} 步<br>（点此放入）</div>`;
@@ -572,32 +687,43 @@ function renderAsm(){
   });
   chain.insertAdjacentHTML('beforeend','<span class="arrow">→</span><div class="endnode">💻<br>用户设备</div>');
 
-  // 支撑
-  const row = document.getElementById('supportrow');
-  row.innerHTML = '<span class="lbl">支撑系统（不分先后）：</span>';
-  support.forEach((id,i)=>{
+  // B / C 区
+  renderZoneRow('supportrow', support, 'sup');
+  renderZoneRow('auxrow', aux, 'aux');
+
+  updateAsmCounters();
+}
+function renderZoneRow(containerId, arr, prefix){
+  const row = document.getElementById(containerId);
+  row.innerHTML='';
+  arr.forEach((id,i)=>{
     const el=document.createElement('div');
     el.className='slot' + (id?' filled':'') + (selected&&!id?' hot':'');
-    el.id='sup-'+i;
+    el.id=prefix+'-'+i;
     if(id){
       const c=byId(id);
+      el.dataset.id = id;
       el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
     }else{
-      el.innerHTML=`<div class="ph">支撑插槽<br>（点此放入）</div>`;
+      el.innerHTML=`<div class="ph">点此放入</div>`;
     }
-    el.onclick=()=>slotClick('sup',i);
+    el.onclick=()=>slotClick(prefix,i);
     row.appendChild(el);
   });
+}
+function updateAsmCounters(){
+  const el=document.getElementById('asmCounters');
+  if(el) el.textContent = `启动 ${asmRunCount} 次｜修改 ${asmModifyCount} 次`;
 }
 
 function slotClick(kind,i){
   if(running) return;
-  const arr = kind==='chain'?slots:support;
+  const arr = kind==='chain' ? slots : (kind==='sup' ? support : aux);
   if(arr[i]){                 // 取回已放置的卡
-    arr[i]=null; selected=null; renderAsm(); return;
+    arr[i]=null; selected=null; asmModifyCount++; renderAsm(); saveC2State(); return;
   }
   if(!selected){ toast('先在左侧仓库点选一张模块卡'); return; }
-  arr[i]=selected; selected=null; renderAsm();
+  arr[i]=selected; selected=null; asmModifyCount++; renderAsm(); saveC2State();
 }
 
 function clearMarks(){
@@ -612,183 +738,301 @@ function log(html,cls){
 }
 function resetAsm(){
   timers.forEach(clearTimeout); timers=[];
-  running=false; slots=Array(8).fill(null); support=Array(2).fill(null); selected=null;
-  document.getElementById('log').innerHTML='<p class="info">把模块放进插槽，然后点「启动终端」。系统会逐级通电，走到哪一步断了，就停在哪里。</p>';
+  running=false;
+  slots=Array(8).fill(null); support=Array(SUPPORT_IDS.length).fill(null); aux=Array(AUX_IDS.length).fill(null);
+  selected=null; asmRunCount=0; asmModifyCount=0;
+  poolOrder = shuffle(ALL_IDS.slice()); // 每次重置模块仓库自动打乱
+  document.getElementById('log').innerHTML='<p class="info">把模块放进插槽：A 区 8 步要按顺序，B/C 区不分先后。放好后点「验证分类」检查类别，或点「启动主接收链」检查顺序。</p>';
   document.getElementById('runBtn').disabled=false;
-  renderAsm(); clearMarks();
+  document.getElementById('classifyBtn').disabled=false;
+  renderAsm(); clearMarks(); saveC2State();
 }
 
+// 「验证分类」：检查每张已放置的卡是否落在正确的类别区（A/B/C），不检查 A 区内部顺序
+function zoneCatLabel(cat){ return cat==='main' ? 'A 主接收信号链' : (cat==='support' ? 'B 支撑系统' : 'C 辅助或其它功能'); }
+function classifyReason(id, actualCat){
+  const card=byId(id);
+  if(card.cat==='main') return MISPLACE_REASON[id];             // 该属于 A 区，被放去了别处
+  if(actualCat==='main') return CHAIN_MISPLACE_TEXT[id];         // 该属于 B/C 区，被放进了 A 区
+  return `「${card.name}」属于${zoneCatLabel(card.cat)}，不属于${zoneCatLabel(actualCat)}，请放入正确的类别区。`;
+}
+function checkClassify(){
+  if(running) return;
+  clearMarks();
+  document.getElementById('log').innerHTML='';
+  const wrongs=[];
+  slots.forEach((id,i)=>{ if(id && byId(id).cat!=='main') wrongs.push({id, elId:'slot-'+i, actual:'main'}); });
+  support.forEach((id,i)=>{ if(id && byId(id).cat!=='support') wrongs.push({id, elId:'sup-'+i, actual:'support'}); });
+  aux.forEach((id,i)=>{ if(id && byId(id).cat!=='aux') wrongs.push({id, elId:'aux-'+i, actual:'aux'}); });
+  if(wrongs.length){
+    wrongs.forEach(w=>{
+      const el=document.getElementById(w.elId); if(el) el.classList.add('bad');
+      log(`❌ 「${byId(w.id).name}」分类不对：${classifyReason(w.id, w.actual)}`, 'bad');
+    });
+    return;
+  }
+  const total = placedIds().length;
+  if(total<17){
+    log(`目前已放置模块的分类都正确，但仓库里还有 ${17-total} 张模块没有放入任何类别区，请继续。`,'info');
+    return;
+  }
+  log('✅ <b>全部 17 张模块分类正确！</b>','big ok');
+}
+
+// 「启动主接收链」：只验证 A 区 8 个有序插槽，遇第一个错误停止，不显示完整正确答案
 function runBoot(){
   if(running) return;
   timers.forEach(clearTimeout); timers=[];
   clearMarks();
   document.getElementById('log').innerHTML='';
-  running=true; document.getElementById('runBtn').disabled=true;
-  const done=()=>{ running=false; document.getElementById('runBtn').disabled=false; };
+  running=true;
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('classifyBtn').disabled=true;
+  asmRunCount++; updateAsmCounters(); saveC2State();
+  const done=()=>{
+    running=false;
+    document.getElementById('runBtn').disabled=false;
+    document.getElementById('classifyBtn').disabled=false;
+    saveC2State();
+  };
   let t=0; const step=(fn,delay)=>{ t+=delay; timers.push(setTimeout(fn,t)); };
 
-  step(()=>log('🔋 按下电源键……','info'),200);
+  step(()=>log('🚀 开始逐级验证主接收链……','info'),200);
 
-  // 1. 电源检查
-  if(!support.includes('pwr')){
-    step(()=>{
-      log('❌ 没有任何反应。设备缺少<b>电源模块</b>。','bad');
-      log('芯片不是接上电池就能直接用——不同器件需要不同且稳定的电压，这正是电源管理（PMIC）的工作。','info');
-      done();
-    },700);
-    return;
-  }
-  step(()=>log('✅ 电源系统上电，各路电压正常。','ok'),700);
-
-  // 2. 逐级走链
-  //   允许 滤波器/LNA 互换（琥珀提示）
-  const swapped = slots[1]==='lna' && slots[2]==='flt';
   let failed=false;
   for(let i=0;i<8;i++){
-    const idx=i, placed=slots[i];
-    let expected=EXPECTED[i];
-    if(swapped && i===1) expected='lna';
-    if(swapped && i===2) expected='flt';
     if(failed) break;
-    if(!placed){
+    const idx=i, placed=slots[i], expected=EXPECTED[i];
+    if(!placed || placed!==expected){
       failed=true;
       step(()=>{
         document.getElementById('slot-'+idx).classList.add('bad');
-        log(`❌ 信号走到第 ${idx+1} 步就断了——这一步还没有放模块。`,'bad');
-        done();
-      },800);
-    }else if(placed!==expected){
-      failed=true;
-      step(()=>{
-        document.getElementById('slot-'+idx).classList.add('bad');
-        log(`❌ 信号在第 ${idx+1} 步中断：「${byId(placed).name}」在这里工作不了。`,'bad');
-        log(MISPLACE_REASON[placed],'info');
+        const head = placed
+          ? `❌ 第 ${idx+1} 步不对：「${byId(placed).name}」在这里工作不了。`
+          : `❌ 第 ${idx+1} 步还没有放置模块。`;
+        log(head,'bad');
+        log(STEP_FAIL_MSG[idx],'info');
         done();
       },800);
     }else{
       step(()=>{
-        document.getElementById('slot-'+idx).classList.add(swapped&&(idx===1||idx===2)?'warn':'ok');
-        log(STAGE_OK_LINE[placed], swapped&&(idx===1||idx===2)?'warn':'ok');
+        document.getElementById('slot-'+idx).classList.add('ok');
+        log(STAGE_OK_LINE[placed],'ok');
       },800);
     }
   }
   if(failed) return;
 
-  if(swapped){
-    step(()=>log('⚠ 注意：你把 LNA 放在了滤波器前面。这种结构在工程上也存在，但带外强干扰会先被放大；本课程采用「先滤波、再放大」的典型教学结构。','warn'),600);
-  }
-
-  // 3. 散热检查 + 结局
-  if(!support.includes('thm')){
-    step(()=>{
-      log('📶 链路建立！开始回传数据……','ok');
-    },800);
-    step(()=>{
-      const supEmpty=[...document.querySelectorAll('#supportrow .slot')].find(s=>!s.classList.contains('filled'));
-      if(supEmpty) supEmpty.classList.add('bad');
-      log('⚠ 运行 10 分钟后：SoC 温度升到 88°C，自动降频……速率从 20 Mbps 跌到 3 Mbps。','warn');
-      log('❌ 设备缺少<b>散热模块</b>：短时间能跑，长时间工作就会过热降频。散热是系统能力的一部分。','bad');
-      done();
-    },1600);
-    return;
-  }
-
   step(()=>{
-    document.querySelectorAll('#supportrow .slot').forEach(s=>s.classList.add('ok'));
-    log('✅ 散热系统正常，温度稳定在 45°C。','ok');
-  },800);
-  step(()=>{
-    log('📶 <b>链路建立！LINK ESTABLISHED</b>','big ok');
-    log('📨 第一条消息已发出：<b>「TEAM SAFE / 队员安全」</b>——位置、文字通道恢复。任务完成！🎉','big ok');
+    log('✅ <b>主接收链验证通过！</b>信号已经可以从天线一路传到网络接口。','big ok');
     done();
-  },1000);
+  },800);
 }
 
 /* ============================= 诊断 ============================= */
-let scen=null, lastChecked=null, checkCount=0, accuseCount=0, solved=false;
-const DIAG_ORDER = ['ant','flt','lna','mix','adc','bb','soc','itf'];
+let scen=null, lastChecked=null, checkCount=0, clickOrder=[], obsHistory=[], solved=false, revealed=false;
+let teacherSelectedFault=null; // 弹窗内临时选中的故障（未点「开始任务」前不生效）
 
 function initDiag(){
-  const sel=document.getElementById('scSel');
-  sel.innerHTML='<option value="">— 老师选择一个故障任务 —</option>';
-  SCENARIOS.forEach((s,i)=>{
-    sel.insertAdjacentHTML('beforeend',`<option value="${i}">${s.title}</option>`);
-  });
-  loadScenario();
+  renderDiagStatus();
+  renderDiagChain();
 }
-function loadScenario(){
-  const v=document.getElementById('scSel').value;
-  scen = v===''?null:SCENARIOS[+v];
+function loadScenario(idx){
+  scen = SCENARIOS[idx] || null;
   resetDiag();
 }
 function resetDiag(){
-  lastChecked=null; checkCount=0; accuseCount=0; solved=false;
-  document.getElementById('checkCount').textContent='0';
-  document.getElementById('accuseCount').textContent='0';
-  document.getElementById('accuseBtn').disabled=true;
-  document.getElementById('verdict').className='verdict';
-  document.getElementById('verdict').innerHTML='';
-  document.getElementById('symptom').innerHTML = scen
-    ? `<b>症状报告：</b>${scen.symptom}<span class="hint">　（先在纸上判断故障位置，再上台检修）</span>`
-    : '请老师先在上方选择一个故障任务。';
-  document.getElementById('obslog').innerHTML='<p style="color:var(--muted)">检修记录会出现在这里。提示：故障通常出现在「最早开始不正常」的位置附近。</p>';
+  lastChecked=null; checkCount=0; clickOrder=[]; obsHistory=[]; solved=false; revealed=false;
+  renderDiagStatus();
   renderDiagChain();
+  saveC2State();
+}
+function renderDiagStatus(){
+  const label=document.getElementById('diagStatusLabel');
+  if(label) label.textContent = scen ? '当前任务：进行中（故障由教师设置，学生端不可见）' : '尚未设置故障任务，请教师点击「教师设置故障」（快捷键 T）';
+  const revealBtn=document.getElementById('revealBtn');
+  if(revealBtn) revealBtn.disabled = !scen;
+  const symptom=document.getElementById('symptom');
+  if(symptom){
+    symptom.innerHTML = scen
+      ? `<b>症状报告：</b>${scen.symptom}<span class="hint">　（先在纸上判断故障位置，再上台检修）</span>`
+      : '请教师先设置一个故障任务。';
+  }
+  const cc=document.getElementById('checkCount');
+  if(cc) cc.textContent = checkCount;
+  renderObsLog();
+  renderVerdict();
+}
+function renderObsLog(){
+  const box=document.getElementById('obslog');
+  if(!box) return;
+  if(!obsHistory.length){
+    box.innerHTML='<p style="color:var(--muted)">检修记录会出现在这里。</p>';
+    return;
+  }
+  box.innerHTML = obsHistory.map(o=>`<p><b>检修 ${o.name}：</b><span${o.bad?' style="color:var(--red);font-weight:bold"':''}>${o.msg}</span></p>`).join('');
+  box.scrollTop=box.scrollHeight;
 }
 function renderDiagChain(){
   const wrap=document.getElementById('diagchain');
-  wrap.innerHTML='<div class="endnode">🛰️<br>卫星信号</div><span class="arrow">→</span>';
-  DIAG_ORDER.forEach((id,i)=>{
+  if(!wrap) return;
+  wrap.innerHTML='';
+  appendDiagZone(wrap, EXPECTED, 'A 主接收信号链', true);
+  appendDiagZone(wrap, SUPPORT_IDS, 'B 支撑系统', false);
+  appendDiagZone(wrap, AUX_IDS, 'C 辅助或其它功能', false);
+}
+function appendDiagZone(container, ids, title, withEnds){
+  const hdr=document.createElement('div');
+  hdr.style.cssText='font-size:14px;color:var(--muted);margin:10px 0 6px;';
+  hdr.textContent=title;
+  container.appendChild(hdr);
+  const row=document.createElement('div');
+  row.className='diagchain';
+  if(withEnds) row.insertAdjacentHTML('beforeend','<div class="endnode">🛰️<br>卫星信号</div><span class="arrow">→</span>');
+  ids.forEach((id,i)=>{
     const c=byId(id);
     const el=document.createElement('div');
-    el.className='slot filled'+(lastChecked===id?' hot':'');
+    const isCulpritFound = solved && scen && id===scen.culprit;
+    el.className='slot filled'+(lastChecked===id?' hot':'')+(isCulpritFound?' bad':'');
     el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
     el.onclick=()=>checkModule(id);
-    wrap.appendChild(el);
-    if(i<DIAG_ORDER.length-1) wrap.insertAdjacentHTML('beforeend','<span class="arrow">→</span>');
+    row.appendChild(el);
+    if(withEnds && i<ids.length-1) row.insertAdjacentHTML('beforeend','<span class="arrow">→</span>');
   });
-  wrap.insertAdjacentHTML('beforeend','<span class="arrow">→</span><div class="endnode">💻<br>用户设备</div>');
-  // 支撑模块
-  ['pwr','thm'].forEach(id=>{
-    const c=byId(id);
-    const el=document.createElement('div');
-    el.className='slot filled'+(lastChecked===id?' hot':'');
-    el.style.marginLeft='14px';
-    el.innerHTML=`<div class="icon">${c.icon}</div><div class="nm">${c.name}</div><div class="en">${c.en}</div>`;
-    el.onclick=()=>checkModule(id);
-    wrap.appendChild(el);
-  });
+  if(withEnds) row.insertAdjacentHTML('beforeend','<span class="arrow">→</span><div class="endnode">💻<br>用户设备</div>');
+  container.appendChild(row);
 }
 function checkModule(id){
-  if(!scen){ toast('请老师先选择一个故障任务'); return; }
+  if(!scen){ toast('请先由教师设置并开始一个故障任务'); return; }
   if(solved) return;
-  lastChecked=id; checkCount++;
-  document.getElementById('checkCount').textContent=checkCount;
-  document.getElementById('accuseBtn').disabled=false;
+  lastChecked=id; checkCount++; clickOrder.push(id);
   const c=byId(id);
-  const logEl=document.getElementById('obslog');
-  if(logEl.querySelector('p[style]')) logEl.innerHTML='';
-  logEl.insertAdjacentHTML('beforeend',`<p><b>检修 ${c.name}：</b>${scen.obs[id]}</p>`);
-  logEl.scrollTop=logEl.scrollHeight;
+  const isCulprit = id===scen.culprit;
+  // 检修反馈：错误模块「当前模块工作正常」，故障模块「发现故障」（逐字取自任务书附录六）
+  obsHistory.push({name:c.name, msg: isCulprit?'发现故障':'当前模块工作正常', bad:isCulprit});
+  if(isCulprit) solved=true; // 首次点错不结束，只有点中故障源才结束
+  document.getElementById('checkCount').textContent=checkCount;
+  renderObsLog();
   renderDiagChain();
+  renderVerdict();
+  saveC2State();
 }
-function accuse(){
-  if(!scen||!lastChecked||solved) return;
-  accuseCount++;
-  document.getElementById('accuseCount').textContent=accuseCount;
+function renderVerdict(){
   const v=document.getElementById('verdict');
-  if(lastChecked===scen.culprit){
-    solved=true;
+  if(!v) return;
+  if(!scen || (!solved && !revealed)){ v.className='verdict'; v.innerHTML=''; return; }
+  const within2 = clickOrder.length<=2;
+  if(solved && !revealed){
     v.className='verdict show good';
-    v.innerHTML=`<h4>✅ 指认正确！故障源：${byId(scen.culprit).name}</h4>
-      <p>${scen.explain}</p>
-      <p style="margin-top:6px"><b>${scen.fix}</b></p>
-      <p class="hint">本轮成绩：检修 ${checkCount} 次，指认 ${accuseCount} 次。</p>`;
-  }else{
-    v.className='verdict show badv';
-    v.innerHTML=`<h4>❌ 不是「${byId(lastChecked).name}」。</h4>
-      <p>对照检修记录再想想：从信号链的哪一步开始，读数变得不正常？「表现异常」的模块不一定是「故障源」——顺着链条往上游找。</p>`;
+    v.innerHTML = `<h4>✅ 已发现故障</h4>
+      <p>完整检修路径：${clickOrder.map(x=>byId(x).name).join(' → ')}</p>
+      <p>检修次数：${checkCount} 次 ｜ 是否两次内找到：${within2?'是':'否'}</p>
+      <p class="hint">教师点击上方「结束并显示解释」可复盘原理。</p>`;
+    return;
   }
-  v.scrollIntoView({block:'nearest'});
+  // 教师已点「结束并显示解释」——只有这一步之后才显示故障名与解释
+  v.className='verdict show '+(solved?'good':'badv');
+  v.innerHTML = `<h4>📖 解释复盘：故障源是${byId(scen.culprit).name}</h4>
+    <p>${scen.explain}</p>
+    <p class="hint">完整检修路径：${clickOrder.length?clickOrder.map(x=>byId(x).name).join(' → '):'（尚未检修）'}</p>
+    <p class="hint">检修次数：${checkCount} 次 ｜ 是否两次内找到：${solved?(within2?'是':'否'):'—（本任务由教师提前结束）'}</p>`;
+}
+function teacherReveal(){
+  if(!scen) return;
+  revealed=true;
+  renderVerdict();
+  saveC2State();
+}
+
+/* ============================= 教师设置故障（弹窗） ============================= */
+function openTeacherPanel(){
+  teacherSelectedFault=null;
+  renderTeacherFaultList();
+  document.getElementById('teacherModal').style.display='flex';
+}
+function closeTeacherPanel(){
+  document.getElementById('teacherModal').style.display='none';
+}
+function renderTeacherFaultList(){
+  const wrap=document.getElementById('teacherFaultList');
+  wrap.innerHTML='';
+  SCENARIOS.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='card'+(teacherSelectedFault===i?' selected':'');
+    el.innerHTML=`<span><div class="nm">${s.name}</div></span>`;
+    el.onclick=()=>{ teacherSelectedFault=i; renderTeacherFaultList(); };
+    wrap.appendChild(el);
+  });
+}
+function teacherStartTask(){
+  if(teacherSelectedFault===null){ toast('请先选择一个故障'); return; }
+  loadScenario(teacherSelectedFault);
+  closeTeacherPanel();
+  showView('diag');
+  const dv=document.getElementById('view-diag');
+  if(dv && dv.scrollIntoView) dv.scrollIntoView({block:'start', behavior:'smooth'});
+}
+
+/* ============================= 教师提示区（默认收起） ============================= */
+function toggleTeacherHint(){
+  const el=document.getElementById('teacherHint');
+  if(!el) return;
+  el.style.display = (el.style.display==='none' || !el.style.display) ? 'block' : 'none';
+}
+
+/* ============================= 课堂状态 localStorage ============================= */
+function saveC2State(){
+  try{
+    const scenIdx = scen ? SCENARIOS.indexOf(scen) : null;
+    const data={
+      slots, support, aux, poolOrder, asmRunCount, asmModifyCount,
+      scenIdx, checkCount, clickOrder, solved, revealed,
+    };
+    localStorage.setItem(C2_STORAGE_KEY, JSON.stringify(data));
+  }catch(e){ /* localStorage 不可用时静默跳过，不影响课堂使用 */ }
+}
+function loadC2State(){
+  try{
+    const raw=localStorage.getItem(C2_STORAGE_KEY);
+    if(!raw) return false;
+    const d=JSON.parse(raw);
+    slots = Array.isArray(d.slots) ? d.slots : slots;
+    support = Array.isArray(d.support) ? d.support : support;
+    aux = Array.isArray(d.aux) ? d.aux : aux;
+    poolOrder = Array.isArray(d.poolOrder) ? d.poolOrder : poolOrder;
+    asmRunCount = d.asmRunCount||0; asmModifyCount = d.asmModifyCount||0;
+    scen = (d.scenIdx!=null && SCENARIOS[d.scenIdx]) ? SCENARIOS[d.scenIdx] : null;
+    checkCount = d.checkCount||0; clickOrder = Array.isArray(d.clickOrder)?d.clickOrder:[];
+    solved = !!d.solved; revealed = !!d.revealed;
+    return true;
+  }catch(e){ return false; }
+}
+function clearCourseState(){
+  if(typeof confirm==='function' && !confirm('确定要清空课程二的课堂状态吗？此操作不可撤销。')) return;
+  scen=null;
+  resetAsm();   // 会自动 saveC2State()，此时写回的是空状态
+  resetDiag();  // 同上
+  try{ localStorage.removeItem(C2_STORAGE_KEY); }catch(e){} // 最后再彻底移除，确保不残留任何记录
+  toast('课堂状态已清空');
+}
+
+/* ============================= 快捷键：T 教师设置 / Esc 关闭 / H 教师提示 ============================= */
+document.addEventListener('keydown', function(e){
+  const tp1=document.getElementById('tabpage-1');
+  if(!tp1 || tp1.style.display==='none') return; // 只在课程二激活时生效，不影响模块②③
+  const tag=(e.target && e.target.tagName) || '';
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT') return;
+  if(e.key==='t' || e.key==='T'){ openTeacherPanel(); }
+  else if(e.key==='Escape'){ closeTeacherPanel(); }
+  else if(e.key==='h' || e.key==='H'){ toggleTeacherHint(); }
+});
+
+/* ============================= 课程二初始化 ============================= */
+function initCourse2(){
+  const restored = loadC2State();
+  if(!restored) poolOrder = shuffle(ALL_IDS.slice());
+  renderAsm(); clearMarks(); updateAsmCounters();
+  initDiag();
 }
 
 /* ============================= 模块② 噪声通信实验室 ============================= */
@@ -1305,8 +1549,7 @@ function c3Init(){
 }
 
 /* ============================= 启动 ============================= */
-renderAsm();
-initDiag();
+initCourse2();
 n2Init();
 c3Init();
 showTab(1);
