@@ -359,6 +359,28 @@
   .n2scorebtns .btn{padding:4px 8px; font-size:13px;}
   .n2modelabel{font-size:14px; color:var(--muted);}
 
+  /* ---- 课程三简化顶栏 + PPT 活动目录（去分组去计分） ---- */
+  .n2topbar2{display:flex; gap:12px; align-items:center; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--line);}
+  .n2topbar2title{display:flex; align-items:center; gap:10px; flex:1; min-width:0;}
+  .n2topbar2title b{font-size:17px;}
+  .n2progresschip{font-size:13px; color:var(--muted); background:var(--panel2); border:1px solid var(--line); border-radius:20px; padding:2px 10px;}
+  .n2moremenu{position:relative; margin-left:auto;}
+  .n2morepanel{position:absolute; right:0; top:110%; z-index:20; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:6px; min-width:220px; box-shadow:0 8px 24px rgba(0,0,0,.25);}
+  .n2morepanel .btn{justify-content:flex-start; text-align:left;}
+  .n2moretip{font-size:12px; color:var(--muted); padding:2px 4px;}
+  .n2dirhead h2{font-size:22px;}
+  .n2dirgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;}
+  .n2dircard{border:1px solid var(--line); border-radius:12px; background:var(--panel2); padding:14px 16px; cursor:pointer; transition:border-color .15s, transform .1s; display:flex; flex-direction:column; gap:6px;}
+  .n2dircard:hover{border-color:var(--sel); transform:translateY(-2px);}
+  .n2dircard .ppt{font-size:12px; color:var(--amber); font-weight:bold;}
+  .n2dircard .nm{font-size:17px; font-weight:bold;}
+  .n2dircard .meta{font-size:13px; color:var(--cyan);}
+  .n2dircard .purpose{font-size:13px; color:var(--muted); line-height:1.5;}
+  .n2dircard .done{font-size:12px; color:var(--green);}
+  .n2dircontinue{border:1px solid var(--sel); border-radius:12px; background:var(--panel2); padding:12px 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+  .n2freeexplore{margin-top:20px; padding-top:14px; border-top:1px dashed var(--line);}
+  .n2retryhint{color:var(--amber); font-size:15px;}
+
   /* ---- 教师答案系统：防泄露弹窗（n2 前缀，独立于课程二的 teacherPrivacyGate） ---- */
   .n2teacherbox{max-width:640px;}
   .n2qa-hints{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;}
@@ -694,37 +716,42 @@
 <div id="tabpage-2" style="display:none">
 <div class="board">
 
-  <!-- 顶部：模式切换（实验/闯关） + A/B 计分栏（手动±1/撤销/清空，localStorage） -->
-  <div class="n2topbar">
-    <div class="n2topmode">
-      <button class="btn on" id="n2topModeLabBtn" onclick="n2SetTopMode('lab')">A 实验模式</button>
-      <button class="btn" id="n2topModeQuestBtn" onclick="n2SetTopMode('quest')">B 闯关模式</button>
-    </div>
-    <div class="n2modelabel">当前作答组：
-      <button class="btn" id="n2teamBtnA" style="padding:4px 10px;font-size:13px" onclick="n2SetTeam('A')">A 组</button>
-      <button class="btn" id="n2teamBtnB" style="padding:4px 10px;font-size:13px" onclick="n2SetTeam('B')">B 组</button>
-    </div>
-    <div class="n2scorebar">
-      <div class="n2scoreitem teamon" id="n2scoreCardA"><span>A 组得分</span><b id="n2scoreA">0</b>
-        <div class="n2scorebtns"><button class="btn" onclick="n2ManualScore('A',1)">+1</button><button class="btn" onclick="n2ManualScore('A',-1)">-1</button></div>
+  <!-- 顶部工具栏（简化版）：返回目录 / 当前活动名 / 进度 / 更多设置。无小组、无计分、无教师辅助/下载/打印。
+       活动目录（#n2directory）打开时隐藏本工具栏；进入某个活动后显示。 -->
+  <div class="n2topbar2" id="n2topbar2" style="display:none">
+    <button class="btn" onclick="n2BackToDirectory()">← 返回活动目录</button>
+    <div class="n2topbar2title"><b id="n2activityName">—</b><span id="n2activityProgress" class="n2progresschip"></span></div>
+    <div class="n2moremenu">
+      <button class="btn" id="n2moreBtn" onclick="n2ToggleMore()">⚙ 更多设置 ▾</button>
+      <div class="n2morepanel" id="n2morePanel" style="display:none">
+        <button class="btn" onclick="n2RestartCurrentActivity()">↺ 重新开始当前活动</button>
+        <button class="btn" onclick="n2ResetCourse3()">🗑 重置课程三进度</button>
+        <div class="n2moretip">高级参数（固定随机种子、可选扩展等）在各实验内部直接调节。</div>
       </div>
-      <div class="n2scoreitem" id="n2scoreCardB"><span>B 组得分</span><b id="n2scoreB">0</b>
-        <div class="n2scorebtns"><button class="btn" onclick="n2ManualScore('B',1)">+1</button><button class="btn" onclick="n2ManualScore('B',-1)">-1</button></div>
-      </div>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2UndoScore()">↩ 撤销上一次加分</button>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2ClearSession()">🗑 重置本节</button>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2OpenTeacherAssist()">🧑‍🏫 教师辅助（T）</button>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2DownloadGuide()">📥 下载讲师指引</button>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2CopyExplain()">📋 复制本题讲解</button>
-      <button class="btn" style="padding:6px 12px;font-size:13px" onclick="n2PrintAnswerCard()">🖨 打印本节答案卡</button>
     </div>
   </div>
 
+  <!-- ============ 课程三活动目录（首页）：按 PPT 页码进入，无小组无分数 ============ -->
+  <div id="n2directory">
+    <div class="n2dirhead">
+      <h2 style="margin:0 0 4px">课程三互动实验室</h2>
+      <p style="color:var(--muted);font-size:14px;margin:0">两名学生共同操作同一台设备：一起讨论、共同选一个答案、提交，系统自动反馈。这是共同探索和练习工具，不是分组竞赛系统。</p>
+    </div>
+    <div class="n2dircontinue" id="n2dirContinue" style="display:none"></div>
+    <h3 style="font-size:16px;margin:18px 0 10px">按 PPT 页码进入</h3>
+    <div class="n2dirgrid" id="n2dirGrid"></div>
+    <div class="n2freeexplore">
+      <button class="btn" onclick="n2ToggleFreeExplore()" id="n2freeExploreBtn">自由探索｜可选 ▾</button>
+      <div id="n2freeExplorePanel" style="display:none">
+        <p style="color:var(--muted);font-size:14px;margin:8px 0 0">以上任意实验都可以脱离 PPT 顺序单独打开自由演示；三个实验内部都提供「固定随机种子（可复现）」和可选扩展参数，供课后或提高班自由探索。</p>
+      </div>
+    </div>
+  </div>
+
+<div id="n2labWrap" style="display:none">
   <div class="n2boundarynote" style="margin-top:0;margin-bottom:14px;border-top:none;padding-top:0">
     两条固定边界说明——① 「模拟噪声强度」和「bit 独立翻转概率」是两个完全不同的参数：模拟噪声只影响星座图接收点的偏移与符号判决，bit 翻转概率只用于讲解 BER/CRC/FEC，二者互不影响。真实无线噪声通常先影响接收波形和符号判决，最终才可能形成 bit 错误；这里的独立 bit 翻转是为了方便课堂观察而采用的简化模型。② 误码率必须分开标注：<b>信道 BER</b> = 信道中翻转的编码 bit 数 ÷ 编码后发送总 bit 数；<b>Payload BER</b> = 恢复后仍错的原始数据 bit 数 ÷ 原始 payload bit 数。页面任何地方都不会只写"BER"。
   </div>
-
-<div id="n2labWrap">
   <!-- 海岛业务优先级：顶部保留，实验共用背景 -->
   <div class="n2biz">
     <h3 style="font-size:16px;margin-bottom:6px">海岛业务优先级（台风过后，卫星链路质量不稳定）</h3>
@@ -959,7 +986,7 @@
 
 <!-- ============ 闯关模式：四关容器 ============ -->
 <div id="n2questWrap" style="display:none">
-  <div class="n2questtabs">
+  <div class="n2questtabs" style="display:none">
     <button class="btn on" id="n2questTabBtn1" onclick="n2QuestGoLevel(1)">第①关 · 符号配对赛</button>
     <button class="btn" id="n2questTabBtn2" onclick="n2QuestGoLevel(2)">第②关 · 点云判决挑战</button>
     <button class="btn" id="n2questTabBtn3" onclick="n2QuestGoLevel(3)">第③关 · BER 侦探</button>
@@ -987,7 +1014,7 @@
   <h3>海岛推荐原则</h3>
   <p>位置坐标、求救文字 → 可靠性优先；短语音 → 可降质或短时中断；低清图片 → 优先级最低，链路差或电量紧张可暂停。没有唯一正确组合，能说明取舍理由就是好方案。</p>
   <h3>快捷键</h3>
-  <p>T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案／N 下一题。</p>
+  <p>H 显示下一级提示／N 下一题／Esc 关闭「更多设置」菜单。本课堂不计分、不分组，学生第二次答错后系统自动揭示答案。</p>
 </div>
 
 </div>
@@ -1822,6 +1849,11 @@ function n2ShowSub(n){
     document.getElementById('n2sub-'+i).style.display = (i===n?'':'none');
     document.getElementById('n2subBtn'+i).classList.toggle('on', i===n);
   }
+  // 实验演示之间切换时，同步顶栏活动名（三个实验是三个独立目录项）
+  if(typeof n2TopMode!=='undefined' && n2TopMode==='lab' && typeof n2CurrentActivity!=='undefined' && n2CurrentActivity){
+    const map={1:'const',2:'ber',3:'crcfec'};
+    if(map[n]){ n2CurrentActivity=map[n]; if(typeof n2UpdateTopbar==='function') n2UpdateTopbar(); if(typeof n2SaveProgress==='function') n2SaveProgress(); }
+  }
 }
 
 /* 汉明(7,4)：可复用给子实验③方案 D（可选扩展）*/
@@ -2510,86 +2542,177 @@ function n2Init(){
   document.getElementById('n2sub3empty').style.display='';
   document.getElementById('n2sub3result').style.display='none';
 
-  n2LoadScore();
-  n2RenderScore();
-  n2SetTeam(n2CurrentTeam);
-  n2SetTopMode(n2TopMode);
+  n2LoadProgress();
+  n2RenderDirectory();
+  n2ShowDirectory();
 }
 
 /* =============================================================================
-   课程三 v2：模式切换（实验/闯关）+ 顶部 A/B 计分栏 + 教师答案系统骨架
-   只存课堂状态（分数/当前组/当前模式/闯关进度），不含任何个人信息。
+   课程三 v3（去分组去计分重构，规格十四~二十）：
+   - 不再区分 A/B 组、不计分、不排名。两名学生共同操作一台设备，讨论后共同提交一个答案，系统自动反馈。
+   - 首页 = 按 PPT 页码进入的活动目录；每个活动直接进入，无模式/小组/参数/教师设置页。
+   - 只保存一份统一课堂进度（当前活动 + 各挑战当前题号 + 已完成活动），不含任何个人信息、分数、排名。
    ============================================================================= */
-const N2_SCORE_KEY = 'satlab_course3_score_v1';
-let n2TopMode = 'lab';       // 'lab' 实验模式 / 'quest' 闯关模式
-let n2QLevel = 1;           // 闯关模式当前关卡 1~4
-let n2ScoreA = 0;
-let n2ScoreB = 0;
-let n2CurrentTeam = 'A';
-let n2ScoreHistory = [];    // 每次加分记录 {team, delta, reason}，供"撤销上一次加分"使用
+const N2_PROGRESS_KEY = 'satlab_course3_v3';
+let n2TopMode = 'lab';       // 内部用：'lab' 实验容器 / 'quest' 挑战容器（不再有面向用户的模式切换）
+let n2QLevel = 1;           // 内部用：当前挑战关卡 1~4
+let n2CurrentActivity = null; // 当前活动 key（在目录时为 null）
+let n2LastActivity = null;    // 最近进入过的活动 key（供"继续上次课堂"，进目录时不清空）
+let n2CompletedActs = {};    // { key:true } 已完成活动
 
-function n2SetTopMode(m){
-  n2TopMode = m;
-  document.getElementById('n2topModeLabBtn').classList.toggle('on', m==='lab');
-  document.getElementById('n2topModeQuestBtn').classList.toggle('on', m==='quest');
-  document.getElementById('n2labWrap').style.display = m==='lab' ? '' : 'none';
-  document.getElementById('n2questWrap').style.display = m==='quest' ? '' : 'none';
-  if(m==='quest' && typeof n2QuestGoLevel==='function') n2QuestGoLevel(n2QLevel);
-  n2SaveScore();
+/* 七个活动：按 PPT 页码。kind 'exp'=实验演示（教师操作，保留全部交互控件）/ 'challenge'=学生共同挑战（自动反馈）。 */
+const N2_ACTIVITIES = [
+  {key:'sym',        ppt:'PPT 第 17 页',   name:'符号配对赛',       kind:'challenge', time:'学生挑战 · 约 5–6 分钟', purpose:'给一个 bit 选对星座点，或给一个星座点选对 bit。', mode:'quest', level:1},
+  {key:'const',      ppt:'PPT 第 27 页后', name:'星座图演示',       kind:'exp',       time:'实验演示 · 约 5 分钟',   purpose:'调节噪声，看接收点如何越过判决边界被判错。',       mode:'lab',   sub:1},
+  {key:'pointcloud', ppt:'PPT 第 31 页',   name:'点云判决挑战',     kind:'challenge', time:'学生挑战 · 约 6 分钟',   purpose:'根据接收点的位置，判断接收机会把它认成哪个 symbol。', mode:'quest', level:2},
+  {key:'ber',        ppt:'PPT 第 34 页后', name:'误码与 BER 演示',  kind:'exp',       time:'实验演示 · 约 4–5 分钟', purpose:'手动或随机翻转 bit，核对信道 BER 与 Payload BER。',   mode:'lab',   sub:2},
+  {key:'berdet',     ppt:'PPT 第 35 页',   name:'BER 侦探',        kind:'challenge', time:'学生挑战 · 约 5–6 分钟', purpose:'找出错误位置、数出错误个数、算出这段传输的 BER。',   mode:'quest', level:3},
+  {key:'crcfec',     ppt:'PPT 第 45 页后', name:'CRC / FEC 演示',  kind:'exp',       time:'实验演示 · 约 7–8 分钟', purpose:'比较无保护 / CRC / 重复码 / 汉明码的检错与纠错表现。', mode:'lab',   sub:3},
+  {key:'commander',  ppt:'PPT 第 49 页',   name:'海岛通信指挥官',   kind:'challenge', time:'学生挑战 · 约 10–12 分钟', purpose:'综合链路/电量/网络压力，为救援通信选一套策略。',    mode:'quest', level:4},
+];
+function n2Activity(key){ return N2_ACTIVITIES.find(a=>a.key===key); }
+
+function n2ShowDirectory(){
+  n2CurrentActivity = null;
+  document.getElementById('n2directory').style.display='';
+  document.getElementById('n2topbar2').style.display='none';
+  document.getElementById('n2labWrap').style.display='none';
+  document.getElementById('n2questWrap').style.display='none';
+  n2CloseMore();
+  n2RenderDirectory();
+  n2SaveProgress();
 }
-function n2SetTeam(t){
-  n2CurrentTeam = t;
-  document.getElementById('n2teamBtnA').classList.toggle('on', t==='A');
-  document.getElementById('n2teamBtnB').classList.toggle('on', t==='B');
-  document.getElementById('n2scoreCardA').classList.toggle('teamon', t==='A');
-  document.getElementById('n2scoreCardB').classList.toggle('teamon', t==='B');
-  n2SaveScore();
+function n2RenderDirectory(){
+  // 继续上次课堂（用最近进入过的活动，进目录不清空）
+  const cont=document.getElementById('n2dirContinue');
+  if(n2LastActivity && n2Activity(n2LastActivity)){
+    const a=n2Activity(n2LastActivity);
+    cont.style.display='';
+    cont.innerHTML=`<span style="font-size:14px">上次进行到：<b>${a.name}</b></span>
+      <button class="btn primary" onclick="n2GoActivity('${a.key}')">▶ 继续上次课堂</button>`;
+  } else {
+    cont.style.display='none';
+  }
+  const grid=document.getElementById('n2dirGrid');
+  grid.innerHTML = N2_ACTIVITIES.map(a=>`
+    <div class="n2dircard" onclick="n2GoActivity('${a.key}')">
+      <div class="ppt">${a.ppt}</div>
+      <div class="nm">${a.name}</div>
+      <div class="meta">${a.time}</div>
+      <div class="purpose">${a.purpose}</div>
+      ${n2CompletedActs[a.key]?'<div class="done">✓ 已完成过</div>':''}
+    </div>`).join('');
 }
-function n2RenderScore(){
-  document.getElementById('n2scoreA').textContent = n2ScoreA;
-  document.getElementById('n2scoreB').textContent = n2ScoreB;
+function n2GoActivity(key){
+  const a=n2Activity(key);
+  if(!a) return;
+  n2CurrentActivity=key; n2LastActivity=key;
+  document.getElementById('n2directory').style.display='none';
+  document.getElementById('n2topbar2').style.display='';
+  n2CloseMore();
+  if(a.mode==='lab'){
+    n2TopMode='lab';
+    document.getElementById('n2labWrap').style.display='';
+    document.getElementById('n2questWrap').style.display='none';
+    if(typeof n2ShowSub==='function') n2ShowSub(a.sub);
+  } else {
+    n2TopMode='quest';
+    document.getElementById('n2labWrap').style.display='none';
+    document.getElementById('n2questWrap').style.display='';
+    n2QuestGoLevel(a.level);
+  }
+  n2UpdateTopbar();
+  n2SaveProgress();
 }
-function n2AddScore(team, delta, reason){
-  if(team==='A') n2ScoreA += delta; else n2ScoreB += delta;
-  n2ScoreHistory.push({team, delta, reason: reason||'手动调整'});
-  n2RenderScore();
-  n2SaveScore();
+function n2BackToDirectory(){ n2ShowDirectory(); }
+function n2UpdateTopbar(){
+  const a=n2Activity(n2CurrentActivity);
+  if(!a) return;
+  document.getElementById('n2activityName').textContent = a.name;
+  // 进度：实验演示不计题；挑战显示"第X题/共Y题"
+  const chip=document.getElementById('n2activityProgress');
+  if(a.mode==='quest'){
+    const idx = n2QuestCurrentIdx();
+    chip.style.display='';
+    chip.textContent = `第 ${idx+1} 题 / 共 8 题`;
+  } else {
+    chip.style.display='none';
+    chip.textContent='';
+  }
 }
-function n2ManualScore(team, delta){ n2AddScore(team, delta, '教师手动'+(delta>0?'+1':'-1')); }
-function n2UndoScore(){
-  const last = n2ScoreHistory.pop();
-  if(!last){ toast('没有可撤销的加分记录'); return; }
-  if(last.team==='A') n2ScoreA -= last.delta; else n2ScoreB -= last.delta;
-  n2RenderScore();
-  n2SaveScore();
-  toast('已撤销上一次加分（'+last.team+' 组 '+(last.delta>0?'+':'')+last.delta+'）');
+function n2QuestCurrentIdx(){
+  if(n2QLevel===1) return n2L1State.idx;
+  if(n2QLevel===2) return n2L2State.idx;
+  if(n2QLevel===3) return n2L3State.idx;
+  if(n2QLevel===4) return n2L4State.idx;
+  return 0;
 }
-function n2ClearSession(){
-  if(typeof confirm==='function' && !confirm('确定要清空课程三本节的分数和进度吗？此操作不可撤销。')) return;
-  n2ScoreA=0; n2ScoreB=0; n2ScoreHistory=[];
-  n2RenderScore();
-  n2SetTeam('A');
+function n2MarkActivityDone(){
+  if(n2CurrentActivity){ n2CompletedActs[n2CurrentActivity]=true; n2SaveProgress(); }
+}
+/* 更多设置菜单 */
+function n2ToggleMore(){
+  const p=document.getElementById('n2morePanel');
+  p.style.display = p.style.display==='none' ? '' : 'none';
+}
+function n2CloseMore(){ const p=document.getElementById('n2morePanel'); if(p) p.style.display='none'; }
+function n2RestartCurrentActivity(){
+  n2CloseMore();
+  const a=n2Activity(n2CurrentActivity);
+  if(!a){ toast('请先进入一个活动'); return; }
+  if(a.mode==='quest'){
+    if(a.level===1) n2L1Restart();
+    else if(a.level===2) n2L2Restart();
+    else if(a.level===3) n2L3Restart();
+    else if(a.level===4 && typeof n2L4Restart==='function') n2L4Restart();
+    n2UpdateTopbar();
+  } else {
+    if(a.sub===1 && typeof n2ResetSub1==='function') n2ResetSub1();
+    else if(a.sub===2 && typeof n2ResetSub2==='function') n2ResetSub2();
+    else if(a.sub===3 && typeof n2ResetSub3==='function') n2ResetSub3();
+  }
+  toast('已重新开始当前活动');
+}
+function n2ResetCourse3(){
+  n2CloseMore();
+  if(typeof confirm==='function' && !confirm('确定要重置整个课程三进度吗？将清空所有挑战答题进度和完成记录，此操作不可撤销。')) return;
+  n2CompletedActs={}; n2LastActivity=null;
   if(typeof n2QuestResetProgress==='function') n2QuestResetProgress();
-  n2SaveScore();
-  toast('课程三本节分数与进度已清空');
+  try{ localStorage.removeItem(N2_PROGRESS_KEY); }catch(e){}
+  n2ShowDirectory();
+  toast('课程三进度已重置');
 }
-function n2SaveScore(){
+function n2ToggleFreeExplore(){
+  const p=document.getElementById('n2freeExplorePanel');
+  p.style.display = p.style.display==='none' ? '' : 'none';
+}
+/* 计分系统已删除：n2AddScore 保留为空操作，兼容旧调用点，不再产生任何分数或记录。 */
+function n2AddScore(){ /* no-op：本课堂不计分、不分组、不排名 */ }
+function n2SaveProgress(){
   try{
-    localStorage.setItem(N2_SCORE_KEY, JSON.stringify({
-      scoreA:n2ScoreA, scoreB:n2ScoreB, currentTeam:n2CurrentTeam, topMode:n2TopMode,
-      history:n2ScoreHistory,
+    localStorage.setItem(N2_PROGRESS_KEY, JSON.stringify({
+      activity:n2LastActivity,
+      completed:n2CompletedActs,
+      idx:{l1:n2L1State.idx, l2:n2L2State.idx, l3:n2L3State.idx, l4:n2L4State.idx},
     }));
   }catch(e){ /* localStorage 不可用时静默跳过，不影响课堂使用 */ }
 }
-function n2LoadScore(){
+function n2LoadProgress(){
   try{
-    const raw=localStorage.getItem(N2_SCORE_KEY);
+    // 迁移：清理旧版计分 key
+    localStorage.removeItem('satlab_course3_score_v1');
+    const raw=localStorage.getItem(N2_PROGRESS_KEY);
     if(!raw) return false;
     const d=JSON.parse(raw);
-    n2ScoreA = d.scoreA||0; n2ScoreB = d.scoreB||0;
-    n2CurrentTeam = d.currentTeam==='B' ? 'B' : 'A';
-    n2ScoreHistory = Array.isArray(d.history) ? d.history : [];
-    if(d.topMode==='quest' || d.topMode==='lab') n2TopMode = d.topMode;
+    n2CompletedActs = (d.completed && typeof d.completed==='object') ? d.completed : {};
+    // 记住上次活动，供"继续上次课堂"；但启动仍停在目录，由学生/教师决定继续或重来
+    if(d.activity && n2Activity(d.activity)) n2LastActivity = d.activity;
+    if(d.idx){
+      if(typeof d.idx.l1==='number') n2L1State.idx=Math.max(0,Math.min(7,d.idx.l1));
+      if(typeof d.idx.l2==='number') n2L2State.idx=Math.max(0,Math.min(7,d.idx.l2));
+      if(typeof d.idx.l3==='number') n2L3State.idx=Math.max(0,Math.min(7,d.idx.l3));
+      if(typeof d.idx.l4==='number') n2L4State.idx=Math.max(0,Math.min(7,d.idx.l4));
+    }
     return true;
   }catch(e){ return false; }
 }
@@ -2682,13 +2805,12 @@ document.addEventListener('keydown', function(e){
   if(!tp2 || tp2.style.display==='none') return;
   const tag=(e.target && e.target.tagName) || '';
   if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT') return;
-  if(e.key==='t' || e.key==='T'){ n2OpenTeacherAssist(); }
-  else if(e.key==='Escape'){ n2CloseTeacherAssist(); }
+  // 去分组去计分后：不再有教师辅助（T）和手动揭示（R）；系统在第二次答错后自动揭示。
+  if(e.key==='Escape'){ n2CloseMore(); }
   else if(e.key==='h' || e.key==='H'){
     if(n2TopMode==='quest' && n2QLevel>=1 && n2QLevel<=4) n2QuestNextHintPublic();
-    else n2NextHint();
+    else if(typeof n2NextHint==='function') n2NextHint();
   }
-  else if(e.key==='r' || e.key==='R'){ if(typeof n2QuestShowAnswer==='function') n2QuestShowAnswer(); }
   else if(e.key==='n' || e.key==='N'){ if(typeof n2QuestNextQuestion==='function') n2QuestNextQuestion(); }
 });
 
@@ -2814,77 +2936,97 @@ const N2_L1_QUESTIONS = [
   n2L1MakeQpsk('bit2point', 2, 'l1-7'),
   n2L1MakeQpsk('point2bit', 3, 'l1-8'),
 ];
-let n2L1State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+let n2L1State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
+/* 共同挑战反馈（规格十六）：答对→答案+为什么+一句话总结；第一次答错→"再想一想"+提示(不泄露答案)+重新选择；
+   第二次答错→揭示答案+错误原因+一句话总结。全程不计分、不分组。 */
+function n2ChallengeResult(q, correct, revealed, extraHighlight){
+  if(correct){
+    return `<div class="n2qresultbox show good">
+      <p><b>✅ 回答正确</b></p>
+      <p>正确答案：${q.answer}</p>
+      <p>为什么：${q.reason}</p>
+      ${extraHighlight||''}
+      <p style="font-size:15px;color:var(--cyan)">一句话总结：${q.teacher20s}</p>
+    </div>`;
+  }
+  // revealed（第二次答错后）
+  return `<div class="n2qresultbox show bad">
+    <p><b>正确答案是：${q.answer}</b></p>
+    <p>错误原因：${q.reason}</p>
+    <p style="color:var(--muted)">常见错误：${q.commonMistakes}</p>
+    ${extraHighlight||''}
+    <p style="font-size:15px;color:var(--cyan)">一句话总结：${q.teacher20s}</p>
+  </div>`;
+}
+function n2ChallengeRetry(q, onRetry){
+  return `<div class="n2qresultbox show bad">
+    <p class="n2retryhint">🤔 再想一想</p>
+    <p>提示：${q.hint1}</p>
+    <p style="color:var(--muted)">两名同学再讨论一下，然后点「重新选择」换一个答案。</p>
+    <button class="btn primary" onclick="${onRetry}">重新选择</button>
+  </div>`;
+}
 function n2L1Render(){
   const i=n2L1State.idx, q=N2_L1_QUESTIONS[i];
   n2ActiveQuestion=q; n2ActiveHintLevel=n2L1State.hintLevel[i];
-  const answered=n2L1State.answered[i], picked=n2L1State.picked[i];
+  const answered=n2L1State.answered[i], picked=n2L1State.picked[i], retrying=n2L1State.retrying[i];
+  const locked = answered || retrying;
   let optsHtml='';
   q.options.forEach((opt,idx)=>{
-    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L1Pick(${idx})" ${answered?'disabled':''}>${opt}</button>`;
+    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L1Pick(${idx})" ${locked?'disabled':''}>${opt}</button>`;
   });
   let hintHtml='';
   for(let lv=1; lv<=n2L1State.hintLevel[i]; lv++) hintHtml += `<p style="font-size:14px;color:var(--amber)">提示${lv}：${q['hint'+lv]}</p>`;
   let resultHtml='';
-  if(answered){
-    const ok=n2L1State.correct[i];
-    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
-      <p><b>${ok?'✅ 回答正确':'❌ 回答不正确'}</b>（本题得分：${n2L1State.points[i]}）</p>
-      <p>正确答案：${q.answer}</p>
-      <p>${q.reason}</p>
-      ${!ok?`<p style="color:var(--muted)">常见错误：${q.commonMistakes}</p>`:''}
-      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
-    </div>`;
-  }
+  if(answered) resultHtml = n2ChallengeResult(q, n2L1State.correct[i], true);
+  else if(retrying) resultHtml = n2ChallengeRetry(q, 'n2L1RetryPick()');
   let summaryHtml='';
   if(i===7 && answered){
-    const correctCount=n2L1State.correct.filter(Boolean).length;
-    const totalPts=n2L1State.points.reduce((a,b)=>a+b,0);
-    summaryHtml = `<div class="n2qsummary"><h4>第①关结束</h4><p>共 8 题，答对 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L1Restart()">↺ 重新开始本关</button></div>`;
+    summaryHtml = `<div class="n2qsummary"><h4>第①关完成</h4><p>共 8 题，两名同学一起把「bit ↔ 星座点」的固定映射走了一遍。</p><div class="n2qbtnrow"><button class="btn" onclick="n2L1Restart()">↺ 重新开始本活动</button><button class="btn primary" onclick="n2BackToDirectory()">← 返回活动目录</button></div></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
-    <div class="n2qprogress">第①关 · 符号配对赛　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qprogress">符号配对赛　第 ${i+1} / 8 题</div>
     <div class="n2qcard">
       <div class="n2qprompt">${q.prompt}</div>
       <div class="n2qoptions">${optsHtml}</div>
       ${hintHtml}
       <div class="n2qbtnrow">
-        <button class="btn" onclick="n2L1Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
-        <button class="btn primary" onclick="n2L1Submit()" ${answered||picked===null?'disabled':''}>提交答案</button>
+        <button class="btn" onclick="n2L1Hint()" ${locked?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L1Submit()" ${locked||picked===null?'disabled':''}>提交答案</button>
         <button class="btn" onclick="n2L1Next()" ${answered?'':'disabled'}>下一题（N）</button>
       </div>
       ${resultHtml}
     </div>
     ${summaryHtml}
   `;
+  n2UpdateTopbar();
 }
-function n2L1Pick(idx){ if(n2L1State.answered[n2L1State.idx]) return; n2L1State.picked[n2L1State.idx]=idx; n2L1Render(); }
+function n2L1Pick(idx){ const i=n2L1State.idx; if(n2L1State.answered[i]||n2L1State.retrying[i]) return; n2L1State.picked[i]=idx; n2L1Render(); }
+function n2L1RetryPick(){ const i=n2L1State.idx; n2L1State.retrying[i]=false; n2L1State.picked[i]=null; n2L1Render(); }
 function n2L1Hint(){
   const i=n2L1State.idx;
-  if(n2L1State.answered[i]) return;
+  if(n2L1State.answered[i]||n2L1State.retrying[i]) return;
   n2L1State.hintLevel[i]=Math.min(3, n2L1State.hintLevel[i]+1);
   n2ActiveHintLevel=n2L1State.hintLevel[i];
   n2L1Render();
 }
 function n2L1Submit(){
   const i=n2L1State.idx, q=N2_L1_QUESTIONS[i];
-  if(n2L1State.answered[i] || n2L1State.picked[i]===null) return;
+  if(n2L1State.answered[i] || n2L1State.retrying[i] || n2L1State.picked[i]===null) return;
   const ok = n2L1State.picked[i]===q.answerIdx;
-  n2L1State.answered[i]=true; n2L1State.correct[i]=ok;
-  const pts=n2QScorePoints(n2L1State.hintLevel[i], ok);
-  n2L1State.points[i]=pts;
-  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第①关第'+(i+1)+'题');
+  if(ok){ n2L1State.answered[i]=true; n2L1State.correct[i]=true; }
+  else {
+    n2L1State.attempts[i]++;
+    if(n2L1State.attempts[i]>=2){ n2L1State.answered[i]=true; n2L1State.correct[i]=false; }
+    else { n2L1State.retrying[i]=true; }
+  }
+  if(i===7 && n2L1State.answered[i]) n2MarkActivityDone();
   n2L1Render();
 }
-function n2L1Next(){ const i=n2L1State.idx; if(!n2L1State.answered[i]) return; if(i<7) n2L1State.idx++; n2L1Render(); }
-function n2L1Reveal(){
-  const i=n2L1State.idx;
-  if(n2L1State.answered[i]) return;
-  n2L1State.answered[i]=true; n2L1State.correct[i]=false; n2L1State.points[i]=0;
-  n2L1Render();
-}
+function n2L1Next(){ const i=n2L1State.idx; if(!n2L1State.answered[i]) return; if(i<7) n2L1State.idx++; n2L1Render(); n2SaveProgress(); }
+function n2L1Reveal(){ /* 保留占位：新流程由系统在第二次答错后自动揭示，教师不手动揭示 */ }
 function n2L1Restart(){
-  n2L1State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L1State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
   n2L1Render();
 }
 
@@ -2938,7 +3080,7 @@ const N2_L2_QUESTIONS = [
   {id:'l2-7', mod:'bpsk', sentIdx:0, rx:{x:-0.85,y:0},  diff:'简单'},
   {id:'l2-8', mod:'qpsk', sentIdx:2, rx:{x:-0.6,y:-0.05},diff:'中等'},
 ].map(n2L2Build);
-let n2L2State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+let n2L2State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
 function n2L2DrawCanvas(canvasId, cfg, rx, reveal, decidedIdx, sentIdx){
   const cv=document.getElementById(canvasId);
   if(!cv) return;
@@ -2969,40 +3111,36 @@ function n2L2DrawCanvas(canvasId, cfg, rx, reveal, decidedIdx, sentIdx){
 function n2L2Render(){
   const i=n2L2State.idx, q=N2_L2_QUESTIONS[i];
   n2ActiveQuestion=q; n2ActiveHintLevel=n2L2State.hintLevel[i];
-  const answered=n2L2State.answered[i], picked=n2L2State.picked[i];
+  const answered=n2L2State.answered[i], picked=n2L2State.picked[i], retrying=n2L2State.retrying[i];
+  const locked=answered||retrying;
   let optsHtml='';
   q.options.forEach((opt,idx)=>{
-    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L2Pick(${idx})" ${answered?'disabled':''}>接收端判为 ${opt}</button>`;
+    optsHtml += `<button class="btn${picked===idx?' picked':''}" onclick="n2L2Pick(${idx})" ${locked?'disabled':''}>接收端判为 ${opt}</button>`;
   });
   let hintHtml='';
   for(let lv=1; lv<=n2L2State.hintLevel[i]; lv++) hintHtml += `<p style="font-size:14px;color:var(--amber)">提示${lv}：${q['hint'+lv]}</p>`;
   let resultHtml='';
   if(answered){
-    const ok=n2L2State.correct[i];
-    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
-      <p><b>${ok?'✅ 判断正确':'❌ 判断不正确'}</b>（本题得分：${n2L2State.points[i]}）——接收端实际判决为「${q.answer}」</p>
-      <p>发送端实际发送符号：「${q.cfg.points[q.sentIdx].bits}」　是否产生符号错误：${q.symErr?'是':'否'}　对应 bit 错误数：${q.bitErr}</p>
-      <p>${q.reason}</p>
-      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
-      <p style="color:var(--muted)">复盘固定句：${N2_L2_FIXED_DEBRIEF}</p>
-    </div>`;
+    const detail = `<p>接收端实际判决为「${q.answer}」；发送端实际发送符号：「${q.cfg.points[q.sentIdx].bits}」　是否产生符号错误：${q.symErr?'是':'否'}　对应 bit 错误数：${q.bitErr}</p>
+      <p style="color:var(--muted)">复盘固定句：${N2_L2_FIXED_DEBRIEF}</p>`;
+    resultHtml = n2ChallengeResult(q, n2L2State.correct[i], true, detail);
+  } else if(retrying){
+    resultHtml = n2ChallengeRetry(q, 'n2L2RetryPick()');
   }
   let summaryHtml='';
   if(i===7 && answered){
-    const correctCount=n2L2State.correct.filter(Boolean).length;
-    const totalPts=n2L2State.points.reduce((a,b)=>a+b,0);
-    summaryHtml = `<div class="n2qsummary"><h4>第②关结束</h4><p>共 8 题，判断正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><p style="color:var(--muted)">${N2_L2_FIXED_DEBRIEF}</p><button class="btn" onclick="n2L2Restart()">↺ 重新开始本关</button></div>`;
+    summaryHtml = `<div class="n2qsummary"><h4>第②关完成</h4><p>共 8 题，两名同学一起判断了接收点会被判成哪个 symbol。</p><p style="color:var(--muted)">${N2_L2_FIXED_DEBRIEF}</p><div class="n2qbtnrow"><button class="btn" onclick="n2L2Restart()">↺ 重新开始本活动</button><button class="btn primary" onclick="n2BackToDirectory()">← 返回活动目录</button></div></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
-    <div class="n2qprogress">第②关 · 点云判决挑战　第 ${i+1}/8 题　难度：${q.diff}　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qprogress">点云判决挑战　第 ${i+1} / 8 题　难度：${q.diff}</div>
     <div class="n2qcard">
-      <div class="n2qprompt">下面是一个带噪声的接收点（发送端实际发送的符号暂时隐藏）。请判断：接收端会把它判成哪个符号？</div>
+      <div class="n2qprompt">下面是一个带噪声的接收点（发送端实际发送的符号暂时隐藏）。两名同学一起判断：接收端会把它判成哪个符号？</div>
       <canvas id="n2l2canvas" width="240" height="240"></canvas>
       <div class="n2qoptions">${optsHtml}</div>
       ${hintHtml}
       <div class="n2qbtnrow">
-        <button class="btn" onclick="n2L2Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
-        <button class="btn primary" onclick="n2L2Submit()" ${answered||picked===null?'disabled':''}>提交判断</button>
+        <button class="btn" onclick="n2L2Hint()" ${locked?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L2Submit()" ${locked||picked===null?'disabled':''}>提交判断</button>
         <button class="btn" onclick="n2L2Next()" ${answered?'':'disabled'}>下一题（N）</button>
       </div>
       ${resultHtml}
@@ -3010,34 +3148,34 @@ function n2L2Render(){
     ${summaryHtml}
   `;
   n2L2DrawCanvas('n2l2canvas', q.cfg, q.rx, answered, q.decidedIdx, q.sentIdx);
+  n2UpdateTopbar();
 }
-function n2L2Pick(idx){ if(n2L2State.answered[n2L2State.idx]) return; n2L2State.picked[n2L2State.idx]=idx; n2L2Render(); }
+function n2L2Pick(idx){ const i=n2L2State.idx; if(n2L2State.answered[i]||n2L2State.retrying[i]) return; n2L2State.picked[i]=idx; n2L2Render(); }
+function n2L2RetryPick(){ const i=n2L2State.idx; n2L2State.retrying[i]=false; n2L2State.picked[i]=null; n2L2Render(); }
 function n2L2Hint(){
   const i=n2L2State.idx;
-  if(n2L2State.answered[i]) return;
+  if(n2L2State.answered[i]||n2L2State.retrying[i]) return;
   n2L2State.hintLevel[i]=Math.min(3, n2L2State.hintLevel[i]+1);
   n2ActiveHintLevel=n2L2State.hintLevel[i];
   n2L2Render();
 }
 function n2L2Submit(){
   const i=n2L2State.idx, q=N2_L2_QUESTIONS[i];
-  if(n2L2State.answered[i] || n2L2State.picked[i]===null) return;
+  if(n2L2State.answered[i] || n2L2State.retrying[i] || n2L2State.picked[i]===null) return;
   const ok = n2L2State.picked[i]===q.answerIdx;
-  n2L2State.answered[i]=true; n2L2State.correct[i]=ok;
-  const pts=n2QScorePoints(n2L2State.hintLevel[i], ok);
-  n2L2State.points[i]=pts;
-  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第②关第'+(i+1)+'题');
+  if(ok){ n2L2State.answered[i]=true; n2L2State.correct[i]=true; }
+  else {
+    n2L2State.attempts[i]++;
+    if(n2L2State.attempts[i]>=2){ n2L2State.answered[i]=true; n2L2State.correct[i]=false; }
+    else { n2L2State.retrying[i]=true; }
+  }
+  if(i===7 && n2L2State.answered[i]) n2MarkActivityDone();
   n2L2Render();
 }
-function n2L2Next(){ const i=n2L2State.idx; if(!n2L2State.answered[i]) return; if(i<7) n2L2State.idx++; n2L2Render(); }
-function n2L2Reveal(){
-  const i=n2L2State.idx;
-  if(n2L2State.answered[i]) return;
-  n2L2State.answered[i]=true; n2L2State.correct[i]=false; n2L2State.points[i]=0;
-  n2L2Render();
-}
+function n2L2Next(){ const i=n2L2State.idx; if(!n2L2State.answered[i]) return; if(i<7) n2L2State.idx++; n2L2Render(); n2SaveProgress(); }
+function n2L2Reveal(){ /* 新流程自动揭示，教师不手动揭示 */ }
 function n2L2Restart(){
-  n2L2State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L2State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), picked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
   n2L2Render();
 }
 
@@ -3083,20 +3221,21 @@ const N2_L3_QUESTIONS = [
   n2L3Build([0,1,1,0,0,1,0,1,1,0,0,1], [1,4,9], 'l3-7'),                           // 3/12 = 25%
   n2L3Build([1,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0], [2,6,9,13], 'l3-8'),                // 4/16 = 25%
 ];
-let n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
+let n2L3State = {idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
 function n2L3ToggleMark(pos){
   const i=n2L3State.idx;
-  if(n2L3State.answered[i]) return;
+  if(n2L3State.answered[i]||n2L3State.retrying[i]) return;
   const set=n2L3State.marked[i];
   if(set.has(pos)) set.delete(pos); else set.add(pos);
   n2L3Render();
 }
 function n2L3SetCount(val){ n2L3State.countVal[n2L3State.idx]=val; }
-function n2L3PickBer(idx){ if(n2L3State.answered[n2L3State.idx]) return; n2L3State.berPicked[n2L3State.idx]=idx; n2L3Render(); }
+function n2L3PickBer(idx){ const i=n2L3State.idx; if(n2L3State.answered[i]||n2L3State.retrying[i]) return; n2L3State.berPicked[i]=idx; n2L3Render(); }
 function n2L3Render(){
   const i=n2L3State.idx, q=N2_L3_QUESTIONS[i];
   n2ActiveQuestion=q; n2ActiveHintLevel=n2L3State.hintLevel[i];
-  const answered=n2L3State.answered[i], marked=n2L3State.marked[i];
+  const answered=n2L3State.answered[i], marked=n2L3State.marked[i], retrying=n2L3State.retrying[i];
+  const locked=answered||retrying;
   let bitsHtml='';
   for(let k=0;k<q.received.length;k++){
     const isMarked=marked.has(k), isActualErr=q.errorPositions.includes(k);
@@ -3108,75 +3247,70 @@ function n2L3Render(){
   const countVal=n2L3State.countVal[i], berPicked=n2L3State.berPicked[i];
   let berOptsHtml='';
   q.berOptions.forEach((opt,idx)=>{
-    berOptsHtml += `<button class="btn${berPicked===idx?' picked':''}" onclick="n2L3PickBer(${idx})" ${answered?'disabled':''}>${opt}</button>`;
+    berOptsHtml += `<button class="btn${berPicked===idx?' picked':''}" onclick="n2L3PickBer(${idx})" ${locked?'disabled':''}>${opt}</button>`;
   });
   let resultHtml='';
   if(answered){
-    const ok=n2L3State.correct[i];
     const markOk = marked.size===q.errorPositions.length && q.errorPositions.every(p=>marked.has(p));
     const countOk = parseInt(countVal,10)===q.errorCount;
     const berOk = berPicked===q.berAnswerIdx;
-    resultHtml = `<div class="n2qresultbox show ${ok?'good':'bad'}">
-      <p><b>${ok?'✅ 全部正确':'❌ 存在错误'}</b>（本题得分：${n2L3State.points[i]}）——错误位置找全：${markOk?'✔':'✘'}　错误数正确：${countOk?'✔':'✘'}　BER正确：${berOk?'✔':'✘'}</p>
-      <p>正确答案：${q.answer}</p>
-      <p>${q.reason}</p>
-      <p style="font-size:15px;color:var(--cyan)">可直接照读：${q.teacher20s}</p>
-    </div>`;
+    const detail = `<p>逐项核对——错误位置找全：${markOk?'✔':'✘'}　错误数正确：${countOk?'✔':'✘'}　BER正确：${berOk?'✔':'✘'}（红色为真正的错误位，绿色为标错的位）</p>`;
+    resultHtml = n2ChallengeResult(q, n2L3State.correct[i], true, detail);
+  } else if(retrying){
+    resultHtml = n2ChallengeRetry(q, 'n2L3RetryPick()');
   }
   let summaryHtml='';
   if(i===7 && answered){
-    const correctCount=n2L3State.correct.filter(Boolean).length;
-    const totalPts=n2L3State.points.reduce((a,b)=>a+b,0);
-    summaryHtml = `<div class="n2qsummary"><h4>第③关结束</h4><p>共 8 题，全部正确 ${correctCount} 题，本关共得 ${totalPts} 分。</p><button class="btn" onclick="n2L3Restart()">↺ 重新开始本关</button></div>`;
+    summaryHtml = `<div class="n2qsummary"><h4>第③关完成</h4><p>共 8 题，两名同学一起找错误位置、数错误个数、算 BER。</p><div class="n2qbtnrow"><button class="btn" onclick="n2L3Restart()">↺ 重新开始本活动</button><button class="btn primary" onclick="n2BackToDirectory()">← 返回活动目录</button></div></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
-    <div class="n2qprogress">第③关 · BER 侦探　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qprogress">BER 侦探　第 ${i+1} / 8 题</div>
     <div class="n2qcard">
-      <div class="n2qprompt">下面是发送串和接收串（共 ${q.totalBits} bit）。请：① 点击接收串中所有出错的位置　② 填写错误 bit 数　③ 选出正确的 BER。</div>
+      <div class="n2qprompt">下面是发送串和接收串（共 ${q.totalBits} bit）。两名同学一起：① 点击接收串中所有出错的位置　② 填写错误 bit 数　③ 选出正确的 BER。</div>
       <div class="n2row"><div class="lbl">发送 bits</div><div class="n2bits mono">${q.sent.join('')}</div></div>
       <div class="n2row"><div class="lbl">接收 bits（点击标记你认为错误的位置）</div><div class="n2bits mono n2bitclickable">${bitsHtml}</div></div>
-      <div class="n2row"><div class="lbl">错误 bit 数：</div><input type="number" min="0" style="width:80px;font-size:16px;padding:6px" value="${countVal}" oninput="n2L3SetCount(this.value)" ${answered?'disabled':''}></div>
+      <div class="n2row"><div class="lbl">错误 bit 数：</div><input type="number" min="0" style="width:80px;font-size:16px;padding:6px" value="${countVal}" oninput="n2L3SetCount(this.value)" ${locked?'disabled':''}></div>
       <div class="n2row"><div class="lbl">BER：</div><div class="n2qoptions">${berOptsHtml}</div></div>
       <div class="n2qbtnrow">
-        <button class="btn" onclick="n2L3Hint()" ${answered?'disabled':''}>💡 提示（H）</button>
-        <button class="btn primary" onclick="n2L3Submit()" ${answered?'disabled':''}>提交答案</button>
+        <button class="btn" onclick="n2L3Hint()" ${locked?'disabled':''}>💡 提示（H）</button>
+        <button class="btn primary" onclick="n2L3Submit()" ${locked?'disabled':''}>提交答案</button>
         <button class="btn" onclick="n2L3Next()" ${answered?'':'disabled'}>下一题（N）</button>
       </div>
       ${resultHtml}
     </div>
     ${summaryHtml}
   `;
+  n2UpdateTopbar();
 }
+function n2L3RetryPick(){ const i=n2L3State.idx; n2L3State.retrying[i]=false; n2L3Render(); }
 function n2L3Hint(){
   const i=n2L3State.idx;
-  if(n2L3State.answered[i]) return;
+  if(n2L3State.answered[i]||n2L3State.retrying[i]) return;
   n2L3State.hintLevel[i]=Math.min(3, n2L3State.hintLevel[i]+1);
   n2ActiveHintLevel=n2L3State.hintLevel[i];
   n2L3Render();
 }
 function n2L3Submit(){
   const i=n2L3State.idx, q=N2_L3_QUESTIONS[i];
-  if(n2L3State.answered[i]) return;
+  if(n2L3State.answered[i] || n2L3State.retrying[i]) return;
   const marked=n2L3State.marked[i];
   const markOk = marked.size===q.errorPositions.length && q.errorPositions.every(p=>marked.has(p));
   const countOk = parseInt(n2L3State.countVal[i],10)===q.errorCount;
   const berOk = n2L3State.berPicked[i]===q.berAnswerIdx;
   const ok = markOk && countOk && berOk;
-  n2L3State.answered[i]=true; n2L3State.correct[i]=ok;
-  const pts=n2QScorePoints(n2L3State.hintLevel[i], ok);
-  n2L3State.points[i]=pts;
-  if(pts>0) n2AddScore(n2CurrentTeam, pts, '第③关第'+(i+1)+'题');
+  if(ok){ n2L3State.answered[i]=true; n2L3State.correct[i]=true; }
+  else {
+    n2L3State.attempts[i]++;
+    if(n2L3State.attempts[i]>=2){ n2L3State.answered[i]=true; n2L3State.correct[i]=false; }
+    else { n2L3State.retrying[i]=true; }
+  }
+  if(i===7 && n2L3State.answered[i]) n2MarkActivityDone();
   n2L3Render();
 }
-function n2L3Next(){ const i=n2L3State.idx; if(!n2L3State.answered[i]) return; if(i<7) n2L3State.idx++; n2L3Render(); }
-function n2L3Reveal(){
-  const i=n2L3State.idx;
-  if(n2L3State.answered[i]) return;
-  n2L3State.answered[i]=true; n2L3State.correct[i]=false; n2L3State.points[i]=0;
-  n2L3Render();
-}
+function n2L3Next(){ const i=n2L3State.idx; if(!n2L3State.answered[i]) return; if(i<7) n2L3State.idx++; n2L3Render(); n2SaveProgress(); }
+function n2L3Reveal(){ /* 新流程自动揭示，教师不手动揭示 */ }
 function n2L3Restart(){
-  n2L3State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), points:new Array(8).fill(0)};
+  n2L3State={idx:0, answered:new Array(8).fill(false), correct:new Array(8).fill(null), hintLevel:new Array(8).fill(0), marked:new Array(8).fill(null).map(()=>new Set()), countVal:new Array(8).fill(''), berPicked:new Array(8).fill(null), attempts:new Array(8).fill(0), retrying:new Array(8).fill(false)};
   n2L3Render();
 }
 
@@ -3541,14 +3675,13 @@ function n2L4Render(){
   }
   let summaryHtml='';
   if(i===7 && submitted){
-    const totalSum = n2L4State.scores.reduce((a,s)=>a+(s?s.total:0),0);
-    summaryHtml = `<div class="n2qsummary"><h4>第④关结束</h4><p>共 8 个场景，已全部提交方案，8 题总分 ${totalSum} / 160。第④关无唯一对错，请两组各自陈述取舍理由。</p><button class="btn" onclick="n2L4Restart()">↺ 重新开始本关</button></div>`;
+    summaryHtml = `<div class="n2qsummary"><h4>第④关完成</h4><p>共 8 个场景，两名同学已一起为每个场景选出一套通信策略。本关无唯一对错，重点是能说清每一步的取舍理由——可以对照每个场景的五维反馈再复盘一次。</p><div class="n2qbtnrow"><button class="btn" onclick="n2L4Restart()">↺ 重新开始本活动</button><button class="btn primary" onclick="n2BackToDirectory()">← 返回活动目录</button></div></div>`;
   }
   document.getElementById('n2questLevelWrap').innerHTML = `
-    <div class="n2qprogress">第④关 · 海岛通信指挥官　第 ${i+1}/8 题　当前作答组：${n2CurrentTeam}</div>
+    <div class="n2qprogress">海岛通信指挥官　第 ${i+1} / 8 题</div>
     <div class="n2qcard">
       <div class="n2l4scenario">链路状态：<b>${q.link}</b>　剩余电量：<b>${q.power}</b>　当前任务：<b>${q.task}</b>　网络压力：<b>${q.pressure}</b></div>
-      <div class="n2qprompt">请为当前场景选择通信策略，系统会按五个维度评分（不判唯一对错）。</div>
+      <div class="n2qprompt">两名同学一起为当前场景选择通信策略，系统会按五个维度给出反馈（不判唯一对错）。</div>
       <div class="n2l4choices">
         <div><label>CRC</label><div style="padding:8px 10px;color:var(--muted)">CRC：基础检错，默认开启（不可关闭）</div></div>
         <div><label>① 调制档位</label>${sel('modTier',['高速档','稳定档'])}</div>
@@ -3569,6 +3702,7 @@ function n2L4Render(){
     </div>
     ${summaryHtml}
   `;
+  n2UpdateTopbar();
 }
 function n2L4Hint(){
   const i=n2L4State.idx;
@@ -3582,10 +3716,10 @@ function n2L4Submit(){
   if(n2L4State.submitted[i]) return;
   n2L4State.scores[i] = n2L4Score(q, n2L4State.picks[i]);
   n2L4State.submitted[i]=true;
-  n2AddScore(n2CurrentTeam, 1, '第④关第'+(i+1)+'题（参与分，无唯一对错，得分见五维评分）');
+  if(i===7) n2MarkActivityDone();
   n2L4Render();
 }
-function n2L4Next(){ const i=n2L4State.idx; if(!n2L4State.submitted[i]) return; if(i<7) n2L4State.idx++; n2L4Render(); }
+function n2L4Next(){ const i=n2L4State.idx; if(!n2L4State.submitted[i]) return; if(i<7) n2L4State.idx++; n2L4Render(); n2SaveProgress(); }
 function n2L4Reveal(){
   const i=n2L4State.idx;
   if(n2L4State.submitted[i]) return;
@@ -3609,7 +3743,7 @@ function n2BuildGuideMarkdown(){
   const lines=[];
   lines.push('# 课程三 HTML 实验与闯关讲师指引');
   lines.push('');
-  lines.push('本指引由 `n2BuildGuideMarkdown()` 从闯关四关的同一份题库数据直接生成，与网页内「🧑‍🏫 教师辅助 → 下载讲师指引」按钮下载的内容、以及仓库 `teacher-guide.md` 文件三处保持逐字一致。');
+  lines.push('本指引由 `n2BuildGuideMarkdown()` 从四个学生挑战的同一份题库数据直接生成，与仓库 `teacher-guide.md` 文件逐字一致（课程三网页已去掉分组计分与顶栏下载按钮，本指引作为独立文件随交付包提供）。');
   lines.push('');
   // ===== 课堂速查卡（规格七）：放在完整版内容之前，控制在两页以内 =====
   lines.push('# 课程三课堂速查卡');
@@ -3645,34 +3779,37 @@ function n2BuildGuideMarkdown(){
   lines.push('');
   lines.push('所有课堂显示从「第 1 位」开始（最左边算第 1 位）。');
   lines.push('');
-  lines.push('## 5. 教师快捷键');
+  lines.push('## 5. 键盘快捷键');
   lines.push('');
-  lines.push('- T：教师辅助　Esc：关闭　H：下一级提示　R：显示答案　N：下一题');
+  lines.push('- H：显示下一级提示　N：下一题　Esc：关闭「更多设置」菜单');
+  lines.push('- 本课堂不分组、不计分、不排名，也没有教师辅助/手动揭示：系统会在学生第二次答错后自动揭示答案和解释，教师无需操作。');
   lines.push('');
   lines.push('## 6. 活动建议时间');
   lines.push('');
-  lines.push('- 符号配对 5–6 分钟｜星座实验 5 分钟｜点云判决 7–8 分钟｜BER 实验 4–5 分钟｜BER 侦探 5–6 分钟｜CRC/FEC 实验 7–8 分钟｜海岛指挥官 10–12 分钟');
+  lines.push('- 符号配对 5–6 分钟｜星座图演示 5 分钟｜点云判决 6 分钟｜BER 演示 4–5 分钟｜BER 侦探 5–6 分钟｜CRC/FEC 演示 7–8 分钟｜海岛指挥官 10–12 分钟');
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 一、课堂使用总流程');
+  lines.push('## 一、课堂使用总流程（共同探索工具，不是分组竞赛）');
   lines.push('');
-  lines.push('建议总时长：45 分钟（实验模式约 20 分钟 + 闯关模式约 25 分钟），可根据班级进度调整。');
+  lines.push('本课堂网页只是一个共同探索和练习工具，**不区分 A/B 组、不计分、不排名**。两名学生共同操作同一台设备：一起讨论 → 共同选一个答案 → 提交 → 系统自动反馈。教师不参与判分、不记答案、不需要选择学生或小组。');
   lines.push('');
-  lines.push('> **与 PPT／故事板联动**：闯关四关分别对应故事板第 17（符号配对赛）、31（点云判决挑战）、35（BER 侦探）、49（海岛通信指挥官）页的规则页，每关打完后回到 PPT 对应的 30 秒复盘页；实验模式在教学页随讲随演，不单独占 PPT 页。');
+  lines.push('> **与 PPT 联动**：课程三首页是「按 PPT 页码进入」的活动目录。教师讲到对应页码，点开目录里对应的活动即可；活动分两类——**实验演示**（教师操作，随讲随演）和**学生挑战**（两名学生共同作答，系统自动反馈）。');
   lines.push('');
-  lines.push('1. **开场（3 分钟）**：讲清楚两条写死的技术边界（见第四节「快速答案卡」），再让学生知道今天会用网页验证判断，而不是老师直接讲结论。');
-  lines.push('2. **实验模式（约 20 分钟，教师随讲随演）**：');
-  lines.push('   - 先讲一个简单概念 → 学生纸上预测 → 网页验证 → 显示答案 → 教师复盘。');
-  lines.push('   - 三个子实验按顺序演示：① 星座图与判决 → ② 误码与 BER → ③ CRC 与 FEC。');
-  lines.push('   - **哪些答案不能提前显示**：子实验①的判决结果颜色和 bit 标签（点"隐藏答案"后）、子实验②的错误标记（点"隐藏错误标记"后）——这些都是"先让学生猜，再核对"的环节，不要提前点开。');
-  lines.push('3. **切换到闯关模式（约 25 分钟，学生 A/B 两组竞赛）**：');
-  lines.push('   - 顶部先选好当前作答组（A/B），四关可以按顺序打，也可以教师跳关、重复某一关。');
-  lines.push('   - 第④关海岛通信指挥官已改为 CRC 默认开启（学生无法关闭）+ 5 项选择（调制档位/FEC强度/重传策略/业务降级/业务发送顺序）+ 20 分 5 维评分，详见第三节。');
-  lines.push('   - **哪些答案不能提前显示**：每道题在学生提交答案之前，正确答案（或第④关的推荐方案）不会出现在投影区；教师如果想自己先确认答案，必须用 T 键打开"教师辅助"，会先弹出隐私确认页，确认现在没有对着学生投影才能看到内容，Esc 随时关闭。');
-  lines.push('4. **结束复盘（3 分钟）**：用第四节「快速答案卡」带全班过一遍固定结论，公布 A/B 两组总分。');
+  lines.push('1. **开场（3 分钟）**：讲清楚两条写死的技术边界（见第四节「快速答案卡」），再让学生知道今天会两人一组用网页共同探索、共同验证，而不是比赛谁分高。');
+  lines.push('2. **实验演示（星座图 / 误码 BER / CRC-FEC，教师随讲随演）**：');
+  lines.push('   - 先讲一个简单概念 → 学生纸上预测 → 网页演示验证 → 教师复盘。');
+  lines.push('   - 三个实验从目录分别进入，也可以在实验内部的子标签之间来回切换对比。');
+  lines.push('   - **哪些答案不能提前显示**：星座图演示的判决结果颜色和 bit 标签（点"隐藏答案"后）、误码演示的错误标记（点"隐藏错误标记"后）——这些是"先让学生猜、再核对"的环节，不要提前点开。');
+  lines.push('3. **学生挑战（符号配对 / 点云判决 / BER 侦探 / 海岛指挥官，两名学生共同操作）**：');
+  lines.push('   - 从目录点开一个挑战，两名学生讨论后共同点选一个答案，点「提交答案」。');
+  lines.push('   - **系统自动反馈**：答对 → 显示正确答案、为什么正确、一句话总结；第一次答错 → 显示「再想一想」和一个不泄露答案的提示，学生点「重新选择」再讨论、改一次；第二次答错 → 系统自动揭示正确答案、错误原因和解释。全程不计分。');
+  lines.push('   - 第④关海岛通信指挥官是综合应用题，无唯一对错：CRC 默认开启（学生无法关闭）+ 5 项选择（调制档位/FEC强度/重传策略/业务降级/业务发送顺序）+ 20 分 5 维反馈（每维含"为什么/主要影响/怎么调"），详见第三节。');
+  lines.push('4. **结束复盘（3 分钟）**：用第四节「快速答案卡」带全班过一遍固定结论。不公布分数、不排名——只请几组说说自己的判断理由。');
   lines.push('');
-  lines.push('## 二、实验模式讲师指引');
+  lines.push('> 顶部工具栏只保留：返回活动目录 / 当前活动名 / 题目进度 / 亮色深色 / 更多设置（重新开始当前活动、重置课程三进度、进阶参数在各实验内部）。「重置课程三进度」需二次确认。');
+  lines.push('');
+  lines.push('## 二、实验演示讲师指引');
   lines.push('');
   lines.push('### 实验① 星座图与判决');
   lines.push('');
@@ -3784,7 +3921,7 @@ function n2BuildGuideMarkdown(){
     lines.push(`  - 60 秒讲稿：${q.teacher60s}`);
     lines.push('');
   });
-  lines.push('- **本关评分规则**：不用第①-③关的判断题计分规则，提交方案即获得 1 分参与分（不判定对错），核心价值在于五维评分和教师复盘讨论。');
+  lines.push('- **本关反馈方式**：本课堂不计分。海岛指挥官无唯一对错，两名学生共同为每个场景选一套策略、提交后看五维反馈（每维含"为什么/主要影响/怎么调"），核心价值在于说清取舍理由和教师复盘讨论。');
   lines.push('');
   lines.push('## 四、快速答案卡（可打印，供课堂随时翻查）');
   lines.push('');
@@ -3797,7 +3934,7 @@ function n2BuildGuideMarkdown(){
   lines.push('- **业务降级**：主动减少需要传输的数据，不等于允许数据随便出错，降级后仍要发送的数据仍需 CRC 检错。');
   lines.push('- **海岛原则**：先保位置和文字，再考虑语音和图片；没有唯一正确组合，能说明取舍理由就是好方案。');
   lines.push('- **两条写死边界**：① 模拟噪声强度和 bit 独立翻转概率是两个完全不同的参数，互不影响；② 误码率必须分别标注"信道 BER"和"Payload BER"，不能只写"BER"。');
-  lines.push('- **快捷键**：T 打开教师辅助（先弹隐私确认）／Esc 立即关闭／H 显示下一级提示／R 直接显示正确答案或推荐方案／N 下一题。');
+  lines.push('- **快捷键**：H 显示下一级提示／N 下一题／Esc 关闭「更多设置」菜单。本课堂不计分、不分组、不排名，也没有教师辅助/手动揭示——学生第二次答错后系统自动揭示答案。');
   lines.push('');
   lines.push('## 五、技术故障备用方案（网页不能用时的纸笔替代）');
   lines.push('');
@@ -3805,7 +3942,7 @@ function n2BuildGuideMarkdown(){
   lines.push('- **判决区域纸笔题**：老师在黑板画一个简化的星座图坐标轴，点上一个"接收点"位置，学生纸上判断它离哪个理想点最近、是否跨过了判决边界。');
   lines.push('- **BER 手算题**：老师口头给出两串等长 0/1（比如 8 位），学生纸上逐位比较，数出错误位置和错误数，再算出 BER（用第三关允许的简单分数形式）。');
   lines.push('- **重复码多数表决题**：老师给出一个 bit 的三次重复副本（比如 1 1 0），学生纸上做多数表决，判断恢复出的 bit 是多少，并说明这是否是"多数表决失败"的情形（两份或以上不一致时）。');
-  lines.push('- **海岛策略卡**：把第三节"海岛场景推荐策略表"打印发给两组，直接讨论当前假设场景该怎么选，不需要网页也能完成第④关的教学目标。');
+  lines.push('- **海岛策略卡**：把第三节"海岛场景推荐策略表"打印发给每桌两名同学，直接讨论当前假设场景该怎么选，不需要网页也能完成第④关的教学目标。');
   lines.push('');
   return lines.join('\n');
 }
