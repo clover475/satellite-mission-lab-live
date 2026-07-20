@@ -394,6 +394,13 @@
   .n2l4barseg span{flex:1; height:14px; border-radius:3px; background:var(--line);}
   .n2l4barseg span.on{background:var(--amber);}
   .n2l4bar .lv{font-size:16px; font-weight:bold; margin-top:4px;}
+  /* 详细版：五维竖排，每维一行，含为什么/主要影响/怎么调 */
+  .n2l4barsdetailed{display:flex; flex-direction:column; gap:10px;}
+  .n2l4barsdetailed .n2l4bar{border:1px solid var(--line); border-radius:8px; padding:10px 12px;}
+  .n2l4barhead{display:grid; grid-template-columns:150px 1fr auto; align-items:center; gap:12px;}
+  .n2l4barhead .k{margin-bottom:0;}
+  .n2l4barhead .lv{margin-top:0;}
+  .n2l4dimdetail{margin-top:8px; font-size:13px; line-height:1.55; display:flex; flex-direction:column; gap:2px;}
   .n2l4scenario{font-size:14px; color:var(--muted); margin-bottom:10px;}
 
   /* ---- 打印本节答案卡：只在打印时显示 #n2printCard，其余全部隐藏 ---- */
@@ -897,6 +904,10 @@
       <button class="btn" onclick="n2RunBatch3(500)">📊 批量统计 500 次</button>
       <button class="btn" onclick="n2ResetSub3()">↺ 重置本实验</button>
     </div>
+    <div class="n2resetrow" style="margin-top:6px">
+      <button class="btn" onclick="n2CompareAll3(100)">📊 同时比较全部方案 100 次</button>
+      <button class="btn" onclick="n2CompareAll3(500)">📊 同时比较全部方案 500 次</button>
+    </div>
 
     <div class="n2result" id="n2sub3result" style="display:none">
       <div class="n2row"><div class="lbl">发送编码后 bits</div><div class="n2bits mono" id="n2row-orig3"></div></div>
@@ -912,7 +923,14 @@
     <div class="n2batchbox" id="n2batchbox3" style="display:none">
       <div class="lbl" style="font-size:15px;color:var(--muted)">批量统计结果（同一 p、同一随机种子序列）</div>
       <table class="n2batchtable" id="n2batchtable3"></table>
-      <p style="font-size:14px;color:var(--muted);margin-top:6px">单次实验有随机性，多次统计才能看出总体趋势；不同方案发送总 bit 数不同，原始错误数不可直接横向比较。</p>
+      <p id="n2batchnote3" style="font-size:14px;color:var(--muted);margin-top:6px"></p>
+    </div>
+
+    <div class="n2batchbox" id="n2comparebox3" style="display:none">
+      <div class="lbl" style="font-size:15px;color:var(--muted)">同时比较全部方案（相同翻转概率 p、相同固定随机种子、每个方案在同一 run 用同一起点种子，公平且可复现）</div>
+      <div style="overflow-x:auto"><table class="n2batchtable" id="n2comparetable3"></table></div>
+      <p style="font-size:14px;color:var(--amber);margin-top:6px">⚠️ 发送 bit 数不同，不能只比较翻转了多少位；应比较<b>信道 BER、Payload BER、完整恢复率和冗余开销</b>。</p>
+      <p style="font-size:14px;color:var(--muted);margin-top:2px">四种方案使用相同的 bit 翻转概率与固定随机种子，编码长度不同所以翻转 bit 总数不能直接横向比较，看 BER 与最终恢复结果才公平。「不适用」表示该方案没有这项能力，不是 0%。</p>
     </div>
 
     <div class="n2boundarynote">
@@ -960,7 +978,7 @@
   <p>信道 BER = 信道中被翻转的编码 bit 数 ÷ 编码后发送总 bit 数。</p>
   <p>Payload BER = 恢复后仍错的原始数据 bit 数 ÷ 原始 payload bit 数。</p>
   <p>CRC-4（x⁴+x+1，二进制 10011）：只检测错误，不自动修复，不宣称能检测所有可能的错误组合。</p>
-  <p>FEC：利用冗余修复一定能力范围内的错误，不是任意数量都能修复。</p>
+  <p>FEC：利用冗余修复一定能力范围内的错误，不是任意数量都能修复。在编码设计合理的情况下，增加冗余通常可以为更强的检错或纠错能力创造条件，但能力不仅取决于冗余数量，也取决于编码规则的设计。</p>
   <h3>四关提示（一级 / 二级 / 三级）</h3>
   <p>①符号配对赛：先数这种调制一共有几个理想点 → QPSK 四个状态需要两个bit → 看右上左上左下右下固定Gray映射。</p>
   <p>②点云判决挑战：先看这个点落在哪个判决区域 → 接收端判为距离最近的理想点 → 不要猜发送端原本想发什么。</p>
@@ -2360,47 +2378,94 @@ function n2RunSingle3(){
   document.getElementById('n2sub3empty').style.display='none';
   document.getElementById('n2batchbox3').style.display='none';
 }
-function n2RunBatch3(n){
-  const scheme=n2Scheme3;
-  const p=n2P3/100;
-  const rng = n2Seed3Fixed ? n2Mulberry32(20260722) : null;
-  let fullRecoverCount=0, sumBER=0, sentLen=0;
+/* 统计单个方案 n 次，返回各项指标。纠错/检错“不适用”与“0%”严格区分（规格三/四）：
+   - 无保护 A：既无检错也无纠错能力 → 两项都「不适用」，不显示 0%（0% 会让学生误以为“有能力只是没成功”）。
+   - CRC B：只检错不纠错 → 检错率显示数值；纠错成功率固定「不适用：CRC 只检错、不纠错」。
+     （即使翻转恰好只落在 CRC 校验位、payload 碰巧正确，也绝不算“CRC 纠错成功”。）
+   - 三次重复码 C / 汉明码 D：有能力范围内的纠错 → 纠错成功率 = “信道产生了 payload 相关错误、经解码后 payload 恢复正确”的比例。 */
+function n2StatScheme3(scheme, p, n, seedBase){
+  let fullRecoverCount=0, sumPayloadBER=0, sumChannelBER=0, sentLen=0;
   let errorRuns=0, detectedInErrorRuns=0, correctedInErrorRuns=0;
   for(let i=0;i<n;i++){
+    // 每次运行用同一个 seedBase 派生的种子，四方案跑同一 run 时起点一致（公平、可复现）
+    const rng = seedBase!=null ? n2Mulberry32(seedBase+i) : null;
     const sentBits=n2Encode3(scheme, N2_MSG_BITS);
     sentLen=sentBits.length;
     const channelBits=sentBits.map(b=> n2Rand3(rng)<p ? 1-b : b);
     const channelFlips=channelBits.filter((b,idx)=>b!==sentBits[idx]).length;
     const dec=n2Decode3(scheme, channelBits, sentBits, N2_MSG_BITS);
     const remainingErrors=dec.stillWrong.filter(Boolean).length;
-    sumBER += remainingErrors/45;
+    sumPayloadBER += remainingErrors/45;
+    sumChannelBER += channelFlips/sentLen;
     if(remainingErrors===0) fullRecoverCount++;
-    if(channelFlips>0){
+    if(channelFlips>0){                       // 本次信道产生了 payload 相关错误
       errorRuns++;
       if(dec.detectable && dec.detected) detectedInErrorRuns++;
-      if(remainingErrors===0) correctedInErrorRuns++;
+      if(remainingErrors===0) correctedInErrorRuns++;  // 经解码后 payload 恢复正确
     }
   }
-  const fullRecoverRate=(fullRecoverCount/n*100).toFixed(1);
-  const avgBER=(sumBER/n*100).toFixed(2);
-  const effRatio=(45/sentLen*100).toFixed(1);
-  const detectApplicable = scheme!=='A';
-  const detectRate = errorRuns>0 ? (detectedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）';
-  const correctRate = errorRuns>0 ? (correctedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）';
-
+  const hasDetect = (scheme!=='A');           // A 无检错能力
+  const hasCorrect = (scheme==='C' || scheme==='D'); // 只有 FEC 类才有纠错能力
+  const na = '不适用';
+  return {
+    scheme, n, sentLen, redundancy: sentLen-45,
+    fullRecoverRate:(fullRecoverCount/n*100).toFixed(1)+'%',
+    avgChannelBER:(sumChannelBER/n*100).toFixed(2)+'%',
+    avgPayloadBER:(sumPayloadBER/n*100).toFixed(2)+'%',
+    effRatio:(45/sentLen*100).toFixed(1)+'%',
+    detectRate: !hasDetect ? na+'（无检错机制）'
+              : (errorRuns>0 ? (detectedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）'),
+    correctRate: !hasCorrect ? (scheme==='B' ? na+'：CRC 只检错、不纠错' : na+'（无纠错机制）')
+              : (errorRuns>0 ? (correctedInErrorRuns/errorRuns*100).toFixed(1)+'%' : '—（本轮无错误发生）'),
+  };
+}
+function n2RunBatch3(n){
+  const scheme=n2Scheme3;
+  const p=n2P3/100;
+  const seedBase = n2Seed3Fixed ? 20260722 : null;
+  const r=n2StatScheme3(scheme, p, n, seedBase);
   const tbl=document.getElementById('n2batchtable3');
   tbl.innerHTML=`
-    <tr><th>运行次数</th><th>完整恢复成功率</th><th>平均 payload BER</th><th>发送总 bit 数</th><th>有效数据比例</th><th>检错成功率</th><th>纠错成功率</th></tr>
+    <tr><th>运行次数</th><th>编码后发送 bit 数</th><th>冗余开销</th><th>平均信道 BER</th><th>平均 Payload BER</th><th>完整恢复成功率</th><th>检错率</th><th>纠错成功率</th></tr>
     <tr>
       <td>${n}</td>
-      <td>${fullRecoverRate}%</td>
-      <td>${avgBER}%</td>
-      <td>${sentLen}</td>
-      <td>${effRatio}%</td>
-      <td>${detectApplicable ? detectRate : '不适用（无检错机制）'}</td>
-      <td>${correctRate}</td>
+      <td>${r.sentLen}</td>
+      <td>+${r.redundancy} bit</td>
+      <td>${r.avgChannelBER}</td>
+      <td>${r.avgPayloadBER}</td>
+      <td>${r.fullRecoverRate}</td>
+      <td>${r.detectRate}</td>
+      <td>${r.correctRate}</td>
     </tr>`;
+  document.getElementById('n2batchnote3').innerHTML = '原始 payload 固定 45 bit。<b>平均信道 BER</b> = 编码后在信道里翻转的 bit 比例；<b>平均 Payload BER</b> = 解码恢复后原始数据仍错的 bit 比例——两者是不同指标，不能混为一个「BER」。「完整恢复成功率」（整条消息一位不错）与「纠错成功率」也是两个不同指标。标「不适用」表示该方案没有这项能力，与「0%」（有能力但本轮没成功）含义不同。';
   document.getElementById('n2batchbox3').style.display='';
+  document.getElementById('n2comparebox3').style.display='none';
+  document.getElementById('n2sub3result').style.display='none';
+}
+/* §5 同时比较全部方案：四方案（含汉明 D）跑同一 n 次。
+   公平性：固定种子 seedBase，第 i 次运行四方案都用 n2Mulberry32(seedBase+i) 作为各自信道 RNG 的起点——
+   即每个方案面对“同一 run 同一起点”的等价随机样本序列，切换方案不会重新生成完全不同的随机条件；可复现。 */
+function n2CompareAll3(n){
+  const p=n2P3/100;
+  const seedBase=20260723; // 比较模式固定种子，保证可复现 + 四方案同起点
+  const schemes=['A','B','C','D'];
+  const names={A:'无保护', B:'CRC', C:'三次重复码', D:'汉明码'};
+  const rows=schemes.map(s=>n2StatScheme3(s, p, n, seedBase));
+  const tbl=document.getElementById('n2comparetable3');
+  tbl.innerHTML=`
+    <tr><th>方案</th><th>发送 bit 数</th><th>冗余开销</th><th>平均信道 BER</th><th>平均 Payload BER</th><th>完整恢复率</th><th>检错率</th><th>纠错成功率</th></tr>
+    ${rows.map(r=>`<tr>
+      <td style="text-align:left">${names[r.scheme]}</td>
+      <td>${r.sentLen}</td>
+      <td>+${r.redundancy} bit</td>
+      <td>${r.avgChannelBER}</td>
+      <td>${r.avgPayloadBER}</td>
+      <td>${r.fullRecoverRate}</td>
+      <td>${r.detectRate}</td>
+      <td>${r.correctRate}</td>
+    </tr>`).join('')}`;
+  document.getElementById('n2comparebox3').style.display='';
+  document.getElementById('n2batchbox3').style.display='none';
   document.getElementById('n2sub3result').style.display='none';
 }
 function n2ResetSub3(){
@@ -2415,6 +2480,7 @@ function n2ResetSub3(){
   document.getElementById('n2sub3result').style.display='none';
   document.getElementById('n2sub3empty').style.display='';
   document.getElementById('n2batchbox3').style.display='none';
+  document.getElementById('n2comparebox3').style.display='none';
 }
 
 /* ---------------------------------------------------------------------------
@@ -2987,18 +3053,20 @@ function n2L3Build(sentBits, errPositions, qid){
   const order = evenQ ? [1,0,2] : [0,1,2];
   const berOptions = order.map(k=>opts[k]);
   const berAnswerIdx = berOptions.indexOf(opts[0]);
+  // 位置对学生/教师一律从「第1位」显示（内部数组仍0索引）：显示位置 = 数组索引 + 1
+  const dispPos = errPositions.map(x=>x+1);
   return {
     id:qid, sent:sentBits.slice(), received, errorPositions:errPositions.slice(), totalBits:total, errorCount:count,
     berOptions, berAnswerIdx,
-    answer:`错误位置（从0开始计数）：${errPositions.join(', ')}；错误数：${count}；BER = ${count}/${total}`,
+    answer:`错误位置（从第1位开始数）：第 ${dispPos.join('、')} 位；错误数：${count}；BER = ${count}/${total}`,
     acceptedAnswers:[],
-    reason:`逐位比较发送串和接收串，第 ${errPositions.join('、')} 位（从0开始计数）不同，共 ${count} 处；BER = 错误 bit 数 ÷ 总 bit 数 = ${count}/${total}。`,
-    hint1:'从左到右逐位比较发送串和接收串，找到所有不同的位置。',
+    reason:`逐位比较发送串和接收串，从左边第1位开始数，第 ${dispPos.join('、')} 位不同，共 ${count} 处；BER = 错误 bit 数 ÷ 总 bit 数 = ${count}/${total}。`,
+    hint1:'从左到右逐位比较发送串和接收串，找到所有不同的位置（最左边算第1位）。',
     hint2:'先数出有几个位置不同，再看总共有多少位——这两个数字分别是分子和分母。',
     hint3:`BER 的分母不是错误数也不是正确数，而是总 bit 数：本题是 ${count}/${total}。`,
     commonMistakes:'把分母错填成"正确的位数"，或漏数/多数错误位置，尤其是首尾位置容易漏看。',
     teacher20s:`BER 只回答一件事：总共传了多少 bit，其中有多少 bit 接错了。本题错了 ${count} 位，总共 ${total} 位，BER = ${count}/${total}。`,
-    teacher60s:`BER（误码率）的计算只需要两个数字：分子是错误 bit 数，分母是总传输 bit 数，二者相除就是 BER。本题发送串和接收串逐位比较后，在第 ${errPositions.join('、')} 位（从0开始计数）出现不同，一共 ${count} 处错误，总长度是 ${total} bit，所以 BER = ${count}/${total}。BER 不是网速，也不是信号强度，它只描述"错了多少、共传了多少"这一个比例关系。`,
+    teacher60s:`BER（误码率）的计算只需要两个数字：分子是错误 bit 数，分母是总传输 bit 数，二者相除就是 BER。本题发送串和接收串逐位比较后，从左边第1位开始数，在第 ${dispPos.join('、')} 位出现不同，一共 ${count} 处错误，总长度是 ${total} bit，所以 BER = ${count}/${total}。BER 不是网速，也不是信号强度，它只描述"错了多少、共传了多少"这一个比例关系。`,
     boundary:'本题使用简单分数（1/8、2/8、3/12、2/16、4/16），刻意避免出现循环小数，方便课堂心算核对。',
   };
 }
@@ -3145,12 +3213,12 @@ function n2L4Describe(c){
 }
 // 三级提示逻辑（规格十一，逐字固定，8 题共用同一套算法，不因场景变化）：
 const N2_L4_HINT1 = '先判断这次任务哪种数据最重要、最不能出错。';
-const N2_L4_HINT2 = '再看当前链路和电量能不能承担强保护——强 FEC、全部重传都有资源开销和电量代价，不是选得越强越好。';
+const N2_L4_HINT2 = '再看当前链路和电量能不能承担强保护——强 FEC、全部重传都有资源开销和电量代价，不是选得越强越好。重传提供再次成功送达的机会，通常可以提高成功率，但不能保证一定成功：链路持续很差、连接中断、超时或电量不足时，多次重传仍可能失败，而且会增加延迟、流量、电量消耗，还可能受最大重传次数限制。';
 const N2_L4_HINT3 = '优先保住位置坐标和求救文字，再决定短语音、低清图片怎样降级、按什么顺序发送。';
 // 技术边界与反误解提醒（规格六，逐字固定，8 题共用）：
 const N2_L4_BOUNDARY = '没有唯一正确组合。高分方案不是某一项拉满，而是能在当前链路和电量条件下保住最重要的任务，并能说明取舍理由。业务降级是主动减少需要传输的数据，不等于允许数据随便出错；短语音降码率后仍需 CRC 检错；低清图片即使降分辨率或暂停，剩下发送的数据依然需要 CRC 检错，不存在"允许随意出错"的豁免。';
 // 60 秒逐字稿固定收尾（规格十，必须讲清 CRC/FEC/重传/业务降级四者功能不同）：
-const N2_L4_TEACHER60S_TAIL = '这四种手段功能不同：CRC 负责检错，发现数据可能坏了但不会自动把它修好；FEC 负责在数据送达前提前加入冗余，修复一定范围内的错误；重传负责发现问题后重新发一遍，用增加流量换正确性；业务降级负责主动减少需要传输的数据量，但不等于允许数据随便出错——降级之后剩下要发的数据仍然需要 CRC 检错。';
+const N2_L4_TEACHER60S_TAIL = '这四种手段功能不同：CRC 负责检错，发现数据可能坏了但不会自动把它修好；FEC 负责在数据送达前提前加入冗余，在编码设计合理的前提下修复一定范围内的错误（能力不只看冗余多少，也看编码规则怎么设计）；重传负责发现问题后重新发一遍，通常能提高成功送达的机会，但不保证一定成功，链路持续很差、超时或电量不足时仍可能失败，而且要付出延迟、流量和电量代价；业务降级负责主动减少需要传输的数据量，但不等于允许数据随便出错——降级之后剩下要发的数据仍然需要 CRC 检错。';
 
 const N2_L4_SCENARIOS = [
   { id:'l4-1', link:'非常差', power:'只够一小时', pressure:'拥塞', task:'报告坐标',
@@ -3317,6 +3385,98 @@ function n2L4WeakHint(name){
   if(name==='电量管理') return '电量紧张时，全部重传和强FEC都会加速耗电，请确认当前电量是否支撑得起。';
   return '请确认业务降级档位是否匹配当前链路、电量和网络压力的综合严重程度。';
 }
+/* 规格八：每个维度单独给出「为什么得这个分 / 哪项选择带来主要影响 / 可以怎样调整」，
+   不让总分代替五个分项。解释文字直接对齐 n2L4Score 里的判分分支。 */
+function n2L4DimExplain(q, p){
+  const linkSev=N2_L4_LINK_SEV[q.link], powSev=N2_L4_POWER_SEV[q.power], pressureSev=N2_L4_PRESSURE_SEV[q.pressure];
+  const fecLv=N2_L4_FEC_LEVEL[p.fec], degLv=N2_L4_DEGRADE_LEVEL[p.bizAdjust];
+  const orderArr=(p.sendOrder||'').split('>');
+  const orderCoreNeeds=N2_L4_ORDER_CORE_TASK[q.task]||[];
+  const uniq=a=>[...new Set(a)];
+  const E={};
+  // ① 核心任务保障
+  {
+    const reasons=[], drivers=[];
+    if(orderCoreNeeds.length){
+      const nonCore=['短语音','低清图片'];
+      const nonCoreIdx=nonCore.map(x=>orderArr.indexOf(x)).filter(x=>x>=0);
+      const coreIdx=orderCoreNeeds.map(x=>orderArr.indexOf(x)).filter(x=>x>=0);
+      if(nonCoreIdx.length && coreIdx.length && Math.max(...coreIdx)>Math.min(...nonCoreIdx)){
+        reasons.push('核心数据（'+orderCoreNeeds.join('、')+'）在发送顺序里被排到了次要业务后面'); drivers.push('业务发送顺序');
+      }
+      if(linkSev>=2 && p.fec==='关闭'){ reasons.push('链路差还关闭 FEC，核心数据很可能传错'); drivers.push('FEC 强度'); }
+      if(linkSev>=2 && p.retrans==='不允许'){ reasons.push('链路差又不允许重传，出错也无法补救'); drivers.push('重传策略'); }
+    }
+    if(q.task==='保持短语音联系' && degLv>=4){ reasons.push('业务降级把语音整个砍掉，任务目标没完成'); drivers.push('业务降级'); }
+    if(q.task==='发送现场图片' && degLv>=3){ reasons.push('暂停/砍掉图片，任务目标没真正达成'); drivers.push('业务降级'); }
+    E.core={
+      why: reasons.length? '扣分原因：'+reasons.join('；')+'。' : '最重要的数据排在了发送顺序前面，保护强度也没让它传错，核心任务基本保住。',
+      driver: drivers.length? '主要受影响的选择：'+uniq(drivers).join('、')+'。' : '主要相关选择：业务发送顺序。',
+      adjust: reasons.length? '可调整：把核心数据（'+(orderCoreNeeds[0]||'位置坐标')+'）排到发送顺序最前；链路差时至少保留中等 FEC 并允许关键数据重传。' : '当前已较好，无需调整。'
+    };
+  }
+  // ② 可靠性
+  {
+    const idealFec = linkSev===0 ? 0 : (linkSev===3 ? 2 : 1);
+    const idealFecName = idealFec===0?'关闭':(idealFec===1?'中等保护':'强保护');
+    const parts=[], drivers=[];
+    if(fecLv!==idealFec){ parts.push('当前链路（'+q.link+'）比较合适的 FEC 是「'+idealFecName+'」，你选的是「'+p.fec+'」，不是越强越好而是越匹配越好'); drivers.push('FEC 强度'); }
+    if(linkSev>=2 && p.modTier!=='稳定档'){ parts.push('链路较差时高速档更易出错，稳定档更稳'); drivers.push('调制档位'); }
+    if(p.retrans!=='仅关键数据允许'){ parts.push('「仅关键数据允许」重传对可靠性最划算'); drivers.push('重传策略'); }
+    const relAdj=[];
+    if(fecLv!==idealFec) relAdj.push('把 FEC 调到「'+idealFecName+'」');
+    if(linkSev>=2 && p.modTier!=='稳定档') relAdj.push('调制改稳定档');
+    if(p.retrans!=='仅关键数据允许') relAdj.push('重传设为「仅关键数据允许」');
+    E.reliability={
+      why: parts.length? '可提升点：'+parts.join('；')+'。' : '调制档位、FEC、重传都与当前链路条件匹配，可靠性拿到高分。',
+      driver: drivers.length? '主要受影响的选择：'+uniq(drivers).join('、')+'。' : '主要相关选择：FEC 强度、调制档位。',
+      adjust: relAdj.length? '可调整：'+relAdj.join('，')+'。' : '当前已匹配，无需调整。'
+    };
+  }
+  // ③ 资源开销把控
+  {
+    const parts=[], drivers=[];
+    if(p.fec==='强保护' && linkSev<=1){ parts.push('链路不差却用强 FEC，属于过度保护，白白增加数据量'); drivers.push('FEC 强度'); }
+    else if(p.fec==='强保护' && linkSev===2){ parts.push('强 FEC 在当前链路略偏重，开销偏高'); drivers.push('FEC 强度'); }
+    if(p.retrans==='全部允许'){ parts.push('「全部允许」重传会显著增加流量和延迟'); drivers.push('重传策略'); }
+    if(p.retrans==='全部允许' && pressureSev===2){ parts.push('网络拥塞时全部重传还会加剧拥塞'); drivers.push('重传策略'); }
+    if(p.modTier==='稳定档' && linkSev===0){ parts.push('链路良好时稳定档牺牲了一点速率'); drivers.push('调制档位'); }
+    E.overhead={
+      why: parts.length? '扣分原因：'+parts.join('；')+'。（分数越高代表没有过度使用保护，不是开销越大越好）' : '没有过度使用强 FEC 或全部重传，资源开销控制得当。',
+      driver: drivers.length? '主要受影响的选择：'+uniq(drivers).join('、')+'。' : '主要相关选择：FEC 强度、重传策略。',
+      adjust: parts.length? '可调整：链路不差时用中等或关闭 FEC，重传收到「仅关键数据允许」。' : '当前已较省，无需调整。'
+    };
+  }
+  // ④ 电量管理
+  {
+    const parts=[], drivers=[];
+    if(powSev>=3){
+      if(p.retrans==='全部允许'){ parts.push('电量只够一小时还全部重传，会加速耗电'); drivers.push('重传策略'); }
+      if(p.fec==='强保护'){ parts.push('电量紧张时强 FEC 也更费电'); drivers.push('FEC 强度'); }
+      if(degLv<=1){ parts.push('电量紧张却几乎没有降级业务，传输量偏大'); drivers.push('业务降级'); }
+    } else if(powSev===2){
+      if(p.retrans==='全部允许'){ parts.push('电量偏紧时全部重传偏费电'); drivers.push('重传策略'); }
+      if(p.fec==='强保护' && degLv<=1){ parts.push('电量偏紧时强 FEC 又不降级，耗电偏高'); drivers.push('FEC 强度'); }
+    }
+    E.power={
+      why: powSev<=1 ? '电量较充足，当前策略在电量维度没有明显压力。' : (parts.length? '扣分原因：'+parts.join('；')+'。' : '策略与当前电量匹配，没有明显浪费。'),
+      driver: drivers.length? '主要受影响的选择：'+uniq(drivers).join('、')+'。' : '主要相关选择：重传策略、FEC 强度。',
+      adjust: parts.length? '可调整：电量紧张时把重传收到「仅关键数据允许」、FEC 降到中等，并适当降级低优先级业务。' : '当前已匹配，无需调整。'
+    };
+  }
+  // ⑤ 业务降级
+  {
+    const sevIndex=linkSev+powSev+pressureSev;
+    const idealDeg=Math.min(4, Math.floor(sevIndex/2));
+    const degName=['全部保留','降低语音码率','降低图片分辨率','暂停图片','只保留位置和文字'][idealDeg];
+    let why, adjust;
+    if(degLv===idealDeg){ why='综合链路+电量+网络压力的严重程度，你的降级档位刚好匹配（不是降得越狠越好）。'; adjust='当前已匹配，无需调整。'; }
+    else if(degLv>idealDeg){ why='当前综合压力没那么大，业务降得偏狠（降到「'+p.bizAdjust+'」），牺牲了本可以保留的业务。'; adjust='可调整：把降级放松到「'+degName+'」附近。'; }
+    else { why='当前综合压力较大，业务降级偏轻（只到「'+p.bizAdjust+'」），传输负担仍偏重。'; adjust='可调整：把降级加强到「'+degName+'」附近，先让核心数据通过。'; }
+    E.degrade={ why, driver:'主要受影响的选择：业务降级。', adjust };
+  }
+  return E;
+}
 /* 结果反馈十项（规格十）：总分/五维分/推荐方案/可接受替代/最大优点/最大风险/可靠性开销/是否保住核心任务/20s/60s 稿 */
 function n2L4Feedback(q, p, s){
   const dims=[['核心任务保障',s.core,5],['可靠性',s.reliability,5],['资源开销把控',s.overhead,4],['电量管理',s.power,3],['业务降级',s.degrade,3]];
@@ -3352,18 +3512,20 @@ function n2L4Render(){
   if(submitted){
     const s=n2L4State.scores[i];
     const fb=n2L4Feedback(q,p,s);
-    const bar=(label,val,max)=>{
+    const ex=n2L4DimExplain(q,p);
+    const bar=(label,val,max,e)=>{
       let segs=''; for(let k=1;k<=max;k++) segs+=`<span class="${k<=val?'on':''}"></span>`;
-      return `<div class="n2l4bar"><div class="k">${label}</div><div class="n2l4barseg">${segs}</div><div class="lv">${val}/${max}</div></div>`;
+      const detail = e ? `<div class="n2l4dimdetail"><div>${e.why}</div><div style="color:var(--muted)">${e.driver}</div><div style="color:var(--cyan)">↳ ${e.adjust}</div></div>` : '';
+      return `<div class="n2l4bar"><div class="n2l4barhead"><div class="k">${label}</div><div class="n2l4barseg">${segs}</div><div class="lv">${val}/${max}</div></div>${detail}</div>`;
     };
     resultHtml = `<div class="n2qresultbox show good">
-      <p><b>总分：${s.total} / 20</b></p>
-      <div class="n2l4bars">
-        ${bar('核心任务保障', s.core, 5)}
-        ${bar('可靠性', s.reliability, 5)}
-        ${bar('资源开销把控', s.overhead, 4)}
-        ${bar('电量管理', s.power, 3)}
-        ${bar('业务降级', s.degrade, 3)}
+      <p><b>总分：${s.total} / 20</b>　（总分不代表全部——请逐项看下面五个维度各自的得分、原因和调整建议）</p>
+      <div class="n2l4bars n2l4barsdetailed">
+        ${bar('① 核心任务保障', s.core, 5, ex.core)}
+        ${bar('② 可靠性', s.reliability, 5, ex.reliability)}
+        ${bar('③ 资源开销把控', s.overhead, 4, ex.overhead)}
+        ${bar('④ 电量管理', s.power, 3, ex.power)}
+        ${bar('⑤ 业务降级', s.degrade, 3, ex.degrade)}
       </div>
       <p>你的方案：${n2L4Describe(p)}</p>
       <p><b>推荐方案：</b>${q.recommendedPlan}</p>
@@ -3396,6 +3558,7 @@ function n2L4Render(){
         <div><label>⑤ 业务发送顺序</label>${sel('sendOrder',N2_L4_SEND_ORDER_OPTIONS,o=>o.replace(/>/g,' → '))}</div>
       </div>
       <p style="font-size:13px;color:var(--muted)">提醒：业务降级是主动减少需要传输的数据，不等于允许数据随便出错；短语音降码率、低清图片降分辨率后仍然需要 CRC 检错。</p>
+      <p class="n2qa-boundary" style="font-size:12px">本游戏是课堂规则模型，用于理解通信策略取舍，不代表真实卫星通信协议或真实性能计算。</p>
       ${hintHtml}
       <div class="n2qbtnrow">
         <button class="btn" onclick="n2L4Hint()" ${submitted?'disabled':''}>💡 提示（H）</button>
@@ -3447,6 +3610,50 @@ function n2BuildGuideMarkdown(){
   lines.push('# 课程三 HTML 实验与闯关讲师指引');
   lines.push('');
   lines.push('本指引由 `n2BuildGuideMarkdown()` 从闯关四关的同一份题库数据直接生成，与网页内「🧑‍🏫 教师辅助 → 下载讲师指引」按钮下载的内容、以及仓库 `teacher-guide.md` 文件三处保持逐字一致。');
+  lines.push('');
+  // ===== 课堂速查卡（规格七）：放在完整版内容之前，控制在两页以内 =====
+  lines.push('# 课程三课堂速查卡');
+  lines.push('');
+  lines.push('> 上课时只看这一页就够；详细讲法见后面完整版。');
+  lines.push('');
+  lines.push('## 1. PPT 与 HTML 切换时机');
+  lines.push('');
+  lines.push('| PPT 位置 | 切到 HTML 做什么 |');
+  lines.push('| --- | --- |');
+  lines.push('| 第 17 页 | 闯关① 符号配对赛 |');
+  lines.push('| 第 27 页后 | 实验① 星座图与判决 |');
+  lines.push('| 第 31 页 | 闯关② 点云判决挑战 |');
+  lines.push('| 第 34 页后 | 实验② BER |');
+  lines.push('| 第 35 页 | 闯关③ BER 侦探 |');
+  lines.push('| 第 45 页后 | 实验③ CRC/FEC |');
+  lines.push('| 第 49 页 | 闯关④ 海岛通信指挥官 |');
+  lines.push('');
+  lines.push('## 2. QPSK 固定映射');
+  lines.push('');
+  lines.push('- 右上：00　左上：01　左下：11　右下：10');
+  lines.push('');
+  lines.push('## 3. 核心定义');
+  lines.push('');
+  lines.push('- BER = 错误 bit 数 ÷ 总 bit 数');
+  lines.push('- 信道 BER = 路上翻转比例（编码后在信道里翻转的 bit ÷ 发送总 bit）');
+  lines.push('- Payload BER = 最终有效数据残留错误比例（解码恢复后原始数据仍错的 bit ÷ 45）');
+  lines.push('- CRC = 发现错误，不负责修复');
+  lines.push('- FEC = 利用冗余修复能力范围内的错误（能力也取决于编码设计，不是冗余越多越好）');
+  lines.push('- 重传 = 增加再次成功的机会，但不保证一定成功（还要付出延迟/流量/电量代价）');
+  lines.push('');
+  lines.push('## 4. 位数规则');
+  lines.push('');
+  lines.push('所有课堂显示从「第 1 位」开始（最左边算第 1 位）。');
+  lines.push('');
+  lines.push('## 5. 教师快捷键');
+  lines.push('');
+  lines.push('- T：教师辅助　Esc：关闭　H：下一级提示　R：显示答案　N：下一题');
+  lines.push('');
+  lines.push('## 6. 活动建议时间');
+  lines.push('');
+  lines.push('- 符号配对 5–6 分钟｜星座实验 5 分钟｜点云判决 7–8 分钟｜BER 实验 4–5 分钟｜BER 侦探 5–6 分钟｜CRC/FEC 实验 7–8 分钟｜海岛指挥官 10–12 分钟');
+  lines.push('');
+  lines.push('---');
   lines.push('');
   lines.push('## 一、课堂使用总流程');
   lines.push('');
@@ -3501,7 +3708,7 @@ function n2BuildGuideMarkdown(){
   lines.push('- **学生可能误解**：以为"CRC 校验失败=自动把数据修好了"；以为"重复码/汉明码可以修复任意数量的错误"；以为"CRC-4 能检测所有可能的错误组合"（CRC-4 只保证检出单 bit 错误和大多数、并非全部的多 bit 错误组合）。');
   lines.push('- **20 秒逐字稿**：CRC 只负责"体检"，告诉你数据可能坏了，它自己不会把坏的数据修好。三次重复码是真正会"修"的方法，把每个 bit 发三遍，多数表决——但如果三份里坏了两份以上，修出来的结果也会是错的。');
   lines.push('- **60 秒逐字稿**：这个实验对比三种保护方式。A 不加保护，发送量最小，但没有任何检错或纠错能力。B 是教学版 CRC-4，生成多项式是 x⁴+x+1（二进制 10011），接收端会用同样的多项式重新计算一次余数，和收到的校验位比较：一致就"通过"，不一致就报告"校验失败"——但无论通过还是失败，CRC 都不会去改动任何数据 bit，失败时原始错误数据原样还在。C 是三次重复码，把每个 bit 重复发送三次，接收端用多数表决决定这一位是 0 还是 1，如果三份里只错了一份，多数表决能把它修回来；但如果错了两份或三份，修出来的反而是错的。批量统计模式能让大家看到"单次结果有随机性，多次统计才能看出总体趋势和平均可靠性"这句话的真正含义。');
-  lines.push('- **技术边界**：CRC-4 只检错不纠错，不宣称能检测所有可能的错误组合；三次重复码/汉明码的纠错能力都有明确上限，超出上限可能留下错误或发生误纠正，不是"冗余越多一定越好"，而是要在可靠性和开销之间取舍。');
+  lines.push('- **技术边界**：CRC-4 只检错不纠错，不宣称能检测所有可能的错误组合；三次重复码/汉明码的纠错能力都有明确上限，超出上限可能留下错误或发生误纠正。在编码设计合理的情况下增加冗余通常能为更强的检错/纠错创造条件，但能力不仅取决于冗余数量，也取决于编码规则的设计，不是"冗余越多一定越好"，而是要在可靠性和开销之间取舍。');
   lines.push('');
   lines.push('## 三、四个闯关游戏 —— 逐题数据与答案（本节由题库数据自动生成）');
   lines.push('');
@@ -3541,7 +3748,7 @@ function n2BuildGuideMarkdown(){
   lines.push('- **三级提示**（本关固定算法）：一级——从左到右逐位比较；二级——先数出不同的位置，再看总共多少位；三级——BER 的分母不是错误数也不是正确数，而是总 bit 数。');
   lines.push('- **8 题逐题数据**：');
   N2_L3_QUESTIONS.forEach((q,idx)=>{
-    lines.push(`  ${idx+1}. 发送 ${q.sent.join('')}｜接收 ${q.received.join('')}｜错误位置(从0计数) ${q.errorPositions.join('、')}｜BER = ${q.errorCount}/${q.totalBits}`);
+    lines.push(`  ${idx+1}. 发送 ${q.sent.join('')}｜接收 ${q.received.join('')}｜错误位置(从第1位数) 第 ${q.errorPositions.map(x=>x+1).join('、')} 位｜BER = ${q.errorCount}/${q.totalBits}`);
   });
   lines.push('- **复盘固定句**：BER 描述总 bit 中有多少比例接错。它不是网速，也不直接等于信号强度。');
   lines.push('- 若题目涉及编码保护（CRC/FEC），结果需同时显示信道 BER 与 Payload BER——本关 8 题为原始信道场景不涉及编码，两个 BER 的对比留给实验③演示（详见第二节实验②③）。');
