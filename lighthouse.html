@@ -1,0 +1,428 @@
+<!-- Project Lighthouse｜卫星终端量产决策台 · V4 · 单文件离线 · 课堂教学工具 -->
+<!-- 所有数字均为课堂教学模拟数据，不代表任何真实公司的内部数据。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Lighthouse｜卫星终端量产决策台 V4</title>
+<style>
+  :root{ --bg:#0b1220; --panel:#141c2e; --panel2:#1b2438; --line:#2a3752;
+    --text:#e8eef8; --muted:#9db0cc; --cyan:#4cc9f0; --green:#3ddc84; --amber:#ffb454; --red:#ff6b6b; --violet:#b98cff; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:17px;line-height:1.5}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 20px 90px}
+  .dash{position:sticky;top:0;z-index:10;background:rgba(11,18,32,.97);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:8px 0}
+  .dash-inner{max-width:1200px;margin:0 auto;padding:0 20px}
+  .dash .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .dash h1{font-size:16px;margin:0;color:var(--cyan);font-weight:800} .dash .rnd{font-size:12px;color:var(--muted)}
+  .metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:6px} @media(max-width:720px){.metrics{grid-template-columns:repeat(3,1fr)}}
+  .m{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+  .m .k{font-size:10.5px;color:var(--muted)} .m .v{font-size:15px;font-weight:800;margin-top:1px}
+  .m.ok .v{color:var(--green)} .m.warn .v{color:var(--amber)} .m.bad .v{color:var(--red)}
+  .step{padding:22px 0 8px}
+  .kick{display:inline-block;font-size:12.5px;font-weight:800;color:var(--cyan);letter-spacing:1px;border:1px solid var(--cyan);border-radius:20px;padding:3px 12px;margin-bottom:12px}
+  .step h2{font-size:26px;margin:0 0 8px;font-weight:800} .step .lead{color:var(--muted);font-size:16px;margin-bottom:18px;max-width:880px}
+  .situation{background:var(--panel2);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:15.5px} .situation.alert{border-left-color:var(--red)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{font-size:12.5px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:4px 12px;color:var(--muted)} .chip b{color:var(--cyan)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:16px}
+  .card{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .15s,transform .1s}
+  .card:hover{transform:translateY(-2px)} .card.sel{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset} .card.disabled{opacity:.5;pointer-events:none}
+  .card .ct{font-size:18px;font-weight:800;margin-bottom:8px} .card .cd{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .card table{width:100%;font-size:13px;border-collapse:collapse} .card td{padding:2px 0} .card td.r{text-align:right;color:var(--muted)}
+  .card .flag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;margin-top:8px}
+  .flag.g{background:rgba(61,220,132,.15);color:var(--green)} .flag.a{background:rgba(255,180,84,.15);color:var(--amber)} .flag.r{background:rgba(255,107,107,.15);color:var(--red)}
+  .draftnote{font-size:12.5px;color:var(--muted);margin:-6px 0 10px}
+  .field{margin-top:14px} .field label{display:block;font-size:14px;font-weight:700;color:var(--amber);margin-bottom:6px}
+  select,textarea{width:100%;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;font-family:inherit;font-size:15px}
+  textarea{min-height:56px;resize:vertical} select{max-width:400px}
+  .row{display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap}
+  button{background:var(--cyan);color:#08131c;border:none;border-radius:8px;padding:11px 22px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)} button.danger{background:transparent;color:var(--red);border:1px solid var(--red)} button.teach{background:transparent;color:var(--violet);border:1px solid var(--violet)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  .consequence{background:var(--panel);border:1px solid var(--cyan);border-radius:12px;padding:16px 18px;margin-top:18px;display:none} .consequence.show{display:block}
+  .consequence h3{margin:0 0 8px;font-size:16px;color:var(--cyan)} .consequence .chg{font-size:14.5px;line-height:1.75}
+  .calc{background:var(--panel2);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13.5px;color:var(--muted);font-family:ui-monospace,Menlo,monospace} .calc b{color:var(--text)}
+  .predict{background:rgba(255,180,84,.08);border:1px solid var(--amber);border-radius:10px;padding:12px 14px;margin-top:8px}
+  .review .q{font-size:14px;font-weight:700;color:var(--violet);margin:10px 0 4px}
+  .note{font-size:12px;color:var(--muted);font-style:italic;margin-top:14px}
+  .report{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:16px}
+  .verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
+  .vc{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel2)} .vc .vk{font-size:13px;color:var(--muted)} .vc .vv{font-size:16px;font-weight:800;margin-top:3px}
+  .vc.ok{border-color:var(--green)} .vc.ok .vv{color:var(--green)} .vc.bad{border-color:var(--red)} .vc.bad .vv{color:var(--red)} .vc.warn{border-color:var(--amber)} .vc.warn .vv{color:var(--amber)}
+  .rtbl{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:10px} .rtbl td{padding:6px 8px;border-bottom:1px solid var(--line)} .rtbl td.r{text-align:right;font-weight:700}
+  @media print{ .dash{position:static} button{display:none} body{background:#fff;color:#000} }
+</style>
+
+<div class="dash"><div class="dash-inner">
+  <div class="top"><h1>Project Lighthouse ｜ 量产决策台 <span style="font-size:11px;color:var(--muted)">V4</span></h1><span class="rnd" id="rnd"></span></div>
+  <div class="metrics" id="metrics"></div>
+</div></div>
+<div class="wrap"><div id="stepHost"></div></div>
+
+<script>
+"use strict";
+const TARGET=10000, WEEKS=16, GOAL=950, BATT_HOURS=8, FIXED_BOM=170, FIXED_OTHER_POWER=10;
+const LS_KEY="lighthouse_v4_state";
+
+const ARCH={
+  A:{name:"A｜高端 FPGA",unit:180,nre:200000,dev:8,power:30,desc:"灵活但单颗贵、功耗高"},
+  B:{name:"B｜SoC + 中型 FPGA",unit:125,nre:500000,dev:12,power:19,desc:"当前阶段的折中方案"},
+  C:{name:"C｜ASIC + 小型 CPU",unit:55,nre:12000000,dev:48,power:10,desc:"单颗最便宜，但开发 48 周远超 16 周"},
+};
+const ANT={
+  A:{name:"A｜一体化相控阵",unit:230,power:16,lead:8,nre:0,perf:true,risk:"高·单一供应商"},
+  B:{name:"B｜模块化相控阵",unit:195,power:18,lead:10,nre:120000,perf:true,risk:"中·可发展第二供应商"},
+  C:{name:"C｜低成本精简阵列",unit:155,power:13,lead:8,nre:50000,perf:false,risk:"弱信号追踪不通过"},
+};
+const PWR={ A:{name:"A｜高效率电源",unit:72,eff:0.92,lead:10,thermal:"低"}, B:{name:"B｜标准电源",unit:55,eff:0.85,lead:6,thermal:"中"}, C:{name:"C｜低成本电源",unit:40,eff:0.78,lead:8,thermal:"高"} };
+const CASE={ A:{name:"A｜CNC 金属外壳",unit:42,nre:10000,lead:4,thermal:"好",outdoor:true}, B:{name:"B｜注塑外壳",unit:18,nre:250000,lead:10,thermal:"中",outdoor:true}, C:{name:"C｜通用现成外壳",unit:25,nre:0,lead:3,thermal:"—",outdoor:false} };
+const TEST={ A:{name:"A｜人工测试",unit:18,nre:20000,yield:0.82,leadAdd:0}, B:{name:"B｜自动测试与校准",unit:35,nre:300000,yield:0.92,leadAdd:1} };
+// R3：B(第二供应商) 的验证费/交期随 R2 天线选择动态（模块化B已为第二供应商做准备）
+const SHORTAGE={
+  A:{name:"A｜等待原供应商",unitAdd:0,nre:0,leadAdd:12,powerAdd:0,cap:0,grade:["不可接受","bad"]},
+  B:{name:"B｜启用第二供应商",unitAdd:15,nre:150000,leadAdd:3,powerAdd:0,cap:TARGET,grade:["可接受","ok"]},
+  C:{name:"C｜通用器件重新设计",unitAdd:25,nre:100000,leadAdd:2,powerAdd:4,cap:TARGET,grade:["需关注","warn"]},
+  D:{name:"D｜分批交付",unitAdd:0,nre:0,leadAdd:0,powerAdd:0,cap:6000,restDelay:12,restQty:4000,grade:["交付风险高","warn"]},
+};
+const YIELDFIX={
+  A:{name:"A｜增加自动校准设备",nre:300000,leadAdd:1,target:0.92},
+  B:{name:"B｜修改 PCB 和散热设计",nre:500000,leadAdd:4,target:0.96},
+  C:{name:"C｜人工返修",nre:0,leadAdd:0,target:0.88,rework:120},
+  D:{name:"D｜不改设计，多投入物料",nre:0,leadAdd:0,target:null},
+};
+const POWERFIX={
+  A:{name:"A｜增大电池",nre:0,leadAdd:0,dPower:0,unitAdd:0},
+  B:{name:"B｜优化 FPGA 逻辑",nre:200000,leadAdd:2,dPower:-6,unitAdd:0},
+  C:{name:"C｜降低处理性能",nre:0,leadAdd:0,dPower:-8,unitAdd:0,perfFail:true},
+  D:{name:"D｜调整硬件组合",nre:350000,leadAdd:3,dPower:-9,unitAdd:8},
+};
+const METRIC_OPTS=["成本","交期","功耗","良率","交付数量","技术风险"];
+
+let S = load() || fresh();
+function fresh(){ return {round:0,bomStep:1,arch:null,ant:null,pwr:null,case_:null,test:null,shortage:null,yieldFix:null,powerFix:null,
+  draft:{}, reasons:{}, predict:{}, review:{}, locked:{}}; }
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const r=localStorage.getItem(LS_KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function ceil(n){ return Math.ceil(n); }
+function money(x){ return x==null?"—":((x<0?"-$":"$")+Math.abs(Math.round(x)).toLocaleString()); }
+function pct(x){ return x==null?"—":(Math.round(x*100)+"%"); }
+
+// R3 第二供应商的有效参数（模块化天线 B 已为第二供应商做准备 → 降低切换成本）
+function shortageEff(){ if(!S.shortage) return null; const sh=Object.assign({},SHORTAGE[S.shortage]);
+  if(S.shortage==="B" && S.ant==="B"){ sh.nre=50000; sh.leadAdd=1; sh.prepared=true; } return sh; }
+
+function compute(){
+  const a=S.arch?ARCH[S.arch]:null, an=S.ant?ANT[S.ant]:null, p=S.pwr?PWR[S.pwr]:null,
+        c=S.case_?CASE[S.case_]:null, t=S.test?TEST[S.test]:null,
+        sh=shortageEff(), yf=S.yieldFix?YIELDFIX[S.yieldFix]:null, pf=S.powerFix?POWERFIX[S.powerFix]:null;
+  const r={a,an,p,c,t,sh,yf,pf};
+  // 功耗：设计估算 / 场测(修正前) / 方案后（保留两个功耗，不把场测直接改成优化后）
+  r.designPower = (a&&an)?(a.power+an.power):null;
+  r.fieldPower  = (a&&an)?(a.power+an.power+FIXED_OTHER_POWER+(sh?sh.powerAdd:0)):null;   // 场测发现
+  r.postPower   = (r.fieldPower!=null)? r.fieldPower+(pf?pf.dPower:0) : null;             // 采取措施后
+  r.eff = p?p.eff:null;
+  r.baselineWh   = (r.designPower!=null&&p)? r.designPower*BATT_HOURS/p.eff : null;        // 原基准电池
+  r.neededFieldWh= (r.fieldPower!=null&&p)? r.fieldPower*BATT_HOURS/p.eff : null;
+  r.neededPostWh = (r.postPower!=null&&p)?  r.postPower*BATT_HOURS/p.eff  : null;          // 方案后所需
+  r.finalWh = pf ? (r.baselineWh!=null?Math.max(r.baselineWh,r.neededPostWh):null) : r.baselineWh;
+  r.addWh = (r.finalWh!=null&&r.baselineWh!=null)? Math.max(0, r.finalWh-r.baselineWh):0;  // 仍需增加
+  r.addCost = r.addWh*0.18; r.addWeight = Math.round(r.addWh*5); r.totalAddTon = r.addWh*5*TARGET/1e6;
+  r.batteryCost = r.finalWh!=null? r.finalWh*0.18 : 0;
+  r.weight = r.finalWh!=null? Math.round(r.finalWh*5):0;
+  r.workTimeBaseline = (r.baselineWh!=null&&r.fieldPower)? r.baselineWh*p.eff/r.fieldPower : null;
+  r.gapWhField = (r.neededFieldWh!=null&&r.baselineWh!=null)? Math.max(0,r.neededFieldWh-r.baselineWh):null;
+  // 良率（max 逻辑，不倒挂）
+  r.baseYield=t?t.yield:null;
+  r.yield = yf ? (yf.target==null? r.baseYield : Math.max(r.baseYield,yf.target)) : r.baseYield;
+  r.reworkNoEffect = (yf && yf.target!=null && r.baseYield!=null && yf.target<=r.baseYield);
+  r.reworkCost=0; r.reworkedUnits=0;
+  if(r.yield){ r.needed=ceil(TARGET/r.yield); }
+  if(yf && S.yieldFix==="C" && !r.reworkNoEffect && r.baseYield!=null){ r.reworkedUnits=Math.max(0,Math.round(r.needed*(0.88-r.baseYield))); r.reworkCost=r.reworkedUnits*120; }
+  r.nre=(a?a.nre:0)+(an?an.nre:0)+(c?c.nre:0)+(t?t.nre:0)+(sh?sh.nre:0)+(yf?yf.nre:0)+(pf?pf.nre:0);
+  r.unit=(a?a.unit:0)+(an?an.unit:0)+(p?p.unit:0)+(c?c.unit:0)+(t?t.unit:0)+FIXED_BOM+(sh?sh.unitAdd:0)+(pf?pf.unitAdd:0)+(r.batteryCost||0);
+  const leads=[a?a.dev:0,an?an.lead:0,p?p.lead:0,c?c.lead:0];
+  r.lead=Math.max(...leads,0)+(t?t.leadAdd:0)+(sh?sh.leadAdd:0)+(yf?yf.leadAdd:0)+(pf?pf.leadAdd:0);
+  r.capacity = sh? sh.cap : TARGET; if(S.shortage==="A") r.capacity=0;
+  r.onTime = (r.lead<=WEEKS)? Math.min(TARGET,r.capacity) : 0;
+  r.split=(S.shortage==="D"); r.finalAllWeeks=r.lead+(r.split?SHORTAGE.D.restDelay:0);
+  if(r.needed!=null){ r.materialTotal=r.unit*r.needed; r.projectTotal=r.nre+r.materialTotal+r.reworkCost; r.unitGood=r.projectTotal/TARGET;
+    r.onTimeInvest = r.onTime>0 ? (r.nre + r.unit*ceil(r.onTime/r.yield) + (S.yieldFix==="C"&&!r.reworkNoEffect?Math.round(ceil(r.onTime/r.yield)*(0.88-r.baseYield))*120:0)) : r.nre;
+  } else { r.materialTotal=r.projectTotal=r.unitGood=r.onTimeInvest=null; }
+  r.perfOk=(an?an.perf:false)&&(c?c.outdoor:false)&&!(pf&&pf.perfFail);
+  r.techPending = !(an&&c);
+  r.gap = r.unitGood!=null ? (r.unitGood-GOAL) : null;             // 单台成本超出目标
+  r.costOk = r.unitGood!=null ? (r.unitGood<=GOAL) : null;
+  return r;
+}
+
+function renderDash(){
+  const r=compute();
+  document.getElementById("rnd").innerText = S.round===6?"最终报告":("第 "+S.round+" 轮 · 进度自动保存");
+  const powTxt = r.postPower!=null?(r.postPower+" W") : (r.fieldPower!=null?(r.fieldPower+" W"):(r.designPower!=null?(r.designPower+" W*"):"—"));
+  const cells=[
+    ["单台真实成本", money(r.unitGood), r.unitGood==null?"":(r.techPending?"":(r.perfOk?(r.costOk?"ok":"warn"):"bad"))],
+    ["交期", S.arch?(r.lead+" 周"):"—", S.arch?(r.lead<=WEEKS?"ok":"bad"):""],
+    ["良率", pct(r.yield), ""],
+    ["按期可交付", (S.arch&&S.ant)?(r.onTime.toLocaleString()+" 台"):"—", (S.arch&&S.ant)?(r.onTime>=TARGET?"ok":"warn"):""],
+    ["功耗", powTxt, ""],
+    ["技术要求", r.techPending?"待评估":(r.perfOk?"通过":"未通过"), r.techPending?"":(r.perfOk?"ok":"bad")],
+  ];
+  document.getElementById("metrics").innerHTML = cells.map(([k,v,cls])=>`<div class="m ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+}
+
+function go(n){ S.round=n; if(n===2&&!S.locked[2]) S.bomStep=1; save(); window.scrollTo(0,0); render(); }
+function clearAll(){ if(confirm("确定清空全部课程进度、从头开始吗？此操作不可撤销。")){ localStorage.removeItem(LS_KEY); S=fresh(); go(0); } }
+function teacherUnlock(no){ if(confirm("教师操作：只解锁本轮，允许重新选择（不影响前面轮次）。确定？")){ delete S.locked[no]; if(no===2) S.bomStep=1; save(); render(); } }
+function render(){ document.getElementById("stepHost").innerHTML=view(); wire(); renderDash(); }
+
+// 最直接受影响的指标（按规则判定，不写死比较美元/周/瓦/%）
+function directMetric(field){
+  if(field==="arch"){ if(S.arch==="C") return "交期"; if(S.arch==="A") return "功耗"; return "成本"; }
+  if(field==="bom"){ const an=S.ant?ANT[S.ant]:null,c=S.case_?CASE[S.case_]:null,t=S.test?TEST[S.test]:null,p=S.pwr?PWR[S.pwr]:null;
+    if((an&&!an.perf)||(c&&c.outdoor===false)) return "技术风险";
+    if(t&&t.yield<=0.82) return "良率";
+    if(p&&p.eff<=0.78) return "功耗";
+    return "成本"; }
+  if(field==="shortage"){ if(S.shortage==="A"||S.shortage==="D") return "交付数量"; if(S.shortage==="C") return "功耗"; return "交期"; }
+  if(field==="yieldFix"){ if(S.yieldFix==="D"||S.yieldFix==="C") return "成本"; return "良率"; }
+  if(field==="powerFix"){ if(S.powerFix==="A") return "成本"; if(S.powerFix==="C") return "技术风险"; return "功耗"; }
+  return "";
+}
+function predictVerdict(field){ const pv=S.predict[field]; if(!pv) return "";
+  const actual=directMetric(field); const ok=actual&&pv===actual;
+  return `<div class="chg" style="margin-bottom:6px">你的预测：<b>${pv}</b>　｜　最直接受影响的指标：<b style="color:${ok?'var(--green)':'var(--amber)'}">${actual||"—"}</b>　${ok?'✅ 一致':'（可以想想差在哪）'}</div>`; }
+
+function view(){
+  if(S.round===0) return brief();
+  if(S.round===1) return optStep({no:1,field:"arch",next:2,kick:"第一轮 · R1 计算架构",
+    title:"用什么完成基带计算？",
+    lead:"三种方案都能算，但别只看单颗价格——算 NRE + 单价 × 10,000，再看开发时间够不够 16 周。先花 20 秒，只找三个极端：谁单价最低？谁开发最快？谁最省电？你会发现不是同一个方案。",
+    situation:"提示：ASIC 单颗最便宜，但当前数量和交期下不一定成立。",
+    opts:[{k:"A",o:ARCH.A,rows:[["单台",money(ARCH.A.unit)],["NRE",money(ARCH.A.nre)],["开发",ARCH.A.dev+" 周"],["功耗",ARCH.A.power+" W"]]},
+      {k:"B",o:ARCH.B,rows:[["单台",money(ARCH.B.unit)],["NRE",money(ARCH.B.nre)],["开发",ARCH.B.dev+" 周"],["功耗",ARCH.B.power+" W"]]},
+      {k:"C",o:ARCH.C,rows:[["单台",money(ARCH.C.unit)],["NRE",money(ARCH.C.nre)],["开发",ARCH.C.dev+" 周"],["功耗",ARCH.C.power+" W"]]}],
+    reviews:["其他条件不变，为什么单颗最便宜的 ASIC 在这个项目里不一定划算？","如果订单不是 1 万台而是 100 万台，你的选择会变吗？为什么？"],
+    cons:()=>{ const a=ARCH[S.arch],tot=a.nre+a.unit*TARGET;
+      return `<div class="calc">架构总成本 = NRE <b>${money(a.nre)}</b> + 单价 <b>${money(a.unit)}</b> × 10,000 = <b>${money(tot)}</b><br>有效单台成本 = ${money(tot)} ÷ 10,000 = <b>${money(tot/TARGET)}</b></div>
+      <div class="chg">开发 <b>${a.dev} 周</b>${a.dev>WEEKS?'（<span style="color:var(--red)">超过 16 周红线，此方案不可行</span>）':'（在 16 周内）'}。<br><span style="color:var(--muted)">『最先进』不是答案，『适合当前数量和时间』才是答案。</span></div>`; } });
+  if(S.round===2) return bomStep();
+  if(S.round===3) return optStep({no:3,field:"shortage",next:4,alert:true,kick:"第三轮 · R3 供应中断",
+    title:"关键波束控制芯片，突然缺货",
+    lead:(()=>{ const prep=(S.ant==="B"); return `其他零件都齐了。供应商通知：原计划 10,000 颗波束控制芯片，16 周内只能交 6,000 颗。${prep?'<b style="color:var(--green)">你在 R2 选了模块化天线 B，前期已为第二供应商做准备——现在切换成本更低（验证费 $50,000、交期 +1 周）。</b>':'（你在 R2 选的是单一供应商方案，第二供应商需完整验证：$150,000、+3 周。）'}`; })(),
+    situation:"⚠ 波束控制芯片 16 周内只能交 6,000 颗（原计划 10,000 颗）。",
+    opts:[{k:"A",o:SHORTAGE.A,rows:[["额外","$0"],["交期","+12 周"],["按期","0 台"]],flag:["r","超红线·按期交 0 台"]},
+      {k:"B",o:SHORTAGE.B,rows:[["单台","+$15"],["验证",S.ant==="B"?"$50,000":"$150,000"],["交期",S.ant==="B"?"+1 周":"+3 周"]],flag:["g",S.ant==="B"?"已备第二供应商·切换更省":"可恢复 10,000 台"]},
+      {k:"C",o:SHORTAGE.C,rows:[["单台","+$25"],["NRE","+$100,000"],["交期","+2 周"],["功耗","+4 W"]],flag:["a","要验证替代料"]},
+      {k:"D",o:SHORTAGE.D,rows:[["第一批","6,000（需交期≤16周）"],["剩余","4,000 延 12 周"]],flag:["a","分批交付"]}],
+    reviews:["为什么其他物料全部到货，仍然只能交 6,000 台？","第二供应商，为什么不能等缺货以后再临时找就够了？"],
+    cons:()=>{ const r=compute();
+      const splitNote=(S.shortage==="D"&&r.lead>WEEKS)?`<span style="color:var(--red)">注意：当前总交期 ${r.lead} 周已超 16 周，分批第一批也无法按期，按期交付 = 0 台。</span>`:"";
+      const prepNote=(S.shortage==="B"&&r.sh&&r.sh.prepared)?`<span style="color:var(--green)">因 R2 选了模块化天线，第二供应商验证费降到 $50,000、交期只 +1 周。</span><br>`:"";
+      return `<div class="chg">${prepNote}· 按期可交付：<b>${r.onTime.toLocaleString()} 台</b>${r.split&&r.lead<=WEEKS?"（+ 4,000 台延后 12 周）":""}<br>· 交期：<b>${r.lead} 周</b>${r.lead>WEEKS?'（<span style="color:var(--red)">超 16 周</span>）':''}　· 场测前功耗：<b>${r.fieldPower} W</b>　· 单台真实成本：<b>${money(r.unitGood)}</b><br>${splitNote}<span style="color:var(--muted)">单点供应是最大风险来源；便宜供应商不等于低风险。</span></div>`; } });
+  if(S.round===4) return optStep({no:4,field:"yieldFix",next:5,kick:"第四轮 · R4 良率危机",
+    title:"样机全成功，量产却掉链子",
+    lead:(()=>{const t=TEST[S.test];return `前 20 台样机全部正常。量产 1,000 台，只有 ${t?Math.round(t.yield*1000):"—"} 台一次通过——你上一轮选的初始良率是 ${t?pct(t.yield):"—"}。要交 10,000 台合格品，得投 ⌈10,000 ÷ 良率⌉ 套物料。`;})(),
+    situation:(()=>{const t=TEST[S.test];return `当前初始良率：<b>${t?pct(t.yield):"—"}</b>。不良品同样消耗芯片、天线、人工和时间。`;})(),
+    opts:[{k:"A",o:YIELDFIX.A,rows:[["NRE","+$300,000"],["交期","+1 周"],["目标良率","92%"]],flag:["g","目标 92%"]},
+      {k:"B",o:YIELDFIX.B,rows:[["NRE","+$500,000"],["交期","+4 周"],["目标良率","96%"]],flag:["g","目标 96%"]},
+      {k:"C",o:YIELDFIX.C,rows:[["返修","$120/台不良"],["交期","+0"],["目标良率","88%"]],flag:["a","靠返修救回"]},
+      {k:"D",o:YIELDFIX.D,rows:[["改设计","不改"],["良率","不变"],["代价","多投料"]],flag:["a","多买物料"]}],
+    reviews:["花 30–50 万美元改善良率，为什么可能反而降低总成本？","样机 20 台全部成功，为什么不能推断 10,000 台都成功？"],
+    cons:()=>{ const r=compute(),yf=YIELDFIX[S.yieldFix];
+      const warn=r.reworkNoEffect?`<div style="color:var(--amber);margin-bottom:6px">⚠ 当前良率已 ${pct(r.baseYield)}，该方案（${yf.name}，目标 ${pct(yf.target)}）不高于当前水平——重复建设、无改善，良率保持 ${pct(r.yield)} 不变。</div>`:"";
+      return `${warn}<div class="calc">最终良率 = max(基础 ${pct(r.baseYield)}, 方案目标 ${yf.target?pct(yf.target):"—"}) = <b>${pct(r.yield)}</b><br>需投入 = ⌈10,000 ÷ ${pct(r.yield)}⌉ = <b>${r.needed.toLocaleString()} 套</b>${r.reworkCost>0?`<br>返修 ${r.reworkedUnits.toLocaleString()} 台 × $120 = <b>${money(r.reworkCost)}</b>`:""}</div>
+      <div class="chg">单台真实成本：<b>${money(r.unitGood)}</b>　· 交期：<b>${r.lead} 周</b><br><span style="color:var(--muted)">少造不良品，就少浪费芯片、天线和人工——花钱改良率，有时反而降总成本。</span></div>`; } });
+  if(S.round===5) return optStep({no:5,field:"powerFix",next:6,kick:"第五轮 · R5 功耗连锁",
+    title:"场测：实际功耗高于预期",
+    lead:(()=>{const r=compute();return `设计时按 <b>${r.designPower} W</b> 估算配了基准电池；<b>场测发现真实功耗 ${r.fieldPower} W</b>（含固定 10W 等）。按场测功耗，基准电池只能撑约 <b>${r.workTimeBaseline?r.workTimeBaseline.toFixed(1):"—"} 小时</b>，离 8 小时差 <b>${r.gapWhField?Math.round(r.gapWhField):"—"} Wh</b>。请比较成本、时间、重量、技术要求四项。`;})(),
+    situation:"连锁：功耗 → 电池容量 → 单台成本 → 单台重量 → 总运输重量。（本模型只自动计入电池变化；散热、外壳、运输成本作为课堂讨论，不自动计入。）",
+    opts:[{k:"A",o:POWERFIX.A,rows:[["电池","补足到 8h"],["成本","+$0.18/Wh"],["重量","+5 g/Wh"],["交期","+0"]],flag:["a","治标不治本"]},
+      {k:"B",o:POWERFIX.B,rows:[["NRE","+$200,000"],["交期","+2 周"],["功耗","-6 W"]],flag:["g","从源头降"]},
+      {k:"C",o:POWERFIX.C,rows:[["功耗","-8 W"],["性能","核心通信不达标"],["交期","+0"]],flag:["r","技术要求不通过"]},
+      {k:"D",o:POWERFIX.D,rows:[["NRE","+$350,000"],["交期","+3 周"],["功耗","-9 W"],["单台","+$8"]],flag:["g","降幅最大"]}],
+    reviews:["为什么『优化 FPGA 逻辑』要花 NRE 和交期，仍可能比『增大电池』更划算？","如果这台终端要背在身上走，重量增加会带来什么额外问题？"],
+    cons:()=>{ const r=compute();
+      const stillGap = (S.powerFix==="B"||S.powerFix==="D") && r.addWh>0 ? `<div style="color:var(--amber)">降低功耗后仍需补充 ${Math.round(r.addWh)} Wh 电池。</div>`:"";
+      return `<div class="calc">场测修正前功耗 = <b>${r.fieldPower} W</b>　→　采取措施后功耗 = <b>${r.postPower} W</b><br>原基准电池 = <b>${Math.round(r.baselineWh)} Wh</b>；方案后所需电池 = <b>${Math.round(r.neededPostWh)} Wh</b>；仍需增加 = <b>${Math.round(r.addWh)} Wh</b><br>单台新增电池成本 = ${Math.round(r.addWh)} × $0.18 = <b>${money(r.addCost)}</b>；单台新增重量 = <b>${r.addWeight} g</b>；10,000 台总新增重量 ≈ <b>${r.totalAddTon.toFixed(2)} 吨</b></div>
+      ${stillGap}<div class="chg">单台真实成本 <b>${money(r.unitGood)}</b>${!r.perfOk?'　<span style="color:var(--red)">⚠ 技术要求未通过（降低性能牺牲了核心通信）。</span>':'　<span style="color:var(--muted)">从源头降功耗，往往比一味增大电池更划算。</span>'}</div>`; } });
+  if(S.round===6) return reportView();
+  return "";
+}
+
+function brief(){ return `<div class="step">
+  <div class="kick">第 0 步 · 任务简报</div><h2>Project Lighthouse ｜ 灯塔计划</h2>
+  <div class="lead">你们是卫星终端量产交付项目组。产品需求已确定、订单已签订。问题不是设计，而是：怎样把一台样机，变成一万台按时交付的合格产品——并算清楚它能否在成本上限内完成交付。</div>
+  <div class="situation"><b>硬指标（不可改）</b><br>· 10,000 台　· 16 周　· <b>单台合格品成本目标 ≤ $950</b>（虚构目标，用于取舍练习）<br>· 必须满足：自动追踪低轨卫星 / 稳定通信 / 文字+压缩图片 / 户外 / 备电 ≥ 8 小时　· 不能为降本取消核心功能。</div>
+  <p style="color:var(--muted)">每一轮：看条件 → 先预测最直接受影响的指标 → <b>选方案（先高亮，不改仪表盘）</b> → 写理由 → <b>锁定后才提交并显示计算</b> → 回答复盘。进度、理由、预测都自动保存，刷新不丢。</p>
+  <div class="row"><button onclick="go(1)">开始第一轮 →</button><button class="danger" onclick="clearAll()">清空课程进度并重新开始</button></div></div>`;
+}
+
+function navButtons(no,next){
+  const locked=S.locked[no];
+  let h=`<div class="row">`;
+  if(!locked) h+=`<button id="lockBtn" onclick="lock(${no},'${curField(no)}')">锁定本轮决策</button>`;
+  else h+=`<button onclick="go(${next})">进入下一轮 →</button><button class="teach" onclick="teacherUnlock(${no})">教师：解锁本轮</button>`;
+  if(no>1) h+=`<button class="ghost" onclick="go(${no-1})">查看上一轮</button>`;
+  h+=`<button class="danger" onclick="clearAll()">清空重来</button></div>`;
+  return h;
+}
+function curField(no){ return {1:"arch",3:"shortage",4:"yieldFix",5:"powerFix"}[no]; }
+
+function optStep(cfg){
+  const locked=S.locked[cfg.no];
+  const sel = locked ? S[cfg.field] : (S.draft[cfg.field]||null);
+  const cards=cfg.opts.map(o=>{ const tbl=o.rows.map(([k,v])=>`<tr><td class="r">${k}</td><td style="text-align:right">${v}</td></tr>`).join("");
+    let cls="card"+(sel===o.k?" sel":"")+(locked?" disabled":"");
+    return `<div class="${cls}" data-k="${o.k}"><div class="ct">${o.o.name}</div>${o.o.desc?`<div class="cd">${o.o.desc}</div>`:""}<table>${tbl}</table>${o.flag?`<span class="flag ${o.flag[0]}">${o.flag[1]}</span>`:""}</div>`; }).join("");
+  const pv=S.predict[cfg.field]||"";
+  const predSel=`<div class="predict"><label style="color:var(--amber);font-weight:700;font-size:14px">先预测：你认为这个选择，最直接受影响的指标是哪个？</label>
+    <select id="predict" data-pf="${cfg.field}" ${locked?"disabled":""}>${["",...METRIC_OPTS].map(m=>`<option ${pv===m?"selected":""}>${m||"（请选择）"}</option>`).join("")}</select></div>`;
+  const reason=S.reasons[cfg.field]||"";
+  const reviewsHtml = locked ? `<div class="review"><div style="font-size:14px;font-weight:700;color:var(--violet)">复盘（各写一句即可，没有唯一标准答案）</div>${cfg.reviews.map((q,i)=>`<div class="q">${q}</div><textarea data-review="${cfg.field}_${i}">${(S.review[cfg.field+"_"+i]||"")}</textarea>`).join("")}</div>`:"";
+  return `<div class="step"><div class="kick">${cfg.kick}</div><h2>${cfg.title}</h2><div class="lead">${cfg.lead}</div>
+    ${cfg.situation?`<div class="situation ${cfg.alert?'alert':''}">${cfg.situation}</div>`:""}
+    <div class="cards">${cards}</div>
+    ${locked?"":'<div class="draftnote">已选为待定项（仅高亮）；顶部仪表盘不会变化，点“锁定本轮决策”后才提交并计算。</div>'}
+    ${predSel}
+    <div class="field"><label>我们为什么这样选（必填，说清因果）</label><textarea id="reason" data-rf="${cfg.field}" ${locked?"disabled":""} placeholder="用成本 / 数量 / 良率 / 功耗 / 交期说明理由…">${reason}</textarea></div>
+    ${navButtons(cfg.no,cfg.next)}
+    <div class="consequence ${locked?'show':''}">${locked?`<h3>锁定后的连锁变化</h3>${predictVerdict(cfg.field)}${cfg.cons()}${reviewsHtml}`:""}</div>
+    <div class="note">本轮所有数字为课堂教学模拟数据，不代表真实器件规格或任何公司内部数据。</div></div>`;
+}
+function lock(no,field){
+  const dk=S.draft[field];
+  if(!dk){ alert("请先选择一个方案（点一下方案卡）。"); return; }
+  if(!S.predict[field]){ alert("请先预测最直接受影响的指标。"); return; }
+  if(!(S.reasons[field]||"").trim()){ alert("请先写下理由，再锁定。"); return; }
+  S[field]=dk; S.locked[no]=true; save(); render();
+}
+
+// —— R2：拆成两个视觉步骤（R2-1 天线+电源 / R2-2 外壳+测试），同一轮统一锁定 ——
+function bomStep(){
+  const locked=S.locked[2];
+  const step = locked?2:(S.bomStep||1);
+  const cur=(f)=> locked? S[f] : (S.draft[f]||null);
+  const chip=(lab,f,D)=>`<div class="chip">${lab}：<b>${cur(f)?D[cur(f)].name.split("｜")[0]:"—"}</b></div>`;
+  const chips=`<div class="chips">${chip("天线","ant",ANT)}${chip("电源","pwr",PWR)}${chip("外壳","case_",CASE)}${chip("测试","test",TEST)}</div>`;
+  const sub=(label,field,DATA,rows)=>{ const cards=Object.keys(DATA).map(k=>{ const o=DATA[k];
+      const tr=rows.map(([lab,prop,unit])=>{ let v=o[prop]; if(prop==="eff"||prop==="yield") v=pct(v); else if(prop==="outdoor") v=v?"通过":"不通过"; else if(prop==="unit"||prop==="nre") v=money(v); else if(unit) v=v+" "+unit; return `<tr><td class="r">${lab}</td><td style="text-align:right">${v}</td></tr>`; }).join("");
+      const bad=(field==="ant"&&!o.perf)||(field==="case_"&&o.outdoor===false);
+      let cls="card"+(cur(field)===k?" sel":"")+(locked?" disabled":"");
+      return `<div class="${cls}" data-field="${field}" data-k="${k}"><div class="ct" style="font-size:16px">${o.name}</div><table>${tr}</table>${bad?`<span class="flag r">核心性能不通过</span>`:""}</div>`; }).join("");
+    return `<h3 style="font-size:16px;color:var(--cyan);margin:14px 0 6px">${label}</h3><div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">${cards}</div>`; };
+  let body,nav;
+  if(!locked && step===1){
+    body = sub("天线","ant",ANT,[["单价","unit"],["功耗","power","W"],["交期","lead","周"],["供应/性能","risk"]]) + sub("电源","pwr",PWR,[["单价","unit"],["效率","eff"],["交期","lead","周"],["热风险","thermal"]]);
+    nav = `<div class="draftnote">R2 分两步选，统一锁定。先选天线+电源。</div><div class="row"><button ${(S.draft.ant&&S.draft.pwr)?"":"disabled"} onclick="bomNext()">下一步：外壳 + 测试 →</button><button class="danger" onclick="clearAll()">清空重来</button></div>`;
+  } else {
+    body = sub("外壳","case_",CASE,[["单价","unit"],["NRE","nre"],["交期","lead","周"],["户外","outdoor"]]) + sub("测试","test",TEST,[["单价","unit"],["初始良率","yield"],["交期影响","leadAdd","周"]]);
+    const pv=S.predict.bom||"";
+    const predSel=`<div class="predict"><label style="color:var(--amber);font-weight:700;font-size:14px">先预测：这套组合，最直接受影响的指标是哪个？</label>
+      <select id="predict" data-pf="bom" ${locked?"disabled":""}>${["",...METRIC_OPTS].map(m=>`<option ${pv===m?"selected":""}>${m||"（请选择）"}</option>`).join("")}</select></div>`;
+    const reason=`<div class="field"><label>我们为什么这样组合（必填）</label><textarea id="reason" data-rf="bom" ${locked?"disabled":""} placeholder="便宜天线弱信号够不够？低效电源要不要更大电池？取消自动测试良率会怎样？…">${S.reasons.bom||""}</textarea></div>`;
+    let btns=`<div class="row">`;
+    if(!locked) btns+=`<button class="ghost" onclick="bomBack()">← 上一步</button><button onclick="lockBOM()">锁定本轮决策</button>`;
+    else btns+=`<button onclick="go(3)">进入下一轮 →</button><button class="teach" onclick="teacherUnlock(2)">教师：解锁本轮</button><button class="ghost" onclick="go(1)">查看上一轮</button>`;
+    btns+=`<button class="danger" onclick="clearAll()">清空重来</button></div>`;
+    nav = predSel + reason + btns;
+  }
+  return `<div class="step"><div class="kick">第二轮 · R2 整机 BOM ${locked?"":"（"+step+"/2）"}</div><h2>整机真实成本，离 $${GOAL} 目标差多少？</h2>
+    <div class="lead">固定物料已含 $${FIXED_BOM}（射频70/内存25/PCB38/网络20/组装17）。四类各选一个（分两步，最后统一锁定）。先花 20 秒找：哪个便宜选项其实碰了红线（弱信号 / 户外 / 良率）？</div>
+    ${chips}
+    ${body}
+    ${nav}
+    <div class="consequence ${locked?'show':''}">${locked?consBOM():""}</div>
+    <div class="note">本轮所有数字为课堂教学模拟数据，不代表真实器件规格或任何公司内部数据。</div></div>`;
+}
+function bomNext(){ if(!(S.draft.ant&&S.draft.pwr)){ alert("请先选好天线和电源。"); return; } S.bomStep=2; save(); render(); }
+function bomBack(){ S.bomStep=1; save(); render(); }
+function lockBOM(){ const d=S.draft;
+  if(!(d.ant&&d.pwr&&d.case_&&d.test)){ alert("请把天线、电源、外壳、测试都各选一个。"); return; }
+  if(!S.predict.bom){ alert("请先预测最直接受影响的指标。"); return; }
+  if(!(S.reasons.bom||"").trim()){ alert("请先写下理由再锁定。"); return; }
+  S.ant=d.ant; S.pwr=d.pwr; S.case_=d.case_; S.test=d.test; S.locked[2]=true; save(); render(); }
+function consBOM(){ const r=compute(),t=TEST[S.test];
+  const reviews=["同样都『更便宜』，为什么便宜天线碰红线、便宜电源却只是后面更贵？","如果只能砍一项成本，你会先砍哪一项？为什么不是最贵的那一项？"];
+  return `<h3>锁定后：BOM / NRE / 功耗 / 交期 / 技术风险</h3>${predictVerdict("bom")}
+    <div class="calc">单台物料 = 架构 ${money(ARCH[S.arch].unit)} + 天线 ${money(ANT[S.ant].unit)} + 电源 ${money(PWR[S.pwr].unit)} + 外壳 ${money(CASE[S.case_].unit)} + 测试 ${money(t.unit)} + 固定 $${FIXED_BOM} + 电池 ${money(r.batteryCost)} = <b>${money(r.unit)}</b></div>
+    <div class="chg">总 NRE <b>${money(r.nre)}</b>　· 设计估算功耗 <b>${r.designPower} W</b>　· 交期 <b>${r.lead} 周</b>　· 初始良率 <b>${pct(t.yield)}</b>　· 技术要求 <b style="color:${r.perfOk?'var(--green)':'var(--red)'}">${r.perfOk?"通过":"未通过"}</b><br><span style="color:var(--muted)">便宜天线弱信号不达标、通用外壳户外不达标都会碰红线；低效电源要更大电池，第五轮会算。不能只从最贵那项开砍。</span></div>
+    <div class="review"><div style="font-size:14px;font-weight:700;color:var(--violet)">复盘（各写一句）</div>${reviews.map((q,i)=>`<div class="q">${q}</div><textarea data-review="bom_${i}">${(S.review["bom_"+i]||"")}</textarea>`).join("")}</div>`;
+}
+
+function riskSummary(r){
+  const parts=[];
+  if(S.ant==="A") parts.push("天线为单一供应商（R3 切换成本高）");
+  if(S.shortage==="A") parts.push("缺货选择等待原供应商，按期交付为 0");
+  else if(S.shortage==="D") parts.push("分批交付，4000 台延后");
+  else if(S.shortage) parts.push("缺货应对："+SHORTAGE[S.shortage].grade[0]);
+  if(!r.perfOk) parts.push("核心技术要求未通过");
+  if(r.lead>WEEKS) parts.push("总交期超 16 周");
+  return parts.length?parts.join("；"):"无突出供应链风险";
+}
+
+function reportView(){
+  const r=compute(),an=ANT[S.ant],p=PWR[S.pwr],c=CASE[S.case_],t=TEST[S.test];
+  const techFail=!r.perfOk;
+  const leadOk=r.lead<=WEEKS, qtyOk=r.onTime>=TARGET, rg=SHORTAGE[S.shortage].grade;
+  const vc=(cls,k,v)=>`<div class="vc ${cls}"><div class="vk">${k}</div><div class="vv">${v}</div></div>`;
+  const hit=[["arch"],["bom"],["shortage"],["yieldFix"],["powerFix"]].filter(([f])=>S.predict[f]&&S.predict[f]===directMetric(f)).length;
+  const choices=[["计算架构",ARCH[S.arch].name],["天线",an.name],["电源",p.name],["外壳",c.name],["测试",t.name],["缺货应对",SHORTAGE[S.shortage].name],["良率改善",YIELDFIX[S.yieldFix].name],["功耗处理",POWERFIX[S.powerFix].name]];
+  const reasons=[["R1",S.reasons.arch],["R2",S.reasons.bom],["R3",S.reasons.shortage],["R4",S.reasons.yieldFix],["R5",S.reasons.powerFix]];
+  const rvQ={arch:["ASIC 为何不一定划算","订单 100 万台会不会变"],bom:["便宜天线碰红线 vs 便宜电源","只砍一项先砍哪个"],shortage:["为何只能交 6000","第二供应商为何要提前备"],yieldFix:["花钱改良率为何可能更省","样机成功为何≠量产成功"],powerFix:["优化逻辑为何可能比加电池划算","重量增加带来什么"]};
+  const reviewRows=[["arch","R1"],["bom","R2"],["shortage","R3"],["yieldFix","R4"],["powerFix","R5"]].map(([f,lb])=>
+    `<tr><td style="width:10%">${lb}</td><td>${(rvQ[f]||[]).map((q,i)=>"· "+q+"："+(S.review[f+"_"+i]||"<span style='color:var(--muted)'>（未填）</span>")).join("<br>")}</td></tr>`).join("");
+  const dual = r.split ? `<h3 style="color:var(--cyan);margin-top:18px">两种口径（你选了分批交付）</h3>
+    <table class="rtbl"><tr><td colspan="2" style="color:var(--amber);font-weight:700">A · 16 周节点状态</td></tr>
+      <tr><td>按期交付数量</td><td class="r">${r.onTime.toLocaleString()} 台${r.lead>WEEKS?"（总交期超 16 周，按期为 0）":""}</td></tr>
+      <tr><td>按期投入成本（含全部 NRE）</td><td class="r">${money(r.onTimeInvest)}</td></tr>
+      <tr><td>未完成数量</td><td class="r">${(TARGET-r.onTime).toLocaleString()} 台</td></tr>
+      <tr><td colspan="2" style="color:var(--green);font-weight:700;padding-top:10px">B · 最终全部交付状态</td></tr>
+      <tr><td>全部 10,000 台完成时间</td><td class="r">${r.finalAllWeeks} 周</td></tr>
+      <tr><td>全项目总成本</td><td class="r">${money(r.projectTotal)}</td></tr></table>` : "";
+  // 成本卡：技术红线未通过时判断无效
+  const costCard = techFail ? vc("bad","成本目标是否达标（≤ $950）","判断无效：技术红线未通过")
+    : vc(r.costOk?"ok":"warn","成本目标是否达标（≤ $950）", r.costOk?("达标 "+money(r.unitGood)):("超出目标 "+money(r.gap)+"/台"));
+  const costLabel = techFail ? "单台制造支出（非合格品成本）" : "单台真实合格品成本";
+  const banner = techFail ? `<div class="situation alert"><b>当前方案不具备交付条件。</b>以下数字仅为制造支出，不代表合格品成本。</div>` : "";
+  const rows=[["成本目标（虚构上限）",money(GOAL)],[costLabel,money(r.unitGood)]];
+  if(!techFail){ rows.push(["单台成本 − 目标 差额",(r.gap>=0?"+":"")+money(r.gap)]); rows.push(["单台成本缺口",money(Math.max(0,r.gap))]); }
+  rows.push(["全项目总成本",money(r.projectTotal)],["最终交期（按期批次）",r.lead+" 周"],["按期可交付数量",r.onTime.toLocaleString()+" 台"+(r.split&&r.lead<=WEEKS?"（+4,000 延后）":"")],
+    ["最终良率",pct(r.yield)],["需投入物料",r.needed.toLocaleString()+" 套"]);
+  // 电池链
+  const batt=[["场测修正前功耗",r.fieldPower+" W"],["采取措施后功耗",r.postPower+" W"],["原基准电池",Math.round(r.baselineWh)+" Wh"],["方案后最终电池",Math.round(r.finalWh)+" Wh"],
+    ["单台新增电池",Math.round(r.addWh)+" Wh"],["单台新增电池成本",money(r.addCost)],["单台新增重量",r.addWeight+" g"],["10,000 台总新增重量",r.totalAddTon.toFixed(2)+" 吨"]];
+  return `<div class="step"><div class="kick">第 6 步 · 最终交付报告</div><h2>Project Lighthouse 最终交付报告</h2>
+    <div class="lead">成本目标 $950 是虚构上限——这一页看五个维度分别达标与否，以及成本、交付、供应链风险。</div>
+    ${banner}
+    <div class="verdict">
+      ${vc(techFail?'bad':'ok',"技术要求",techFail?"未满足":"满足")}
+      ${costCard}
+      ${vc(leadOk?'ok':'bad',"按期批次 ≤ 16 周",r.lead+" 周")}
+      ${vc(qtyOk?'ok':'bad',"按期数量 = 10,000",r.onTime.toLocaleString())}
+      ${vc(rg[1],"缺货应对风险",rg[0])}</div>
+    <div class="report">
+      <h3 style="margin-top:0;color:var(--cyan)">最大供应链风险（自动总结）</h3>
+      <div style="font-size:14.5px;color:var(--text);padding:6px 0">${riskSummary(r)}</div>
+      <h3 style="color:var(--cyan);margin-top:16px">方案</h3><table class="rtbl">${choices.map(([k,v])=>`<tr><td>${k}</td><td class="r">${v}</td></tr>`).join("")}</table>
+      <h3 style="color:var(--cyan);margin-top:18px">成本与交付结果</h3><table class="rtbl">${rows.map(([k,v])=>`<tr><td>${k}</td><td class="r">${v}</td></tr>`).join("")}</table>
+      ${dual}
+      <h3 style="color:var(--cyan);margin-top:18px">电池与重量变化</h3><table class="rtbl">${batt.map(([k,v])=>`<tr><td>${k}</td><td class="r">${v}</td></tr>`).join("")}</table>
+      <div class="note">本模型只自动计入电池变化；散热、外壳、运输成本作为课堂讨论，不自动计入。</div>
+      <h3 style="color:var(--cyan);margin-top:18px">我们的预测准不准？</h3><table class="rtbl"><tr><td>五轮预测命中</td><td class="r">${hit} / 5</td></tr></table>
+      <h3 style="color:var(--cyan);margin-top:18px">每轮决策理由</h3>
+      <table class="rtbl">${reasons.map(([k,v])=>`<tr><td style="width:10%">${k}</td><td>${v||"<span style='color:var(--muted)'>（未填）</span>"}</td></tr>`).join("")}</table>
+      <h3 style="color:var(--cyan);margin-top:18px">五轮复盘题及回答</h3>
+      <table class="rtbl">${reviewRows}</table>
+    </div>
+    <div class="row"><button onclick="window.print()">打印报告</button><button class="ghost" onclick="go(5)">查看上一轮</button><button class="danger" onclick="clearAll()">清空课程进度并重新开始</button></div>
+    <div class="note">本报告全部数字为课堂教学模拟数据，不代表任何真实公司的内部数据。</div></div>`;
+}
+
+function wire(){
+  document.querySelectorAll('.card[data-field]:not(.disabled)').forEach(el=>el.onclick=()=>{ S.draft[el.dataset.field]=el.dataset.k; save(); render(); });
+  document.querySelectorAll('.card[data-k]:not([data-field]):not(.disabled)').forEach(el=>{ const f=curField(S.round); if(!f) return; el.onclick=()=>{ S.draft[f]=el.dataset.k; save(); render(); }; });
+  const rt=document.getElementById("reason"); if(rt&&!rt.disabled) rt.oninput=()=>{ S.reasons[rt.dataset.rf]=rt.value; save(); };
+  const pd=document.getElementById("predict"); if(pd&&!pd.disabled) pd.onchange=()=>{ S.predict[pd.dataset.pf]=pd.value.startsWith("（")?"":pd.value; save(); };
+  document.querySelectorAll('textarea[data-review]').forEach(el=>el.oninput=()=>{ S.review[el.dataset.review]=el.value; save(); });
+}
+render();
+</script>
